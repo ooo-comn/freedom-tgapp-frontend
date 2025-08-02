@@ -1,0 +1,112 @@
+.landing {
+  align-items: center;
+  display: flex;
+  height: calc(
+    100vh - var(--tg-content-safe-area-inset-top) -
+      var(--tg-safe-area-inset-top)
+  );
+  overflow: hidden;
+  position: relative;
+  flex-direction: column;
+}
+
+.landing__wrapper {
+  position: absolute;
+  overflow: hidden;
+  bottom: 0;
+  overflow: hidden;
+  position: absolute;
+  width: 105.641vw;
+  height: 189.231vw;
+  border-radius: 15.385vw 15.385vw 0 0;
+  background-color: var(--background);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.landing__logo {
+  display: flex;
+  gap: 9.895vw;
+}
+
+.landing__logo_top {
+  position: absolute;
+  top: -11.795vw;
+  left: 8.974vw;
+}
+
+.landing__letter {
+  height: 23.59vw;
+  width: 100%;
+}
+
+.landing__content {
+  display: flex;
+  width: 91.282vw;
+  flex-direction: column;
+  align-items: center;
+  gap: 4.1vw;
+  margin-top: 76.62vw;
+}
+
+.landing__title {
+  color: var(--active-color);
+  text-align: center;
+  font-family: "Geologica";
+  font-size: 8.97vw;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.landing__subtitle {
+  width: 66.154vw;
+  color: var(--second-text);
+  text-align: center;
+  font-family: "Geologica";
+  font-size: 3.59vw;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+}
+
+.landing__agreement {
+  margin-top: 42.05vw;
+  width: 67.18vw;
+  color: var(--second-text);
+  text-align: center;
+  font-family: "Geologica";
+  font-size: 3.08vw;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+}
+
+.landing__button {
+  margin-top: 8.205vw;
+  display: flex;
+  width: 91.282vw;
+  padding: 3.846vw 2.564vw;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1.538vw;
+  background: var(--active-color);
+  border: none;
+  color: var(--active-text);
+  font-family: "Geologica";
+  font-size: 3.59vw;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.landing__agreement-link {
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-skip-ink: none;
+  text-decoration-thickness: auto;
+  text-underline-offset: auto;
+  text-underline-position: from-font;
+  color: var(--second-text);
+}

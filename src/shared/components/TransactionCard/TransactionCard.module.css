@@ -1,0 +1,68 @@
+.transaction-card {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	align-self: stretch;
+	width: 87.179vw;
+}
+
+.transaction-card__info {
+	display: flex;
+	align-items: center;
+	gap: 2.051vw;
+}
+
+.transaction-card__icon {
+	width: 11.795vw;
+	height: 11.795vw;
+}
+
+.transaction-card__details {
+	display: flex;
+	flex-direction: column;
+	gap: 1.282vw;
+}
+
+.transaction-card__name {
+	color: var(--main-text);
+	font-family: 'Geologica';
+	font-size: 3.59vw;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+}
+
+.transaction-card__operation {
+	color: var(--second-text);
+	font-family: 'Geologica';
+	font-size: 3.077vw;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+}
+
+.transaction-card__amount {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 1.282vw;
+	height: 9.744vw;
+}
+
+.transaction-card__value {
+	/* color: #2FD159; */
+	font-family: 'Geologica';
+	font-size: 3.59vw;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+}
+
+.transaction-card__type {
+	color: var(--second-text);
+	font-family: 'Geologica';
+	font-size: 3.077vw;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+}

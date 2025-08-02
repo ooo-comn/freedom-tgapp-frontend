@@ -1,0 +1,66 @@
+.subscription-page {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 4.103vw;
+}
+
+.subscription-page__title {
+	width: 91.795vw;
+	color: var(--main-text);
+	font-family: 'Geologica';
+	font-size: 4.615vw;
+	font-style: normal;
+	font-weight: 500;
+	line-height: normal;
+}
+
+.subscription-page__cards-container {
+	display: flex;
+	flex-direction: column;
+	gap: 2.051vw;
+	width: 91.795vw;
+}
+
+.subscription-page__disclaimer,
+.subscription-page__payment-title {
+	color: var(--second-text);
+	font-family: 'Geologica';
+	font-size: 3.077vw;
+	font-style: normal;
+	font-weight: 300;
+	line-height: normal;
+}
+
+.subscription-page__payment-section {
+	display: flex;
+	flex-direction: column;
+	gap: 1.282vw;
+}
+
+.subscription-page__payment-buttons {
+	display: flex;
+	flex-direction: column;
+	gap: 2.051vw;
+}
+
+.subscription-page__payment-button {
+	position: fixed;
+	bottom: 15.385vw;
+	display: flex;
+	width: 91.795vw;
+	padding: 3.846vw 2.564vw;
+	justify-content: center;
+	align-items: center;
+	border-radius: 1.538vw;
+	background: var(--active-color);
+	color: var(--active-text);
+	text-align: center;
+	font-family: 'Geologica';
+	font-size: 3.59vw;
+	font-style: normal;
+	font-weight: 500;
+	line-height: normal;
+	border: none;
+	outline: none;
+}

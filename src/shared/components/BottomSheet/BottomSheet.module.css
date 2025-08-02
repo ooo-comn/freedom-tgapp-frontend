@@ -1,0 +1,47 @@
+.bottom-sheet {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: flex-end;
+	z-index: 1000;
+}
+
+.bottom-sheet__overlay {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background: var(--overlay);
+}
+
+.bottom-sheet__content {
+	position: relative;
+	width: 100%;
+	max-width: 480px;
+	background: var(--mini-background);
+	border-radius: 4.103vw 4.103vw 0 0;
+	padding: 6.026vw 0 13.077vw 0;
+}
+
+.bottom-sheet__close {
+	position: absolute;
+	top: 4.103vw;
+	right: 4.103vw;
+	background: rgba(0, 0, 0, 0.05);
+	border-radius: 100%;
+	border: none;
+	cursor: pointer;
+	width: 7.179vw;
+	height: 7.179vw;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.bottom-sheet__close-svg {
+	width: 3.077vw;
+	height: 3.077vw;
+}

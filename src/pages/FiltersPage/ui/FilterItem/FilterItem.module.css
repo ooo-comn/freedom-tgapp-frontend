@@ -1,0 +1,119 @@
+.filter-item {
+	display: flex;
+	position: relative;
+	height: 11.282vw;
+	padding: 2.564vw 2.051vw;
+	width: 91.795vw;
+	justify-content: space-between;
+	align-items: center;
+	align-self: stretch;
+	border-radius: 1.538vw;
+	background: var(--mini-background);
+}
+
+.filter-item__button-content {
+	display: flex;
+	gap: 2.051vw;
+	align-items: center;
+}
+
+.filter-item__text {
+	color: var(--main-text);
+	font-family: 'Geologica';
+	font-size: 3.077vw;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+}
+
+.filter-item__toggle {
+	position: absolute;
+	right: 2.051vw;
+	width: 8.974vw;
+	height: 5.385vw;
+}
+
+.filter-item__toggle .filter-item__toggle-input {
+	display: none;
+}
+
+.filter-item__toggle .filter-item__toggle-label {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 8.974vw;
+	height: 100%;
+	background-color: #efeff4;
+	border-radius: 4.103vw;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+.filter-item__toggle
+	.filter-item__toggle-input:checked
+	+ .filter-item__toggle-label {
+	background-color: #007aff;
+}
+
+.filter-item__toggle .filter-item__toggle-label::before {
+	content: '';
+	position: absolute;
+	top: 0.349vw;
+	left: 0.349vw;
+	width: 4.718vw;
+	height: 4.718vw;
+	background-color: #efeff4;
+	border-radius: 68.145px;
+	box-shadow: 0vw 0vw 0vw 0.175vw rgba(0, 0, 0, 0.04),
+		0vw 0.524vw 1.398vw 0vw rgba(0, 0, 0, 0.15),
+		0vw 0.524vw 0.175vw 0vw rgba(0, 0, 0, 0.06);
+	border-radius: 50%;
+	transition: transform 0.3s ease;
+	-webkit-transition: -webkit-transform 0.3s ease;
+	-moz-transform: transform 0.3s ease;
+	-o-transform: transform 0.3s ease;
+}
+
+.filter-item__toggle
+	.filter-item__toggle-input:checked
+	+ .filter-item__toggle-label::before {
+	transform: translateX(3.59vw);
+	-webkit-transform: translateX(3.59vw);
+}
+
+.filter-item__checkbox-label {
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+}
+
+.filter-item__checkbox-input {
+	display: none;
+}
+
+.filter-item__checkbox-custom {
+	width: 4.103vw;
+	height: 4.103vw;
+	background-color: var(--mini-background);
+	border: 1px solid var(--second-text);
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.3s ease;
+}
+
+.filter-item__checkbox-custom.filter-item__checkbox-custom--checked {
+	background-color: var(--active-color);
+	border-color: var(--active-color);
+}
+
+.filter-item__checkbox-icon {
+	width: 1.795vw;
+	height: 1.795vw;
+}
+
+.filter-item__link-icon {
+	width: 4.103vw;
+	height: 4.103vw;
+}

@@ -1,0 +1,68 @@
+.transactions-history-list {
+	display: flex;
+	padding: 2.051vw;
+	flex-direction: column;
+	gap: 4.103vw;
+	border-radius: 1.538vw;
+	background: var(--mini-background);
+}
+
+.transactions-history-list__title {
+	color: var(--second-text);
+	font-family: 'Geologica';
+	font-size: 3.077vw;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+}
+
+.transactions-history-list__wrapper-empty {
+	display: flex;
+	height: 157.436vw;
+	width: 91.282vw;
+	padding: 2.051vw;
+	justify-content: center;
+	align-items: center;
+	border-radius: 1.538vw;
+	background: var(--mini-background);
+}
+
+.transactions-history-list__empty-text {
+	color: var(--second-text);
+	text-align: center;
+	font-family: 'Geologica';
+	font-size: 3.077vw;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+}
+
+.transactions-history-list__card_isActive_true {
+	color: #2fd159;
+}
+
+.transactions-history-list__card_isActive_false {
+	color: var(--main-text);
+}
+
+.transactions-history-list__wrapper-day {
+	display: flex;
+	flex-direction: column;
+	gap: 4.103vw;
+}
+
+.transactions-history-list__title {
+	height: 4.615vw;
+	color: var(--main-text);
+	font-family: 'Geologica';
+	font-size: 3.59vw;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+}
+
+.transactions-history-list__wrapper-day-cards {
+	display: flex;
+	flex-direction: column;
+	gap: 3.077vw;
+}

@@ -1,0 +1,132 @@
+.universities-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--background-color);
+  padding: 0 4.1vw;
+  padding-bottom: calc(2.05vw + 70px);
+}
+
+.universities-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4.1vw;
+}
+
+.universities-page__title {
+  color: var(--main-text);
+  font-family: "Geologica";
+  font-size: 4.62vw;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  margin: 0;
+}
+
+.universities-page__reset-button {
+  background: none;
+  border: none;
+  color: var(--second-text);
+  font-family: "Geologica";
+  font-size: 4.1vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  cursor: pointer;
+  padding: 0;
+}
+
+.universities-page__search {
+  margin-bottom: 2.05vw;
+}
+
+.universities-page__search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.universities-page__search-input {
+  width: 100%;
+  padding: 3.08vw;
+  padding-left: 8.72vw;
+  border: none;
+  border-radius: 1.54vw;
+  background: var(--mini-background);
+  color: var(--main-text);
+  font-family: "Geologica";
+  font-size: 3.59vw;
+  outline: none;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  box-sizing: border-box;
+}
+
+.universities-page__search-icon {
+  position: absolute;
+  left: 3.08vw;
+  width: 3.59vw;
+  height: 3.59vw;
+  pointer-events: none;
+}
+
+.universities-page__search-input::placeholder {
+  color: var(--second-text);
+}
+
+.universities-page__content {
+  flex: 1;
+  margin-bottom: 7.69vw;
+}
+
+.universities-page__list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.28vw;
+}
+
+.universities-page__loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  color: var(--second-text);
+  font-family: "Geologica";
+  font-size: 3.59vw;
+}
+
+.universities-page__footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 2.05vw 4.36vw 4.1vw 4.36vw;
+  background-color: var(--mini-background);
+}
+
+.universities-page__apply-button {
+  width: 100%;
+  padding: 3.59vw;
+  border: none;
+  border-radius: 2.56vw;
+  background: var(--active-color);
+  color: white;
+  font-family: "Geologica";
+  font-size: 4.1vw;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.universities-page__apply-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.universities-page__apply-button:not(:disabled):hover {
+  opacity: 0.9;
+}

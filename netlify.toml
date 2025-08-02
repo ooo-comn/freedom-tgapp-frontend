@@ -1,0 +1,16 @@
+[build]
+  command = "npm run build"
+  publish = "build"
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+  force = true
+  headers = {Access-Control-Allow-Origin = "*", Access-Control-Allow-Headers = "Content-Type, Authorization, X-Telegram-Init-Data", Access-Control-Allow-Methods = "GET, POST, OPTIONS"}
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200 

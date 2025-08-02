@@ -1,0 +1,204 @@
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: 4.103vw;
+  padding-bottom: 22.564vw;
+  align-items: center;
+}
+
+.feed__header {
+  display: flex;
+  width: 91.795vw;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: -1.282vw;
+}
+
+.feed__title {
+  color: var(--main-text);
+  font-family: "Geologica";
+  font-size: 4.615vw;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.feed__create-button {
+  display: flex;
+  padding: 1.282vw 2.051vw;
+  align-items: center;
+  gap: 1.026vw;
+  border-radius: 1.538vw;
+  background: var(--create-course-button);
+  border: none;
+}
+
+.feed__create-button-count {
+  color: var(--active-color);
+  font-family: "Geologica";
+  font-size: 3.59vw;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.feed__create-button-img {
+  width: 4.103vw;
+  height: 4.103vw;
+}
+
+.feed__top-panel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 2.051vw;
+}
+
+.feed__search {
+  position: relative;
+  display: flex;
+  padding: 2.564vw 2.051vw 2.564vw 8.205vw;
+  color: var(--main-text);
+  font-family: "Geologica";
+  font-size: 3.59vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  border-radius: 1.538vw;
+  background: var(--mini-background);
+  width: 83.59vw;
+  border: none;
+  outline: none;
+}
+
+.feed__search-icon {
+  position: absolute;
+  width: 4.103vw;
+  height: 4.103vw;
+  top: 2.821vw;
+  left: 2.051vw;
+
+  path {
+    fill: var(--main-text);
+  }
+}
+
+.feed__filter-button {
+  display: flex;
+  width: fit-content;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+.feed__filter-button-img {
+  width: 6.154vw;
+  height: 6.154vw;
+}
+
+.feed__loading {
+  display: flex;
+  flex-direction: column;
+  gap: 2.051vw;
+}
+
+.feed__filters {
+  display: flex;
+  align-items: center;
+  gap: 1.282vw;
+  width: 91.795vw;
+}
+
+.feed__filter-item {
+  cursor: pointer;
+  display: flex;
+  border: none;
+  padding: 1.282vw 2.564vw;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1.538vw;
+  background-color: var(--mini-background);
+  outline: none;
+  color: var(--second-text);
+  font-family: "Geologica";
+  font-size: 3.59vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  min-width: fit-content;
+}
+
+.feed__filter-item_isActive {
+  background: var(--active-color);
+  color: var(--active-text);
+}
+
+.feed__link-create-subscription {
+  position: fixed;
+  bottom: 21.282vw;
+}
+
+.feed__create-subscription {
+  width: 91.795vw;
+  padding: 3.846vw 2.564vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1.538vw;
+  background: var(--active-color);
+  color: var(--active-text);
+  text-align: center;
+  font-family: "Geologica";
+  font-size: 3.59vw;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  border: none;
+  outline: none;
+}
+
+.feed__no-contacts {
+  display: flex;
+  width: 91.795vw;
+  padding: 5vw 0;
+  justify-content: center;
+  align-items: center;
+  background: var(--mini-background);
+  border-radius: 1.538vw;
+  margin-top: 2vw;
+}
+
+.feed__no-contacts p {
+  color: var(--second-text);
+  font-family: "Geologica";
+  font-size: 3.59vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin: 0;
+}
+
+.feed__error {
+  display: flex;
+  width: 91.795vw;
+  padding: 5vw 0;
+  justify-content: center;
+  align-items: center;
+  background: var(--mini-background);
+  border-radius: 1.538vw;
+  margin-top: 2vw;
+}
+
+.feed__error p {
+  color: #ff5757;
+  font-family: "Geologica";
+  font-size: 3.59vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin: 0;
+  text-align: center;
+  padding: 0 5vw;
+}

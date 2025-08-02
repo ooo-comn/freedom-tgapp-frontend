@@ -1,0 +1,31 @@
+.subscription-button {
+	display: flex;
+	height: 11.026vw;
+	width: 91.795vw;
+	padding: 2.564vw 2.051vw;
+	justify-content: flex-start;
+	align-items: center;
+	gap: 2.051vw;
+	align-self: stretch;
+	border-radius: 1.538vw;
+	border: 0.256vw solid var(--mini-background);
+	background: var(--mini-background);
+}
+
+.subscription-button__wrapper_isActive {
+	border: 0.256vw solid var(--active-color);
+}
+
+.subscription-button__icon {
+	width: 6.154vw;
+	height: 6.154vw;
+}
+
+.subscription-button__text {
+	color: var(--main-text);
+	font-family: 'Geologica';
+	font-size: 3.077vw;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+}

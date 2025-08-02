@@ -1,0 +1,199 @@
+.card {
+  display: flex;
+  width: 91.795vw;
+  padding: 2.05vw;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4.1vw;
+  border-radius: 1.538vw;
+  background: var(--mini-background);
+  text-decoration: none;
+}
+
+.card__user {
+  display: flex;
+  align-items: center;
+  gap: 2.564vw;
+  width: 100%;
+}
+
+.card__userpic-wrapper {
+  width: 11.79vw;
+  height: 11.79vw;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.card__userpic {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card__info {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card__name {
+  color: var(--main-text);
+  font-family: "Geologica";
+  font-size: 3.59vw;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  margin: 0;
+}
+
+.card__uni {
+  color: var(--main-text);
+  font-family: "Geologica";
+  font-size: 3.59vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin: 0;
+}
+
+.card__info-sales {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 14.615vw;
+}
+
+.card__info-sales-count {
+  color: var(--active-color);
+  text-align: center;
+  font-family: "Geologica";
+  font-size: 3.59vw;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  margin: 0;
+}
+
+.card__info-sales-desc {
+  color: var(--second-text);
+  text-align: center;
+  font-family: "Geologica";
+  font-size: 3.077vw;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+  margin: 0;
+}
+
+.card__subtitle {
+  color: var(--second-text);
+  font-family: "Geologica";
+  font-size: 3.08vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin: 0;
+}
+
+.card__workTypes,
+.card__subjects {
+  display: flex;
+  flex-direction: column;
+  gap: 2.05vw;
+  width: 100%;
+}
+
+.card__tags {
+  display: flex;
+  gap: 1.282vw;
+  flex-wrap: wrap;
+}
+
+.card__tag {
+  margin: 0;
+  padding: 1.28vw 2.05vw;
+  border-radius: 1.026vw;
+  background: #e0efff;
+  color: #333;
+  font-family: "Geologica";
+  font-size: 3.077vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.card__wrapper-user {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.card__actions {
+  display: flex;
+  align-items: flex-start;
+  gap: 2.05vw;
+}
+
+.card__action-btn {
+  display: flex;
+  width: 7.18vw;
+  height: 7.18vw;
+  padding: 1.2vw;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+  border: none;
+  outline: none;
+  background: var(--stars-background);
+}
+
+.card__action-icon {
+  width: 4.79vw;
+  height: 4.79vw;
+  flex-shrink: 0;
+}
+
+.card__action-icon--filled {
+  filter: brightness(0) saturate(100%) invert(8%) sepia(100%) saturate(7500%)
+    hue-rotate(357deg) brightness(88%) contrast(118%);
+}
+
+.card__bottom {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.card__reviews {
+  display: flex;
+  align-items: center;
+  gap: 0.513vw;
+}
+
+.card__reviews-star {
+  width: 3.846vw;
+  height: 3.846vw;
+}
+
+.card__reviews-rate {
+  color: var(--main-text);
+  font-family: "Geologica";
+  font-size: 2.56vw;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  margin: 0;
+}
+
+.card__reviews-count {
+  color: var(--second-text);
+  font-family: "Geologica";
+  font-size: 3.077vw;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+  margin: 0;
+}

@@ -1,0 +1,82 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+.App {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+	color: aliceblue;
+	background-color: var(--background);
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+	padding-top: calc(
+		var(--tg-content-safe-area-inset-top) + var(--tg-safe-area-inset-top)
+	);
+}
+
+.mobile-body {
+	overflow: hidden;
+	height: 100vh;
+}
+
+.mobile-wrap {
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+.mobile-content {
+	height: calc(100% + 1px);
+}
+
+::-webkit-scrollbar {
+	display: none;
+}
+
+html {
+	scrollbar-width: none;
+	overflow-x: hidden;
+	overscroll-behavior: none;
+}
+
+body {
+	-ms-overflow-style: none;
+	overflow-x: hidden;
+	overscroll-behavior: none;
+}
+
+.loading {
+	position: absolute;
+	top: 305px;
+	left: calc(50% - 45px);
+	width: 80px;
+	height: 80px;
+	background-image: url('../shared/assets/load.gif.mp4');
+	background-size: contain;
+	background-position: center;
+}
+
+.mobile-body {
+	overflow: hidden;
+	height: 100vh;
+}
+
+.mobile-wrap {
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+.mobile-content {
+	height: calc(100% + 1px);
+}

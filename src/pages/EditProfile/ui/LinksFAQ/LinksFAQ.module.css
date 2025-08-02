@@ -1,0 +1,98 @@
+.linksFAQ {
+	display: flex;
+	position: relative;
+	width: 91.282vw;
+	padding: 2.564vw 2.051vw;
+	justify-content: space-between;
+	align-items: center;
+	gap: 3.077vw;
+	border-radius: 1.538vw;
+	background: var(--mini-background);
+}
+
+.linksFAQ__content {
+	display: flex;
+	align-items: center;
+	gap: 2.051vw;
+}
+
+.linksFAQ__image-wrapper {
+	display: flex;
+	width: 9.231vw;
+	height: 9.231vw;
+	justify-content: center;
+	align-items: center;
+	border-radius: 38.462vw;
+	background: var(--stars-background);
+}
+
+.linksFAQ__image {
+	width: 4.816vw;
+	height: 4.816vw;
+}
+
+.linksFAQ__text {
+	color: var(--main-text);
+	font-family: 'Geologica';
+	font-size: 3.59vw;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+	width: 63.91vw;
+}
+
+.linksFAQ__arrow {
+	width: 4.103vw;
+	height: 4.103vw;
+}
+
+.linksFAQ__toggle {
+	position: absolute;
+	right: 2.051vw;
+	width: 8.974vw;
+	height: 5.385vw;
+}
+
+.linksFAQ__toggle .linksFAQ__checkbox {
+	display: none;
+}
+
+.linksFAQ__toggle .linksFAQ__label {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 8.974vw;
+	height: 100%;
+	background-color: #efeff4;
+	border-radius: 4.103vw;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+.linksFAQ__toggle .linksFAQ__checkbox:checked + .linksFAQ__label {
+	background-color: #007aff;
+}
+
+.linksFAQ__toggle .linksFAQ__label::before {
+	content: '';
+	position: absolute;
+	top: 0.349vw;
+	left: 0.349vw;
+	width: 4.718vw;
+	height: 4.718vw;
+	background-color: #efeff4;
+	border-radius: 68.145px;
+	box-shadow: 0vw 0vw 0vw 0.175vw rgba(0, 0, 0, 0.04),
+		0vw 0.524vw 1.398vw 0vw rgba(0, 0, 0, 0.15),
+		0vw 0.524vw 0.175vw 0vw rgba(0, 0, 0, 0.06);
+	border-radius: 50%;
+	transition: transform 0.3s ease;
+	-webkit-transition: -webkit-transform 0.3s ease;
+	-moz-transform: transform 0.3s ease;
+	-o-transform: transform 0.3s ease;
+}
+
+.linksFAQ__toggle .linksFAQ__checkbox:checked + .linksFAQ__label::before {
+	transform: translateX(3.59vw);
+	-webkit-transform: translateX(3.59vw);
+}

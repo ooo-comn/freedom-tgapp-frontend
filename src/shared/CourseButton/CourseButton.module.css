@@ -1,0 +1,16 @@
+.course-button {
+	cursor: pointer;
+	border: none;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 9.231vw;
+	height: 9.231vw;
+	border-radius: 100%;
+	background: var(--stars-background);
+}
+
+.course-button__icon {
+	width: 6.154vw;
+	height: 6.154vw;
+}

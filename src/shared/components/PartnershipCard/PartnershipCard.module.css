@@ -1,0 +1,72 @@
+.partnershipCard {
+	display: flex;
+	padding: 2.564vw;
+	flex-direction: column;
+	justify-content: center;
+	gap: 3.077vw;
+	border-radius: 1.538vw;
+	background: var(--mini-background);
+}
+
+.partnershipCard__infoBlock {
+	display: flex;
+	align-items: center;
+	gap: 1.282vw;
+}
+
+.partnershipCard__icon {
+	width: 4.103vw;
+	height: 4.103vw;
+}
+
+.partnershipCard__counter {
+	color: var(--active-color);
+	font-family: 'Geologica';
+	font-size: 3.077vw;
+	font-style: normal;
+	font-weight: 300;
+	line-height: normal;
+}
+
+.partnershipCard__content {
+	display: flex;
+	flex-direction: column;
+	gap: 2.051vw;
+}
+
+.partnershipCard__title {
+	color: var(--main-text);
+	font-family: 'Geologica';
+	font-size: 3.59vw;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+}
+
+.partnershipCard__description {
+	color: var(--second-text);
+	font-family: 'Geologica';
+	font-size: 3.077vw;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+}
+
+.partnershipCard__button {
+	cursor: pointer;
+	display: flex;
+	padding: 2.051vw 0vw;
+	justify-content: center;
+	align-items: center;
+	align-self: stretch;
+	border-radius: 1.538vw;
+	border: 0.256vw solid var(--active-color);
+	color: var(--active-color);
+	text-align: center;
+	font-family: 'Geologica';
+	font-size: 3.59vw;
+	font-style: normal;
+	font-weight: 500;
+	line-height: normal;
+	background-color: transparent;
+}
