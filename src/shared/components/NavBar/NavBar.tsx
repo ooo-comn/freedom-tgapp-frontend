@@ -74,7 +74,7 @@ const NavBar: FC = () => {
 						<h2
 							className={styles['navbar__title']}
 							style={{
-								color: location.pathname === '/' ? '#F3734E' : '#959595',
+								color: location.pathname === '/pay' ? '#F3734E' : '#959595',
 							}}
 						>
 							Оплатить

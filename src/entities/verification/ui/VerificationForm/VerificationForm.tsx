@@ -104,7 +104,7 @@ export const VerificationForm: FC = () => {
 			return
 		}
 
-		let formDataToSend = new FormData()
+		const formDataToSend = new FormData()
 		Object.entries(formData).forEach(([key, value]) => {
 			formDataToSend.append(key, value instanceof File ? value : String(value))
 		})

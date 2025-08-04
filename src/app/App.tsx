@@ -5,30 +5,18 @@ import { Route, Routes, useNavigate } from 'react-router-dom'
 import { initializeUser } from 'src/entities/user/model/createUser'
 import { VerificationForm } from 'src/entities/verification/ui/VerificationForm/VerificationForm'
 import ConnectCard from 'src/pages/ConnectCard/ConnectCard'
-import EditCourse from 'src/pages/EditCourse/EditCourse'
 import EditProfile from 'src/pages/EditProfile/EditProfile'
-import FeedbackPage from 'src/pages/FeedbackPage/FeedbackPage'
-import FiltersPage from 'src/pages/FiltersPage/FiltersPage'
 import LegalPage from 'src/pages/LegalPage/LegalPage'
 import UserProfile from 'src/pages/UserProfile/ui/UserProfile'
-import ConnectWallet from 'src/pages/Wallet/ConnectWallet'
-import ConnectWalletN from 'src/pages/Wallet/ConnectWalletN'
 import Create from '../pages/Create/Create'
 // import LandingPage from "src/pages/LandingPage/LandingPage";
 import RegistrationPage from 'src/pages/RegistrationPage/RegistrationPage'
-import SubjectsPage from 'src/pages/SubjectsPage/SubjectsPage'
 import SubscriptionPage from 'src/pages/SubscriptionPage/SubscriptionPage'
-import UniversitiesPage from 'src/pages/UniversitiesPage/UniversitiesPage'
 import SellerProfile from 'src/pages/UserProfile/ui/SellerProfile'
-import WorkTypesPage from 'src/pages/WorkTypesPage/WorkTypesPage'
-import Feed from '../pages/Feed/Feed'
+import { WalletWidget } from 'src/widgets/WalletWidget/WalletWidget'
 import NavBar from '../pages/Navbar/Navbar'
-import Bio from '../pages/Profile/Bio'
-import ECourse from '../pages/Profile/ECourse'
-import Verification from '../pages/Profile/Verification'
 import ConnectPayments from '../pages/Wallet/ConnectPayments'
 import ReturnForm from '../pages/Wallet/ReturnForm'
-import VerificationN from '../pages/Wallet/VerificationN'
 import useTheme from '../shared/hooks/useTheme'
 import './App.css'
 
@@ -141,7 +129,7 @@ function App() {
 							content='width=device-width, user-scalable=no'
 						></meta>
 						<Routes>
-							<Route index element={<Feed />} />
+							<Route index element={<WalletWidget />} />
 							<Route
 								path={'create'}
 								element={
@@ -152,30 +140,11 @@ function App() {
 							/>
 							<Route path={'profile'} element={<UserProfile />} />
 							<Route path={'subscription'} element={<SubscriptionPage />} />
-							<Route path={'filters'} element={<FiltersPage />} />
 							<Route path={'edit-profile/:id'} element={<EditProfile />} />
-							<Route path={'edit-bio/:id'} element={<Bio />} />
-							<Route path={'edit-ecourse/:id'} element={<ECourse />} />
-							<Route path={'edit-course/:cid'} element={<EditCourse />} />
-							<Route
-								path={'course-feedback/:id'}
-								element={<FeedbackPage isFullCourses={false} />}
-							/>
-							<Route
-								path={'user-feedback/:id'}
-								element={<FeedbackPage isFullCourses={true} />}
-							/>
 							<Route path={'user/:id'} element={<SellerProfile />} />
 							<Route path={'registration'} element={<RegistrationPage />} />
 							{/* <Route path={"landing"} element={<LandingPage />} /> */}
-							<Route path={'verification'} element={<Verification />} />
-							<Route path={'connect-wallet'} element={<ConnectWallet />} />
-							<Route path={'verificationN'} element={<VerificationN />} />
-							<Route path={'connect-walletN'} element={<ConnectWalletN />} />
 							<Route path={'legal'} element={<LegalPage />} />
-							<Route path={'subjects'} element={<SubjectsPage />} />
-							<Route path={'work-types'} element={<WorkTypesPage />} />
-							<Route path={'universities'} element={<UniversitiesPage />} />
 							<Route
 								path={'verification-form'}
 								element={<VerificationForm />}
