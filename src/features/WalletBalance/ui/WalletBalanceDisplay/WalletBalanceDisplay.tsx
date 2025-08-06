@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { useExchangeRate } from "src/hooks/useExchangeRate";
-import USDTImage from "src/shared/assets/wallet/USDT.svg";
+import USDTImage from "../../../../shared/assets/wallet/USDT.png";
 import styles from "./WalletBalanceDisplay.module.css";
 
 interface WalletBalanceDisplayProps {
