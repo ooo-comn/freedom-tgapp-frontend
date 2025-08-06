@@ -1,0 +1,20 @@
+.avatar {
+  border-radius: 100%;
+  object-fit: cover;
+  background-size: cover;
+}
+
+.avatar--small {
+  width: 12vw;
+  height: 12vw;
+}
+
+.avatar--medium {
+  width: 13.42vw;
+  height: 13.42vw;
+}
+
+.avatar--large {
+  width: 20vw;
+  height: 20vw;
+}

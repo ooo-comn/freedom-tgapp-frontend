@@ -1,0 +1,8 @@
+.userName {
+  color: var(--main-text);
+  font-family: "Geologica";
+  font-size: 4.62vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}

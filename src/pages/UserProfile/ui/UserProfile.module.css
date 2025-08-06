@@ -29,11 +29,10 @@
 .user-profile__title {
   color: var(--main-text);
   font-family: "Geologica";
-  font-size: 3.59vw;
+  font-size: 4.62vw;
   font-style: normal;
   font-weight: 400;
   line-height: 120%;
-  margin-bottom: 2.308vw;
 }
 
 .user-profile__avatar {
@@ -265,4 +264,37 @@
 .card__action-icon--filled {
   filter: brightness(0) saturate(100%) invert(8%) sepia(100%) saturate(7500%)
     hue-rotate(357deg) brightness(88%) contrast(118%);
+}
+
+.user-profile__user-info {
+  display: flex;
+  height: 20.77vw;
+  padding: 2.05vw 2.56vw;
+  width: 91.28vw;
+  align-items: center;
+  gap: 2.05vw;
+  align-self: stretch;
+  border-radius: 1.54vw;
+  background: var(--mini-background);
+}
+
+.user-profile__user-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1.03vw;
+}
+
+.user-profile__status {
+  color: var(--second-text);
+  font-family: "Geologica";
+  font-size: 3.08vw;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+}
+
+.user-profile__wrapper-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1.28vw;
 }
