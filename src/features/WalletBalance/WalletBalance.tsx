@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchUserTransactions } from "src/entities/wallet/model/fetchUserTransactions";
 import { fetchWithdraw } from "src/entities/wallet/model/fetchWithdraw";
+import { useExchangeRate } from "src/hooks/useExchangeRate";
 import USDTImage from "../../shared/assets/wallet/USDT.png";
 import CreditCard from "../../shared/assets/wallet/CreditCard.svg";
 import styles from "./WalletBalance.module.css";
@@ -14,6 +15,11 @@ export const WalletBalance: FC<WalletBalanceProps> = ({ onBalanceChange }) => {
   const navigate = useNavigate();
   const { id } = window.Telegram.WebApp.initDataUnsafe.user;
   const [balance, setBalance] = useState<number>(0);
+  const {
+    data: exchangeRate,
+    isLoading: isRateLoading,
+    error: rateError,
+  } = useExchangeRate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,11 +63,24 @@ export const WalletBalance: FC<WalletBalanceProps> = ({ onBalanceChange }) => {
         <div className={styles["wallet-balance__info-wrapper"]}>
           <div className={styles["wallet-balance__info"]}>
             <h2 className={styles["wallet-balance__currency"]}>USDT</h2>
-            <h2 className={styles["wallet-balance__value"]}>0.0 ₽</h2>
+            <h2 className={styles["wallet-balance__value"]}>
+              {exchangeRate
+                ? (balance * exchangeRate.price.usdt_rub).toFixed(2)
+                : "0.00"}{" "}
+              ₽
+            </h2>
           </div>
           <div className={styles["wallet-balance__amount"]}>
-            <p className={styles["wallet-balance__rate"]}>78,99 ₽</p>
-            <p className={styles["wallet-balance__crypto"]}>0.0 USDT</p>
+            <p className={styles["wallet-balance__rate"]}>
+              {isRateLoading
+                ? "Загрузка..."
+                : rateError
+                ? "Ошибка"
+                : `${exchangeRate?.price.usdt_rub.toFixed(2)} ₽`}
+            </p>
+            <p className={styles["wallet-balance__crypto"]}>
+              {balance.toFixed(2)} USDT
+            </p>
           </div>
         </div>
       </div>

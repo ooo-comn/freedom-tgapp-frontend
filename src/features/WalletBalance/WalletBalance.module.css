@@ -45,7 +45,8 @@
   line-height: normal;
 }
 
-.wallet-balance__rate {
+.wallet-balance__rate,
+.wallet-balance__crypto {
   color: var(--second-text);
   font-family: "Geologica";
   font-size: 3.077vw;
@@ -70,9 +71,9 @@
   flex: 1 0 0;
   align-self: stretch;
   border-radius: 1.538vw;
-  background: #fff;
+  background: var(--mini-background);
   border: none;
-  color: #333;
+  color: var(--main-text);
   font-family: "Geologica";
   font-size: 3.077vw;
   font-style: normal;
