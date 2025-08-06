@@ -21,6 +21,10 @@ export const WalletBalance: FC<WalletBalanceProps> = ({ onBalanceChange }) => {
     error: rateError,
   } = useExchangeRate();
 
+  // Отладочная информация
+  console.log("Exchange rate data:", exchangeRate);
+  console.log("USDT/RUB rate:", exchangeRate?.price?.usdt_rub);
+
   useEffect(() => {
     const fetchData = async () => {
       const result = await fetchUserTransactions(id);
@@ -64,7 +68,7 @@ export const WalletBalance: FC<WalletBalanceProps> = ({ onBalanceChange }) => {
           <div className={styles["wallet-balance__info"]}>
             <h2 className={styles["wallet-balance__currency"]}>USDT</h2>
             <h2 className={styles["wallet-balance__value"]}>
-              {exchangeRate
+              {exchangeRate?.price?.usdt_rub
                 ? (balance * exchangeRate.price.usdt_rub).toFixed(2)
                 : "0.00"}{" "}
               ₽
@@ -76,7 +80,9 @@ export const WalletBalance: FC<WalletBalanceProps> = ({ onBalanceChange }) => {
                 ? "Загрузка..."
                 : rateError
                 ? "Ошибка"
-                : `${exchangeRate?.price.usdt_rub.toFixed(2)} ₽`}
+                : exchangeRate?.price?.usdt_rub
+                ? `${exchangeRate.price.usdt_rub.toFixed(2)} ₽`
+                : "0.00 ₽"}
             </p>
             <p className={styles["wallet-balance__crypto"]}>
               {balance.toFixed(2)} USDT

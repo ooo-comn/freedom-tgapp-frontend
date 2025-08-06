@@ -21,7 +21,9 @@ const fetchExchangeRate = async (): Promise<ExchangeRateResponse> => {
   if (!response.ok) {
     throw new Error("Failed to fetch exchange rate");
   }
-  return response.json();
+  const data = await response.json();
+  console.log("API Response:", data);
+  return data;
 };
 
 export const useExchangeRate = () => {
