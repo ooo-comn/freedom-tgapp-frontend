@@ -2,15 +2,15 @@
   display: flex;
   align-items: center;
   gap: 2.05vw;
-  padding: 2.05vw;
+  padding: 4.36vw 2.05vw;
   background: var(--mini-background);
   border-radius: 1.54vw;
-  width: 100%;
+  width: 91.28vw;
 }
 
 .wallet-balance-display__img {
-  width: 8.21vw;
-  height: 8.21vw;
+  width: 11.79vw;
+  height: 11.79vw;
   flex-shrink: 0;
 }
 
@@ -24,6 +24,7 @@
 .wallet-balance-display__info {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 2.05vw;
 }
 
@@ -49,7 +50,8 @@
 
 .wallet-balance-display__amount {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
   gap: 0.51vw;
 }
 

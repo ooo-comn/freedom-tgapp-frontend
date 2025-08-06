@@ -53,16 +53,9 @@ const WithdrawalPage: FC = () => {
     }
   };
 
-  const handleBack = () => {
-    navigate(-1);
-  };
-
   return (
     <div className={styles.withdrawalPage}>
       <div className={styles.header}>
-        <button onClick={handleBack} className={styles.backButton}>
-          ←
-        </button>
         <h1 className={styles.title}>Вывод</h1>
       </div>
 
