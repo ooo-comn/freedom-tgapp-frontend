@@ -49,3 +49,44 @@ export const fetchUserByUserId = async (
     throw error;
   }
 };
+
+export const fetchUserByTelegramIdV1 = async (telegram_id: string) => {
+  try {
+    const response = await fetch(
+      `http://comnapp.ru:8080/api/v1/user/${telegram_id}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (!response.ok) {
+      if (response.status === 404) return null;
+      throw new Error(`Ошибка HTTP: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Ошибка при запросе пользователя v1:", error);
+    throw error;
+  }
+};
+
+export const authorizeUser = async (payload: any) => {
+  try {
+    const response = await fetch("http://comnapp.ru:8080/api/v1/authorize", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) {
+      throw new Error(`Ошибка HTTP: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Ошибка при авторизации пользователя:", error);
+    throw error;
+  }
+};
