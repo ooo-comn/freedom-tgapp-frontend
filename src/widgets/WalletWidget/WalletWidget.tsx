@@ -52,10 +52,6 @@ export const WalletWidget: FC = () => {
     checkAndAuthorizeUser();
   }, [id]);
 
-  if (loading) {
-    return <div className={styles["wallet"]}>Загрузка...</div>;
-  }
-
   useEffect(() => {
     if (selectedTransaction) {
       setIsOpen(true);
@@ -64,12 +60,14 @@ export const WalletWidget: FC = () => {
 
   const formatDate = (dateString: string) => {
     const date = parseISO(dateString);
-
     if (isToday(date)) return "Сегодня";
     if (isYesterday(date)) return "Вчера";
-
     return format(date, "d MMMM, EEEE", { locale: ru });
   };
+
+  if (loading) {
+    return <div className={styles["wallet"]}>Загрузка...</div>;
+  }
 
   return (
     <div className={styles["wallet"]}>
