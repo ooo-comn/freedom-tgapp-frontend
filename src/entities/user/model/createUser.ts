@@ -16,7 +16,7 @@ export const createUser = async (userId: number): Promise<boolean> => {
     }
 
     const userData = {
-      user_id: userId,
+      id: userId,
       username: telegramUser.username || "",
       first_name: telegramUser.first_name || "",
       last_name: telegramUser.last_name || "",

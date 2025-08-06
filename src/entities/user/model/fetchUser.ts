@@ -53,7 +53,7 @@ export const fetchUserByUserId = async (
 export const fetchUserByTelegramIdV1 = async (telegram_id: string) => {
   try {
     const response = await fetch(
-      `http://comnapp.ru:8080/api/v1/user/${telegram_id}`,
+      `https://comnapp.ru/api/v1/user/${telegram_id}`,
       {
         method: "GET",
         headers: {
@@ -74,12 +74,20 @@ export const fetchUserByTelegramIdV1 = async (telegram_id: string) => {
 
 export const authorizeUser = async (payload: any) => {
   try {
-    const response = await fetch("http://comnapp.ru:8080/api/v1/authorize", {
+    // Преобразуем данные в правильный формат для сервера
+    const userData = {
+      id: payload.id,
+      username: payload.username || "",
+      first_name: payload.first_name || "",
+      last_name: payload.last_name || "",
+    };
+
+    const response = await fetch("https://comnapp.ru/api/v1/authorize", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(userData),
     });
     if (!response.ok) {
       throw new Error(`Ошибка HTTP: ${response.status}`);
