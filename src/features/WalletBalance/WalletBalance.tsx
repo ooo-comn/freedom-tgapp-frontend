@@ -1,10 +1,7 @@
 import { FC, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { fetchUserTransactions } from "src/entities/wallet/model/fetchUserTransactions";
-import { fetchWithdraw } from "src/entities/wallet/model/fetchWithdraw";
-import { useExchangeRate } from "src/hooks/useExchangeRate";
-import USDTImage from "../../shared/assets/wallet/USDT.png";
-import CreditCard from "../../shared/assets/wallet/CreditCard.svg";
+import { WalletBalanceDisplay } from "./ui/WalletBalanceDisplay/WalletBalanceDisplay";
+import { WalletBalanceActions } from "./ui/WalletBalanceActions/WalletBalanceActions";
 import styles from "./WalletBalance.module.css";
 
 interface WalletBalanceProps {
@@ -12,18 +9,8 @@ interface WalletBalanceProps {
 }
 
 export const WalletBalance: FC<WalletBalanceProps> = ({ onBalanceChange }) => {
-  const navigate = useNavigate();
   const { id } = window.Telegram.WebApp.initDataUnsafe.user;
   const [balance, setBalance] = useState<number>(0);
-  const {
-    data: exchangeRate,
-    isLoading: isRateLoading,
-    error: rateError,
-  } = useExchangeRate();
-
-  // Отладочная информация
-  console.log("Exchange rate data:", exchangeRate);
-  console.log("USDT/RUB rate:", exchangeRate?.price?.usdt_rub);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,85 +24,10 @@ export const WalletBalance: FC<WalletBalanceProps> = ({ onBalanceChange }) => {
     fetchData();
   }, [id, onBalanceChange]);
 
-  const handleDeposit = async () => {
-    console.log(balance);
-    if (balance > 6000) {
-      const success = await fetchWithdraw();
-
-      console.log("ok");
-
-      if (success) {
-        navigate("/profile");
-      }
-    }
-    window.document.body.style.overflow = "hidden";
-    document.documentElement.style.overflow = "hidden";
-  };
-
-  const handleWithdraw = () => {
-    navigate("/withdrawal");
-  };
-
   return (
     <div className={styles["wallet-balance"]}>
-      <div className={styles["wallet-balance__wrapper"]}>
-        <img
-          src={USDTImage}
-          alt="картинка USDT"
-          className={styles["wallet-balance__img"]}
-        />
-        <div className={styles["wallet-balance__info-wrapper"]}>
-          <div className={styles["wallet-balance__info"]}>
-            <h2 className={styles["wallet-balance__currency"]}>USDT</h2>
-            <h2 className={styles["wallet-balance__value"]}>
-              {exchangeRate?.price?.usdt_rub
-                ? (balance * exchangeRate.price.usdt_rub).toFixed(2)
-                : "0.00"}{" "}
-              ₽
-            </h2>
-          </div>
-          <div className={styles["wallet-balance__amount"]}>
-            <p className={styles["wallet-balance__rate"]}>
-              {isRateLoading
-                ? "Загрузка..."
-                : rateError
-                ? "Ошибка"
-                : exchangeRate?.price?.usdt_rub
-                ? `${exchangeRate.price.usdt_rub.toFixed(2)} ₽`
-                : "0.00 ₽"}
-            </p>
-            <p className={styles["wallet-balance__crypto"]}>
-              {balance.toFixed(2)} USDT
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className={styles["wallet-balance__actions"]}>
-        <button
-          className={`${styles["wallet-balance__button"]} ${styles["wallet-balance__button--deposit"]}`}
-          onClick={handleDeposit}
-        >
-          <img
-            src={CreditCard}
-            alt="картинка пополнения"
-            className={styles["wallet-balance__button-icon"]}
-          />
-          Пополнение
-        </button>
-
-        <button
-          className={`${styles["wallet-balance__button"]} ${styles["wallet-balance__button--withdraw"]}`}
-          onClick={handleWithdraw}
-        >
-          <img
-            src={CreditCard}
-            alt="картинка вывода"
-            className={styles["wallet-balance__button-icon"]}
-          />
-          Вывод
-        </button>
-      </div>
+      <WalletBalanceDisplay balance={balance} />
+      <WalletBalanceActions balance={balance} />
     </div>
   );
 };

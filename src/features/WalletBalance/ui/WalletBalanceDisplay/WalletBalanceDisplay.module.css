@@ -1,0 +1,74 @@
+.wallet-balance-display__wrapper {
+  display: flex;
+  align-items: center;
+  gap: 2.05vw;
+  padding: 2.05vw;
+  background: var(--mini-background);
+  border-radius: 1.54vw;
+  width: 100%;
+}
+
+.wallet-balance-display__img {
+  width: 8.21vw;
+  height: 8.21vw;
+  flex-shrink: 0;
+}
+
+.wallet-balance-display__info-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.03vw;
+  flex: 1;
+}
+
+.wallet-balance-display__info {
+  display: flex;
+  align-items: center;
+  gap: 2.05vw;
+}
+
+.wallet-balance-display__currency {
+  color: var(--main-text);
+  font-family: "Geologica";
+  font-size: 4.62vw;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  margin: 0;
+}
+
+.wallet-balance-display__value {
+  color: var(--main-text);
+  font-family: "Geologica";
+  font-size: 4.62vw;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  margin: 0;
+}
+
+.wallet-balance-display__amount {
+  display: flex;
+  flex-direction: column;
+  gap: 0.51vw;
+}
+
+.wallet-balance-display__rate {
+  color: var(--second-text);
+  font-family: "Geologica";
+  font-size: 3.08vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin: 0;
+}
+
+.wallet-balance-display__crypto {
+  color: var(--second-text);
+  font-family: "Geologica";
+  font-size: 3.08vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin: 0;
+}
