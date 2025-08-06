@@ -1,7 +1,5 @@
 .withdrawalPage {
   min-height: 100vh;
-  background-color: #f5f5f5;
-  padding: 20px;
   display: flex;
   flex-direction: column;
 }
@@ -9,137 +7,91 @@
 .header {
   display: flex;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 4.1vw;
   position: relative;
 }
 
-.backButton {
-  position: absolute;
-  left: 0;
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #333;
-  padding: 8px;
-  border-radius: 50%;
-  transition: background-color 0.2s;
-}
-
-.backButton:hover {
-  background-color: rgba(0, 0, 0, 0.1);
-}
-
 .title {
-  flex: 1;
-  text-align: center;
-  font-size: 24px;
-  font-weight: 600;
-  color: #333;
-  margin: 0;
+  color: var(--main-text);
+  font-family: "Geologica";
+  font-size: 4.62vw;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  letter-spacing: 0.01vw;
 }
 
 .form {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 4.1vw;
 }
 
 .inputGroup {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 2.05vw;
 }
 
 .label {
-  font-size: 16px;
-  font-weight: 500;
-  color: #333;
-  margin: 0;
+  color: var(--second-text);
+  font-family: "Geologica";
+  font-size: 3.08vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
 }
 
 .input {
-  padding: 16px;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  font-size: 16px;
-  background-color: white;
-  transition: border-color 0.2s;
-}
-
-.input:focus {
-  outline: none;
-  border-color: #007bff;
+  display: flex;
+  padding: 2.56vw 2.05vw;
+  align-items: center;
+  align-self: stretch;
+  border-radius: 1.54vw;
+  background: var(--mini-background);
+  color: var(--main-text);
+  font-family: "Geologica";
+  font-size: 3.59vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  border: none;
 }
 
 .input::placeholder {
-  color: #999;
+  color: var(--second-text);
 }
 
 .commission {
-  font-size: 14px;
-  color: #dc3545;
-  margin: 4px 0 0 0;
+  color: #f3734e;
+  font-family: "Geologica";
+  font-size: 2.56vw;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
 }
 
 .balanceSection {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-}
-
-.balanceCard {
-  background-color: white;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  gap: 2.05vw;
 }
 
 .submitButton {
   margin-top: auto;
-  padding: 16px;
-  background-color: #ff6b35;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-size: 18px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.submitButton:hover {
-  background-color: #e55a2b;
-}
-
-.submitButton:active {
-  transform: translateY(1px);
-}
-
-.submitButton:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Адаптивность для мобильных устройств */
-@media (max-width: 480px) {
-  .withdrawalPage {
-    padding: 16px;
-  }
-
-  .title {
-    font-size: 20px;
-  }
-
-  .input {
-    padding: 14px;
-    font-size: 14px;
-  }
-
-  .submitButton {
-    padding: 14px;
-    font-size: 16px;
-  }
+  display: flex;
+  width: 91.28vw;
+  padding: 2.56vw;
+  justify-content: center;
+  align-items: center;
+  gap: 2.56vw;
+  border-radius: 1.54vw;
+  background: var(---, #f3734e);
+  color: var(---, #fff);
+  font-family: "Geologica";
+  font-size: 3.59vw;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
 }

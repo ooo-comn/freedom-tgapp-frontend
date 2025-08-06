@@ -1,17 +1,17 @@
 .wallet-balance-actions {
   display: flex;
   gap: 2.05vw;
-  margin-top: 2.05vw;
 }
 
 .wallet-balance-actions__button {
   display: flex;
   align-items: center;
-  justify-content: center;
+  background: var(--mini-background);
   gap: 1.03vw;
   padding: 2.05vw 4.1vw;
   border: none;
   border-radius: 1.54vw;
+  color: var(--main-text);
   font-family: "Geologica";
   font-size: 3.59vw;
   font-style: normal;
@@ -19,22 +19,6 @@
   line-height: normal;
   cursor: pointer;
   flex: 1;
-  transition: opacity 0.2s ease;
-}
-
-.wallet-balance-actions__button:hover {
-  opacity: 0.8;
-}
-
-.wallet-balance-actions__button--deposit {
-  background: var(--active-color);
-  color: var(--active-text);
-}
-
-.wallet-balance-actions__button--withdraw {
-  background: var(--mini-background);
-  color: var(--main-text);
-  border: 1px solid var(--border-color);
 }
 
 .wallet-balance-actions__button-icon {

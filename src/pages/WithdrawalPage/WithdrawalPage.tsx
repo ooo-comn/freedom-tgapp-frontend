@@ -6,6 +6,16 @@ import { fetchWithdrawFunds } from "../../entities/wallet/model/fetchWithdrawFun
 import styles from "./WithdrawalPage.module.css";
 
 const WithdrawalPage: FC = () => {
+  window.scrollTo(0, 0);
+
+  const BackButton = window.Telegram.WebApp.BackButton;
+  BackButton.show();
+  BackButton.onClick(function () {
+    BackButton.hide();
+  });
+  window.Telegram.WebApp.onEvent("backButtonClicked", function () {
+    window.history.back();
+  });
   const navigate = useNavigate();
   const [address, setAddress] = useState("");
   const [amount, setAmount] = useState("");
@@ -13,8 +23,8 @@ const WithdrawalPage: FC = () => {
   const { data: walletData } = useWalletBalance();
   const balance = walletData?.balance || 0;
 
-  const commission = 2.75; // Фиксированная комиссия
-  const minAmount = commission + 0.01; // Минимальная сумма для вывода
+  const commission = 2.75;
+  const minAmount = commission + 0.01;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,9 +100,7 @@ const WithdrawalPage: FC = () => {
 
         <div className={styles.balanceSection}>
           <label className={styles.label}>Баланс</label>
-          <div className={styles.balanceCard}>
-            <WalletBalanceDisplay balance={balance} />
-          </div>
+          <WalletBalanceDisplay balance={balance} />
         </div>
 
         <button type="submit" className={styles.submitButton}>
