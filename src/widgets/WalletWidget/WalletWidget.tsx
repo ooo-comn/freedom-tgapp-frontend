@@ -13,6 +13,7 @@ import {
   fetchUserByTelegramIdV1,
   authorizeUser,
 } from "src/entities/user/model/fetchUser";
+import MyDataCard from "src/shared/components/MyDataCard/MyDataCard";
 
 export const WalletWidget: FC = () => {
   const { id } = window.Telegram.WebApp.initDataUnsafe.user;
@@ -77,7 +78,12 @@ export const WalletWidget: FC = () => {
 
       <WalletBalance onBalanceChange={setFormattedBalance} />
 
-      <WalletVerification />
+      <MyDataCard
+        title="Пройдите верификацию"
+        description="Пройди верификацию, чтобы создавать объявления и начать зарабатывать на своих знаниях. Проверка занимает 3-4 рабочих дня"
+        verifyed="На модерации"
+        path="/"
+      />
 
       <TransactionsHistory
         onSelectTransaction={(data) => {

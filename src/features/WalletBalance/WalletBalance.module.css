@@ -12,7 +12,7 @@
   gap: 2.051vw;
   flex: 1 0 0;
   border-radius: 1.538vw;
-  background: #fff;
+  background: var(--mini-background);
 }
 
 .wallet-balance__img {
@@ -37,7 +37,7 @@
 
 .wallet-balance__currency,
 .wallet-balance__value {
-  color: #333;
+  color: var(--main-text);
   font-family: "Geologica";
   font-size: 4.615vw;
   font-style: normal;
@@ -46,7 +46,7 @@
 }
 
 .wallet-balance__rate {
-  color: #8b8b8b;
+  color: var(--second-text);
   font-family: "Geologica";
   font-size: 3.077vw;
   font-style: normal;
@@ -65,7 +65,6 @@
   display: flex;
   padding: 2.564vw 2.051vw;
   width: 44.615vw;
-  justify-content: center;
   align-items: center;
   gap: 2.051vw;
   flex: 1 0 0;

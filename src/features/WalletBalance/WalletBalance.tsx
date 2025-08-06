@@ -2,6 +2,8 @@ import { FC, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchUserTransactions } from "src/entities/wallet/model/fetchUserTransactions";
 import { fetchWithdraw } from "src/entities/wallet/model/fetchWithdraw";
+import USDTImage from "../../shared/assets/wallet/USDT.png";
+import CreditCard from "../../shared/assets/wallet/CreditCard.svg";
 import styles from "./WalletBalance.module.css";
 
 interface WalletBalanceProps {
@@ -48,7 +50,7 @@ export const WalletBalance: FC<WalletBalanceProps> = ({ onBalanceChange }) => {
     <div className={styles["wallet-balance"]}>
       <div className={styles["wallet-balance__wrapper"]}>
         <img
-          src="../../shared/assets/wallet/USDT.png"
+          src={USDTImage}
           alt="картинка USDT"
           className={styles["wallet-balance__img"]}
         />
@@ -70,7 +72,7 @@ export const WalletBalance: FC<WalletBalanceProps> = ({ onBalanceChange }) => {
           onClick={handleDeposit}
         >
           <img
-            src="../../shared/assets/wallet/CreditCard.svg"
+            src={CreditCard}
             alt="картинка пополнения"
             className={styles["wallet-balance__button-icon"]}
           />
@@ -82,7 +84,7 @@ export const WalletBalance: FC<WalletBalanceProps> = ({ onBalanceChange }) => {
           onClick={handleWithdraw}
         >
           <img
-            src="../../shared/assets/wallet/CreditCard.svg"
+            src={CreditCard}
             alt="картинка вывода"
             className={styles["wallet-balance__button-icon"]}
           />
