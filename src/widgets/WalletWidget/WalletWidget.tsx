@@ -25,6 +25,8 @@ export const WalletWidget: FC = () => {
   const [formattedBalance, setFormattedBalance] = useState<string>("0");
   const [loading, setLoading] = useState(true);
 
+  console.log("initDataUnsafe", window.Telegram.WebApp.initDataUnsafe);
+
   useEffect(() => {
     const checkAndAuthorizeUser = async () => {
       try {
