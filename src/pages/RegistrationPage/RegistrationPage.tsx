@@ -575,7 +575,6 @@ const RegistrationPage: FC = () => {
           <LinksFAQ
             isSubmit={false}
             path={Bell}
-            isNotify={isNotify}
             text="Получай уведомления о новых курсах наших преподавателей"
             isNotifyFAQ={handleNotify}
           />
@@ -591,12 +590,7 @@ const RegistrationPage: FC = () => {
               window.open("https://forms.gle/x9KbBitA1AGDPmXY8");
             }}
           >
-            <LinksFAQ
-              isSubmit={true}
-              path={Error}
-              isNotify={isNotify}
-              text="Сообщить о баге"
-            />
+            <LinksFAQ isSubmit={true} path={Error} text="Сообщить о баге" />
           </Link>
           <Link
             to="https://forms.gle/NtaWQe2wuiRpcY2L8"
@@ -606,12 +600,7 @@ const RegistrationPage: FC = () => {
               window.open("https://forms.gle/NtaWQe2wuiRpcY2L8");
             }}
           >
-            <LinksFAQ
-              isSubmit={true}
-              path={Bulb}
-              isNotify={isNotify}
-              text="Предложить идею"
-            />
+            <LinksFAQ isSubmit={true} path={Bulb} text="Предложить идею" />
           </Link>
           <Link
             to="https://common-course-1.gitbook.io/common-course-app/"
@@ -623,12 +612,7 @@ const RegistrationPage: FC = () => {
               );
             }}
           >
-            <LinksFAQ
-              isSubmit={true}
-              path={Faq}
-              isNotify={isNotify}
-              text="Ответы на вопросы"
-            />
+            <LinksFAQ isSubmit={true} path={Faq} text="Ответы на вопросы" />
           </Link>
         </div>
 
@@ -638,7 +622,6 @@ const RegistrationPage: FC = () => {
             <LinksFAQ
               isSubmit={true}
               path={Warning}
-              isNotify={isNotify}
               text="Правовая информация"
             />
           </Link>
