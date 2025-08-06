@@ -4,7 +4,6 @@ import { FC, useEffect, useState } from "react";
 import { ITransaction } from "src/entities/course/model/types";
 import { TransactionsHistory } from "src/features/TransactionsHistory/TransactionsHistory";
 import { WalletBalance } from "src/features/WalletBalance/WalletBalance";
-import { WalletVerification } from "src/features/WalletVerification/WalletVerification";
 import BottomSheet from "src/shared/components/BottomSheet/BottomSheet";
 import NavBar from "src/shared/components/NavBar/NavBar";
 import Credit_Card from "../../shared/assets/course/Credit_Card.svg";
