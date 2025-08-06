@@ -68,8 +68,7 @@ export const TransactionsHistoryList: FC<{
       {allTransactions.length === 0 ? (
         <div className={styles["transactions-history-list__wrapper-empty"]}>
           <p className={styles["transactions-history-list__empty-text"]}>
-            История транзакций пока пуста. Рассмотри возможность совершения
-            покупки или продажи своего курса.
+            История транзакций пока пуста
           </p>
         </div>
       ) : (

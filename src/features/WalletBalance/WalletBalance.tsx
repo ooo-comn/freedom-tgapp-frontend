@@ -1,78 +1,94 @@
-import { FC, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { fetchUserTransactions } from 'src/entities/wallet/model/fetchUserTransactions'
-import { fetchWithdraw } from 'src/entities/wallet/model/fetchWithdraw'
-import ModalNotification from 'src/shared/components/ModalNotification/ModalNotification'
-import styles from './WalletBalance.module.css'
+import { FC, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { fetchUserTransactions } from "src/entities/wallet/model/fetchUserTransactions";
+import { fetchWithdraw } from "src/entities/wallet/model/fetchWithdraw";
+import styles from "./WalletBalance.module.css";
 
 interface WalletBalanceProps {
-	onBalanceChange?: (balance: string) => void
+  onBalanceChange?: (balance: string) => void;
 }
 
 export const WalletBalance: FC<WalletBalanceProps> = ({ onBalanceChange }) => {
-	const navigate = useNavigate()
-	const { id } = window.Telegram.WebApp.initDataUnsafe.user
-	const [balance, setBalance] = useState<number>(0)
-	const [withdrawModalOpen, setWithdrawModalOpen] = useState(false)
+  const navigate = useNavigate();
+  const { id } = window.Telegram.WebApp.initDataUnsafe.user;
+  const [balance, setBalance] = useState<number>(0);
 
-	const formattedBalance = balance.toLocaleString('ru-RU')
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await fetchUserTransactions(id);
+      if (result?.balance !== undefined) {
+        const formatted = result.balance.toLocaleString("ru-RU");
+        setBalance(result.balance);
+        onBalanceChange?.(formatted);
+      }
+    };
+    fetchData();
+  }, [id, onBalanceChange]);
 
-	function handleFail() {
-		setWithdrawModalOpen(false)
-		window.document.body.style.overflow = 'visible'
-		document.documentElement.style.overflow = 'visible'
-	}
+  const handleDeposit = async () => {
+    console.log(balance);
+    if (balance > 6000) {
+      const success = await fetchWithdraw();
 
-	useEffect(() => {
-		const fetchData = async () => {
-			const result = await fetchUserTransactions(id)
-			if (result?.balance !== undefined) {
-				const formatted = result.balance.toLocaleString('ru-RU')
-				setBalance(result.balance)
-				onBalanceChange?.(formatted)
-			}
-		}
-		fetchData()
-	}, [id, onBalanceChange])
+      console.log("ok");
 
-	const handleWithdraw = async () => {
-		console.log(balance)
-		if (balance > 6000) {
-			const success = await fetchWithdraw()
+      if (success) {
+        navigate("/profile");
+      }
+    }
+    window.document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+  };
 
-			console.log('ok')
+  const handleWithdraw = () => {
+    navigate("/withdrawal");
+  };
 
-			if (success) {
-				navigate('/profile')
-			}
-		}
-		setWithdrawModalOpen(true)
-		window.document.body.style.overflow = 'hidden'
-		document.documentElement.style.overflow = 'hidden'
-	}
+  return (
+    <div className={styles["wallet-balance"]}>
+      <div className={styles["wallet-balance__wrapper"]}>
+        <img
+          src="../../shared/assets/wallet/USDT.png"
+          alt="картинка USDT"
+          className={styles["wallet-balance__img"]}
+        />
+        <div className={styles["wallet-balance__info-wrapper"]}>
+          <div className={styles["wallet-balance__info"]}>
+            <h2 className={styles["wallet-balance__currency"]}>USDT</h2>
+            <h2 className={styles["wallet-balance__value"]}>0.0 ₽</h2>
+          </div>
+          <div className={styles["wallet-balance__amount"]}>
+            <p className={styles["wallet-balance__rate"]}>78,99 ₽</p>
+            <p className={styles["wallet-balance__crypto"]}>0.0 USDT</p>
+          </div>
+        </div>
+      </div>
 
-	return (
-		<div className={styles['wallet__balance']}>
-			<div className={styles['wallet__balance-wrapper']}>
-				<h3 className={styles['wallet__balance-title']}>Основной счёт</h3>
-				<p className={styles['wallet__balance-amount']}>{formattedBalance} ₽</p>
-			</div>
-			<button
-				className={styles['wallet__balance-withdraw-button']}
-				onClick={handleWithdraw}
-			>
-				Вывод средств
-			</button>
+      <div className={styles["wallet-balance__actions"]}>
+        <button
+          className={`${styles["wallet-balance__button"]} ${styles["wallet-balance__button--deposit"]}`}
+          onClick={handleDeposit}
+        >
+          <img
+            src="../../shared/assets/wallet/CreditCard.svg"
+            alt="картинка пополнения"
+            className={styles["wallet-balance__button-icon"]}
+          />
+          Пополнение
+        </button>
 
-			{withdrawModalOpen && (
-				<div className={styles['wallet__balance__notification']}>
-					<ModalNotification
-						title='Внимание'
-						text='Вывод средств возможен при балансе от 6000 рублей'
-						onClose={handleFail}
-					/>
-				</div>
-			)}
-		</div>
-	)
-}
+        <button
+          className={`${styles["wallet-balance__button"]} ${styles["wallet-balance__button--withdraw"]}`}
+          onClick={handleWithdraw}
+        >
+          <img
+            src="../../shared/assets/wallet/CreditCard.svg"
+            alt="картинка вывода"
+            className={styles["wallet-balance__button-icon"]}
+          />
+          Вывод
+        </button>
+      </div>
+    </div>
+  );
+};
