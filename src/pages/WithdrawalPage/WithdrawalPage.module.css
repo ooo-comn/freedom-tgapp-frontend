@@ -19,11 +19,15 @@
   font-weight: 500;
   line-height: normal;
   letter-spacing: 0.01vw;
+  width: 91.28vw;
+  margin: 0 auto;
 }
 
 .form {
-  flex: 1;
   display: flex;
+  flex: 1 1;
+  width: 91.28vw;
+  margin: 0 auto;
   flex-direction: column;
   gap: 4.1vw;
 }
@@ -57,6 +61,7 @@
   font-weight: 400;
   line-height: normal;
   border: none;
+  outline: none;
 }
 
 .input::placeholder {
@@ -80,6 +85,7 @@
 
 .submitButton {
   margin-top: auto;
+  margin-bottom: 9.74vw;
   display: flex;
   width: 91.28vw;
   padding: 2.56vw;
@@ -94,4 +100,6 @@
   font-style: normal;
   font-weight: 500;
   line-height: normal;
+  border: none;
+  outline: none;
 }
