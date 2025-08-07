@@ -32,7 +32,8 @@ export const WalletWidget: FC = () => {
   useEffect(() => {
     const checkAndAuthorizeUser = async () => {
       try {
-        const user = await fetchUserByTelegramIdV1(id);
+        if (!id) return;
+        const user = await fetchUserByTelegramIdV1(id.toString());
         if (!user) {
           // Собираем все нужные данные из initDataUnsafe
           const tgData = webApp?.initDataUnsafe;

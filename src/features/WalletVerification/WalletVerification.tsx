@@ -23,7 +23,7 @@ export const WalletVerification: FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await fetchUserTransactions(id);
+      const result = await fetchUserTransactions(id.toString());
       if (result) {
         setVerifyed(result.verifyed);
         setConnectedPayments(result.connected);

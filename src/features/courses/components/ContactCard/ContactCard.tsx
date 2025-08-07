@@ -68,6 +68,8 @@ const ContactCard: FC<IContactCard> = ({
         isFavorite
       );
 
+      if (!userId) return;
+
       const response = await fetch(
         `${API_BASE_URL}/contacts/${itemCard.id}/favorite?user_id=${userId}`,
         {

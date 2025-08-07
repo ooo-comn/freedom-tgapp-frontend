@@ -20,6 +20,34 @@ declare module "*.webp" {
 
 declare global {
   interface Window {
-    Telegram: any;
+    Telegram: {
+      WebApp: {
+        BackButton: {
+          show(): void;
+          hide(): void;
+          onClick(callback: () => void): void;
+        };
+        onEvent(eventType: string, callback: () => void): void;
+        initDataUnsafe: {
+          user: {
+            id: number;
+            first_name?: string;
+            last_name?: string;
+            username?: string;
+            photo_url?: string;
+          };
+          auth_date?: number;
+          hash?: string;
+        };
+        initData?: string;
+        requestCameraAccess(): Promise<boolean>;
+        showScanQrPopup(options: {
+          text: string;
+          onResult: (result: string) => void;
+          onError: (error: any) => void;
+        }): void;
+        closeScanQrPopup(): void;
+      };
+    };
   }
 }

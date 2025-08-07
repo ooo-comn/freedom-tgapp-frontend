@@ -15,7 +15,8 @@ export const WalletBalance: FC<WalletBalanceProps> = ({ onBalanceChange }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await fetchUserTransactions(id);
+      if (!id) return;
+      const result = await fetchUserTransactions(id.toString());
       if (result?.balance !== undefined) {
         const formatted = result.balance.toLocaleString("ru-RU");
         setBalance(result.balance);

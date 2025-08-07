@@ -41,7 +41,8 @@ export const TransactionsHistoryList: FC<{
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await fetchUserTransactions(id);
+      if (!id) return;
+      const result = await fetchUserTransactions(id.toString());
 
       if (result) {
         setCoursesPaid(result.paid_courses || []);
