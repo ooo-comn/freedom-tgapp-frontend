@@ -10,49 +10,12 @@ const QRScanner: FC<QRScannerProps> = ({ onScanSuccess, onClose }) => {
   useEffect(() => {
     if (window.Telegram?.WebApp) {
       const webApp = window.Telegram.WebApp;
-      let qrResultReceived = false;
-
-      // Обработчик для события qr_text_received
-      const handleQrEvent = (event: any) => {
-        if (qrResultReceived) return;
-
-        const result = event?.data || event?.detail?.data;
-        if (result) {
-          qrResultReceived = true;
-          console.log("QR result received:", result);
-
-          // Закрываем сканер
-          if (typeof webApp.closeScanQrPopup === "function") {
-            webApp.closeScanQrPopup();
-          }
-
-          // Вызываем callback
-          onScanSuccess(result);
-          onClose();
-        }
-      };
-
-      // Слушаем событие qr_text_received
-      window.addEventListener("qr_text_received", handleQrEvent);
-
-      // Слушаем все сообщения
-      const messageHandler = (event: any) => {
-        if (qrResultReceived) return;
-
-        if (event.data && event.data.type === "qr_text_received") {
-          handleQrEvent(event.data);
-        }
-      };
-      window.addEventListener("message", messageHandler);
 
       if (typeof webApp.showScanQrPopup === "function") {
         try {
           webApp.showScanQrPopup({
             text: "Наведите камеру на QR-код для оплаты",
             onResult: (result: string) => {
-              if (qrResultReceived) return;
-              qrResultReceived = true;
-
               if (typeof webApp.closeScanQrPopup === "function") {
                 webApp.closeScanQrPopup();
               }
@@ -71,25 +34,6 @@ const QRScanner: FC<QRScannerProps> = ({ onScanSuccess, onClose }) => {
               onClose();
             },
           });
-
-          // Автоматически закрываем сканер через 30 секунд
-          const timeout = setTimeout(() => {
-            if (!qrResultReceived) {
-              if (typeof webApp.closeScanQrPopup === "function") {
-                webApp.closeScanQrPopup();
-              }
-              if (typeof webApp.showAlert === "function") {
-                webApp.showAlert("Время ожидания истекло. Попробуйте еще раз.");
-              }
-              onClose();
-            }
-          }, 30000);
-
-          return () => {
-            clearTimeout(timeout);
-            window.removeEventListener("qr_text_received", handleQrEvent);
-            window.removeEventListener("message", messageHandler);
-          };
         } catch (error) {
           if (typeof webApp.showAlert === "function") {
             webApp.showAlert(
@@ -100,9 +44,7 @@ const QRScanner: FC<QRScannerProps> = ({ onScanSuccess, onClose }) => {
         }
       } else {
         if (typeof webApp.showAlert === "function") {
-          webApp.showAlert(
-            "QR-сканер недоступен. Используйте Telegram для Android/iOS."
-          );
+          webApp.showAlert("QR-сканер недоступен в данной версии Telegram.");
         }
         onClose();
       }
