@@ -55,7 +55,7 @@ export const WalletWidget: FC = () => {
       }
     };
     checkAndAuthorizeUser();
-  }, [id]);
+  }, [id, webApp?.initDataUnsafe]);
 
   useEffect(() => {
     if (selectedTransaction) {
