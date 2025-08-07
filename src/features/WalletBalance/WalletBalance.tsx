@@ -1,6 +1,5 @@
-import { FC, useEffect, useState } from "react";
-import { fetchUserTransactions } from "src/entities/wallet/model/fetchUserTransactions";
-import { getTelegramUserId } from "src/shared/lib/telegram";
+import { FC, useEffect } from "react";
+import { useUserBalance } from "src/hooks/useUserBalance";
 import { WalletBalanceDisplay } from "./ui/WalletBalanceDisplay/WalletBalanceDisplay";
 import { WalletBalanceActions } from "./ui/WalletBalanceActions/WalletBalanceActions";
 import styles from "./WalletBalance.module.css";
@@ -10,21 +9,14 @@ interface WalletBalanceProps {
 }
 
 export const WalletBalance: FC<WalletBalanceProps> = ({ onBalanceChange }) => {
-  const id = getTelegramUserId();
-  const [balance, setBalance] = useState<number>(0);
+  const { data: balance = 0 } = useUserBalance();
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!id) return;
-      const result = await fetchUserTransactions(id.toString());
-      if (result?.balance !== undefined) {
-        const formatted = result.balance.toLocaleString("ru-RU");
-        setBalance(result.balance);
-        onBalanceChange?.(formatted);
-      }
-    };
-    fetchData();
-  }, [id, onBalanceChange]);
+    if (balance !== undefined) {
+      const formatted = balance.toLocaleString("ru-RU");
+      onBalanceChange?.(formatted);
+    }
+  }, [balance, onBalanceChange]);
 
   return (
     <div className={styles["wallet-balance"]}>
