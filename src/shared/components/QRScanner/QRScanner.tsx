@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState, useCallback } from "react";
 import styles from "./QRScanner.module.css";
 
 interface QRScannerProps {
@@ -19,17 +19,20 @@ const QRScanner: FC<QRScannerProps> = ({ onScanSuccess, onClose }) => {
   });
 
   // Обработчик события qr_text_received
-  const handleQrTextReceived = (event: any) => {
-    const result = event?.data;
-    if (result) {
-      const webApp = window.Telegram.WebApp;
-      if (typeof webApp.closeScanQrPopup === "function") {
-        webApp.closeScanQrPopup();
+  const handleQrTextReceived = useCallback(
+    (event: any) => {
+      const result = event?.data;
+      if (result) {
+        const webApp = window.Telegram.WebApp;
+        if (typeof webApp.closeScanQrPopup === "function") {
+          webApp.closeScanQrPopup();
+        }
+        onScanSuccess(result);
+        onClose();
       }
-      onScanSuccess(result);
-      onClose();
-    }
-  };
+    },
+    [onScanSuccess, onClose]
+  );
 
   useEffect(() => {
     // Проверяем, что Telegram WebApp доступен
