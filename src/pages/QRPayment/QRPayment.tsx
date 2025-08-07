@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import QRScanner from "src/shared/components/QRScanner";
+import { useQRScanner } from "src/shared/components/QRScanner";
 import PurchaseForm, {
   PurchaseFormData,
 } from "src/shared/components/PurchaseForm";
@@ -12,6 +12,33 @@ const QRPayment: FC = () => {
   const [showPurchaseForm, setShowPurchaseForm] = useState(false);
   const [qrData, setQrData] = useState<string>("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+
+  const { scanQR, isAvailable } = useQRScanner({
+    onSuccess: (result) => {
+      console.log("QR Code scanned:", result);
+      console.log("QR Data type:", typeof result);
+      console.log("QR Data length:", result.length);
+      console.log("Setting QR data and showing purchase form...");
+
+      setQrData(result);
+      setShowScanner(false);
+      setShowPurchaseForm(true);
+
+      console.log(
+        "State updated - scanner closed, purchase form should be visible"
+      );
+    },
+    onError: (error) => {
+      console.error("QR Scanner error:", error);
+      // Показываем ошибку пользователю
+      if (window.Telegram?.WebApp?.showAlert) {
+        window.Telegram.WebApp.showAlert(
+          "Ошибка сканирования QR-кода. Попробуйте еще раз."
+        );
+      }
+    },
+    text: "Наведите камеру на QR-код для оплаты",
+  });
 
   const handleScanSuccess = (result: string) => {
     console.log("QR Code scanned:", result);
@@ -32,6 +59,22 @@ const QRPayment: FC = () => {
     setShowScanner(false);
     // Здесь можно добавить навигацию назад
     window.history.back();
+  };
+
+  const handleManualScan = async () => {
+    if (isAvailable) {
+      const result = await scanQR();
+      if (result) {
+        handleScanSuccess(result);
+      }
+    } else {
+      console.log("QR Scanner is not available");
+      if (window.Telegram?.WebApp?.showAlert) {
+        window.Telegram.WebApp.showAlert(
+          "QR сканер недоступен в данной версии Telegram."
+        );
+      }
+    }
   };
 
   const handlePurchaseFormClose = () => {
@@ -56,10 +99,51 @@ const QRPayment: FC = () => {
   return (
     <div className={styles["qr-payment"]}>
       {showScanner && (
-        <QRScanner
-          onScanSuccess={handleScanSuccess}
-          onClose={handleScannerClose}
-        />
+        <div className={styles["qr-scanner-container"]}>
+          {isAvailable ? (
+            <div className={styles["qr-scanner-placeholder"]}>
+              <div className={styles["qr-scanner-content"]}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="64"
+                  height="64"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  style={{ marginBottom: "20px" }}
+                >
+                  <path
+                    d="M3 9h6v11H3V9zM9 3h6v17H9V3zM15 9h6v11h-6V9z"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <h3>QR Сканер</h3>
+                <p>Нажмите кнопку ниже, чтобы открыть сканер QR-кода</p>
+                <button
+                  onClick={handleManualScan}
+                  className={styles["scan-button"]}
+                >
+                  Открыть QR Сканер
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className={styles["qr-scanner-placeholder"]}>
+              <div className={styles["qr-scanner-content"]}>
+                <h3>QR Сканер недоступен</h3>
+                <p>QR сканер недоступен в данной версии Telegram.</p>
+                <button
+                  onClick={handleScannerClose}
+                  className={styles["back-button"]}
+                >
+                  Назад
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       )}
 
       <AnimatePresence>

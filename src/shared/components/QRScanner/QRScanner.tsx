@@ -1,4 +1,5 @@
 import { FC, useEffect } from "react";
+import { qrScanner } from "@telegram-apps/sdk";
 import styles from "./QRScanner.module.css";
 
 interface QRScannerProps {
@@ -8,85 +9,94 @@ interface QRScannerProps {
 
 const QRScanner: FC<QRScannerProps> = ({ onScanSuccess, onClose }) => {
   useEffect(() => {
-    if (window.Telegram?.WebApp) {
-      const webApp = window.Telegram.WebApp;
+    const openQRScanner = async () => {
+      try {
+        console.log("=== QR Scanner Debug Info ===");
+        console.log("QR Scanner available:", qrScanner.open.isAvailable());
+        console.log("QR Scanner is opened:", qrScanner.isOpened());
 
-      console.log("=== QR Scanner Debug Info ===");
-      console.log("WebApp version:", (webApp as any).version);
-      console.log("Platform:", (webApp as any).platform);
-      console.log("Available methods:", Object.keys(webApp));
-      console.log(
-        "showScanQrPopup available:",
-        typeof webApp.showScanQrPopup === "function"
-      );
-      console.log(
-        "closeScanQrPopup available:",
-        typeof webApp.closeScanQrPopup === "function"
-      );
-      console.log(
-        "showAlert available:",
-        typeof webApp.showAlert === "function"
-      );
-
-      if (typeof webApp.showScanQrPopup === "function") {
-        try {
-          console.log("Calling showScanQrPopup...");
-          const result = webApp.showScanQrPopup({
-            text: "Наведите камеру на QR-код для оплаты",
-            onResult: (result: string) => {
-              console.log("=== QR Scanner onResult called ===");
-              console.log("Result:", result);
-              console.log("Result type:", typeof result);
-              console.log("Result length:", result.length);
-
-              if (typeof webApp.closeScanQrPopup === "function") {
-                console.log("Calling closeScanQrPopup...");
-                webApp.closeScanQrPopup();
-              }
-              onScanSuccess(result);
-              onClose();
-            },
-            onError: (error: any) => {
-              console.log("=== QR Scanner onError called ===");
-              console.log("Error:", error);
-              console.log("Error type:", typeof error);
-
-              if (typeof webApp.closeScanQrPopup === "function") {
-                console.log("Calling closeScanQrPopup from error...");
-                webApp.closeScanQrPopup();
-              }
-              if (typeof webApp.showAlert === "function") {
-                webApp.showAlert(
-                  "Ошибка сканирования QR-кода. Попробуйте еще раз."
-                );
-              }
-              onClose();
-            },
-          });
-          console.log("showScanQrPopup result:", result);
-        } catch (error) {
-          console.log("=== QR Scanner Exception ===");
-          console.log("Exception:", error);
-          console.log("Exception type:", typeof error);
-
-          if (typeof webApp.showAlert === "function") {
-            webApp.showAlert(
-              "Ошибка при открытии QR-сканера. Попробуйте еще раз."
-            );
-          }
+        if (!qrScanner.open.isAvailable()) {
+          console.log("QR Scanner is not available!");
           onClose();
+          return;
         }
-      } else {
-        console.log("showScanQrPopup method not available!");
-        if (typeof webApp.showAlert === "function") {
-          webApp.showAlert("QR-сканер недоступен в данной версии Telegram.");
+
+        console.log("Opening QR Scanner...");
+
+        // Вариант 1: Promise стиль (простой)
+        const result = await qrScanner.open({
+          text: "Наведите камеру на QR-код для оплаты",
+        });
+
+        console.log("=== QR Scanner Result ===");
+        console.log("Result:", result);
+        console.log("Result type:", typeof result);
+
+        if (result) {
+          onScanSuccess(result);
         }
+
+        onClose();
+      } catch (error) {
+        console.log("=== QR Scanner Error ===");
+        console.log("Error:", error);
+        console.log("Error type:", typeof error);
+
+        // Показываем ошибку пользователю
+        if (window.Telegram?.WebApp?.showAlert) {
+          window.Telegram.WebApp.showAlert(
+            "Ошибка сканирования QR-кода. Попробуйте еще раз."
+          );
+        }
+
         onClose();
       }
-    } else {
-      console.log("Telegram WebApp not available!");
-      onClose();
-    }
+    };
+
+    // Альтернативный вариант с callback стилем (для более детального контроля)
+    const openQRScannerWithCallback = () => {
+      if (!qrScanner.open.isAvailable()) {
+        console.log("QR Scanner is not available!");
+        onClose();
+        return;
+      }
+
+      console.log("Opening QR Scanner with callback...");
+
+      qrScanner
+        .open({
+          text: "Наведите камеру на QR-код для оплаты",
+          onCaptured: (qr) => {
+            console.log("=== QR Scanner onCaptured ===");
+            console.log("QR content:", qr);
+
+            // Можно добавить валидацию QR кода здесь
+            if (qr && qr.length > 0) {
+              qrScanner.close();
+              onScanSuccess(qr);
+              onClose();
+            }
+          },
+        })
+        .catch((error) => {
+          console.log("=== QR Scanner Callback Error ===");
+          console.log("Error:", error);
+
+          if (window.Telegram?.WebApp?.showAlert) {
+            window.Telegram.WebApp.showAlert(
+              "Ошибка сканирования QR-кода. Попробуйте еще раз."
+            );
+          }
+
+          onClose();
+        });
+    };
+
+    // Используем Promise стиль по умолчанию
+    openQRScanner();
+
+    // Раскомментируйте строку ниже, если хотите использовать callback стиль
+    // openQRScannerWithCallback();
   }, [onScanSuccess, onClose]);
 
   return (

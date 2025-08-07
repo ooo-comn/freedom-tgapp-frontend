@@ -8,6 +8,7 @@ import ConnectCard from "src/pages/ConnectCard/ConnectCard";
 import EditProfile from "src/pages/EditProfile/EditProfile";
 import LegalPage from "src/pages/LegalPage/LegalPage";
 import QRPayment from "src/pages/QRPayment/QRPayment";
+import { QRScannerTest } from "src/shared/components/QRScanner";
 import UserProfile from "src/pages/UserProfile/ui/UserProfile";
 import WithdrawalPage from "src/pages/WithdrawalPage/WithdrawalPage";
 import Create from "../pages/Create/Create";
@@ -161,6 +162,7 @@ function App() {
               <Route path={"return-form"} element={<ReturnForm />} />
               <Route path={"withdrawal"} element={<WithdrawalPage />} />
               <Route path={"qr-payment"} element={<QRPayment />} />
+              <Route path={"qr-test"} element={<QRScannerTest />} />
             </Routes>
           </div>
         </div>
