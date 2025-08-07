@@ -1,4 +1,4 @@
-import { postEvent, retrieveLaunchParams } from "@telegram-apps/sdk";
+import { postEvent, retrieveLaunchParams, initData } from "@telegram-apps/sdk";
 import { TonConnectUIProvider } from "@tonconnect/ui-react";
 import { useEffect, useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
@@ -27,13 +27,62 @@ import "./App.css";
 function App() {
   const [hasRedirected, setHasRedirected] = useState(false);
   const [userInitialized, setUserInitialized] = useState(false);
+  const [sdkInitialized, setSdkInitialized] = useState(false);
 
   const { theme } = useTheme();
   console.log("theme", theme);
 
   const navigate = useNavigate();
 
+  // Инициализация Telegram Apps SDK
   useEffect(() => {
+    const initializeSDK = async () => {
+      try {
+        console.log("=== Initializing Telegram Apps SDK ===");
+
+        // Получаем launch params
+        const lp = retrieveLaunchParams();
+        console.log("Launch params:", lp);
+
+        if (!lp) {
+          console.log("No launch params found, SDK may not work properly");
+          setSdkInitialized(true);
+          return;
+        }
+
+        // Проверяем платформу
+        console.log("Platform:", lp.platform);
+        console.log("Version:", lp.version);
+
+        // Инициализируем initData если есть
+        if (lp.initData) {
+          console.log("Initializing with initData");
+          (initData as any).init(lp.initData);
+        }
+
+        // Отправляем события для инициализации
+        if (
+          !["macos", "tdesktop", "weba", "web", "webk"].includes(lp.platform)
+        ) {
+          console.log("Sending web_app_request_fullscreen event");
+          postEvent("web_app_request_fullscreen");
+        }
+
+        console.log("Telegram Apps SDK initialized successfully");
+        setSdkInitialized(true);
+      } catch (error) {
+        console.error("Error initializing Telegram Apps SDK:", error);
+        setSdkInitialized(true); // Продолжаем работу даже при ошибке
+      }
+    };
+
+    initializeSDK();
+  }, []);
+
+  // Инициализация старого Telegram WebApp (для совместимости)
+  useEffect(() => {
+    if (!sdkInitialized) return;
+
     const script = document.createElement("script");
     script.src = "https://telegram.org/js/telegram-web-app.js";
     script.async = true;
@@ -46,13 +95,7 @@ function App() {
         const webApp = window.Telegram.WebApp;
 
         webApp.ready();
-
         webApp.expand();
-
-        const lp = retrieveLaunchParams();
-        if (lp && !["macos", "tdesktop", "weba"].includes(lp.platform)) {
-          postEvent("web_app_request_fullscreen");
-        }
 
         // Проверяем доступность методов перед их использованием
         if (
@@ -86,9 +129,11 @@ function App() {
     };
 
     return () => {
-      document.body.removeChild(script);
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
     };
-  }, [userInitialized]);
+  }, [sdkInitialized, userInitialized]);
 
   useEffect(() => {
     const lp = retrieveLaunchParams();

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { qrScanner } from "@telegram-apps/sdk";
+import { qrScanner, retrieveLaunchParams, initData } from "@telegram-apps/sdk";
 
 const QRScannerDiagnostic: React.FC = () => {
   const [diagnosticInfo, setDiagnosticInfo] = useState<any>({});
@@ -43,15 +43,38 @@ const QRScannerDiagnostic: React.FC = () => {
 
       // Проверяем launch params
       try {
-        const { retrieveLaunchParams } = await import("@telegram-apps/sdk");
         const lp = retrieveLaunchParams();
         info.launchParams = {
           exists: !!lp,
           platform: lp?.platform,
           version: lp?.version,
+          initData: lp?.initData ? "exists" : "not exists",
+          startParam: lp?.startParam,
+          themeParams: lp?.themeParams ? "exists" : "not exists",
         };
       } catch (error) {
         info.launchParams = {
+          error: error instanceof Error ? error.message : String(error),
+        };
+      }
+
+      // Проверяем initData
+      try {
+        info.initData = {
+          exists: !!initData,
+          authDate: (initData as any)?.authDate,
+          hash: (initData as any)?.hash ? "exists" : "not exists",
+          user: (initData as any)?.user ? "exists" : "not exists",
+          receiver: (initData as any)?.receiver ? "exists" : "not exists",
+          chat: (initData as any)?.chat ? "exists" : "not exists",
+          chatType: (initData as any)?.chatType,
+          chatInstance: (initData as any)?.chatInstance,
+          startParam: (initData as any)?.startParam,
+          canSendAfter: (initData as any)?.canSendAfter,
+          canSendAfterDate: (initData as any)?.canSendAfterDate,
+        };
+      } catch (error) {
+        info.initData = {
           error: error instanceof Error ? error.message : String(error),
         };
       }
@@ -61,6 +84,22 @@ const QRScannerDiagnostic: React.FC = () => {
 
       // Проверяем, находимся ли мы в Telegram
       info.isInTelegram = /TelegramWebApp/i.test(navigator.userAgent);
+
+      // Проверяем URL параметры
+      info.urlParams = {
+        tgWebAppData: new URLSearchParams(window.location.search).get(
+          "tgWebAppData"
+        ),
+        tgWebAppPlatform: new URLSearchParams(window.location.search).get(
+          "tgWebAppPlatform"
+        ),
+        tgWebAppVersion: new URLSearchParams(window.location.search).get(
+          "tgWebAppVersion"
+        ),
+        tgWebAppThemeParams: new URLSearchParams(window.location.search).get(
+          "tgWebAppThemeParams"
+        ),
+      };
 
       setDiagnosticInfo(info);
       console.log("=== QR Scanner Diagnostic Info ===", info);
@@ -110,6 +149,27 @@ const QRScannerDiagnostic: React.FC = () => {
     }
   };
 
+  const testSDKInitialization = () => {
+    try {
+      console.log("=== Testing SDK Initialization ===");
+      const lp = retrieveLaunchParams();
+      console.log("Launch params:", lp);
+
+      if (lp?.initData) {
+        console.log("Initializing initData...");
+        (initData as any).init(lp.initData);
+        console.log("initData initialized successfully");
+        alert("SDK initialization test completed successfully");
+      } else {
+        console.log("No initData found");
+        alert("No initData found for SDK initialization");
+      }
+    } catch (error) {
+      console.error("SDK initialization test error:", error);
+      alert(`SDK initialization test error: ${error}`);
+    }
+  };
+
   return (
     <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
       <h2>QR Scanner Diagnostic</h2>
@@ -133,6 +193,7 @@ const QRScannerDiagnostic: React.FC = () => {
           onClick={testNewQRScanner}
           style={{
             padding: "10px 20px",
+            marginRight: "10px",
             backgroundColor: "#28a745",
             color: "white",
             border: "none",
@@ -141,6 +202,19 @@ const QRScannerDiagnostic: React.FC = () => {
           }}
         >
           Test New QR Scanner
+        </button>
+        <button
+          onClick={testSDKInitialization}
+          style={{
+            padding: "10px 20px",
+            backgroundColor: "#ffc107",
+            color: "black",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          Test SDK Init
         </button>
       </div>
 
@@ -179,6 +253,18 @@ const QRScannerDiagnostic: React.FC = () => {
               : "❌ Not Available"}
           </li>
           <li>
+            <strong>Launch Params:</strong>{" "}
+            {diagnosticInfo.launchParams?.exists
+              ? "✅ Available"
+              : "❌ Not Available"}
+          </li>
+          <li>
+            <strong>Init Data:</strong>{" "}
+            {diagnosticInfo.initData?.exists
+              ? "✅ Available"
+              : "❌ Not Available"}
+          </li>
+          <li>
             <strong>Old QR Scanner:</strong>{" "}
             {diagnosticInfo.oldQRMethods?.showScanQrPopupExists
               ? "✅ Available"
@@ -208,6 +294,10 @@ const QRScannerDiagnostic: React.FC = () => {
             from a browser
           </li>
           <li>Try refreshing the page and testing again</li>
+          <li>
+            If SDK is not working, check that the app is properly configured in
+            BotFather
+          </li>
         </ul>
       </div>
     </div>
