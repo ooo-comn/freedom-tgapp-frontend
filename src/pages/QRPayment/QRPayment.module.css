@@ -4,3 +4,44 @@
   height: 100vh;
   background: #000;
 }
+
+.purchase-form-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.purchase-form-container {
+  width: 100%;
+  max-width: 100%;
+  background: #fff;
+  border-radius: 20px 20px 0 0;
+  overflow: hidden;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.success-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.success-modal-container {
+  width: 100%;
+  max-width: 400px;
+}
