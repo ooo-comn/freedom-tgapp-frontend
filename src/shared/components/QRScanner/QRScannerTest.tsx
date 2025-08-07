@@ -6,7 +6,13 @@ const QRScannerTest: React.FC = () => {
   const [result, setResult] = useState<string>("");
   const [method, setMethod] = useState<"component" | "hook">("component");
 
-  const { scanQR, scanQRWithValidation, isAvailable } = useQRScanner({
+  const {
+    scanQR,
+    scanQRWithValidation,
+    isAvailable,
+    isNewAvailable,
+    isOldAvailable,
+  } = useQRScanner({
     onSuccess: (qrResult) => {
       setResult(qrResult);
       console.log("QR отсканирован через хук:", qrResult);
@@ -50,8 +56,16 @@ const QRScannerTest: React.FC = () => {
 
       <div style={{ marginBottom: "20px" }}>
         <p>
-          <strong>Доступность:</strong>{" "}
+          <strong>Общая доступность:</strong>{" "}
           {isAvailable ? "✅ Доступен" : "❌ Недоступен"}
+        </p>
+        <p>
+          <strong>Новый QR сканер:</strong>{" "}
+          {isNewAvailable ? "✅ Доступен" : "❌ Недоступен"}
+        </p>
+        <p>
+          <strong>Старый QR сканер:</strong>{" "}
+          {isOldAvailable ? "✅ Доступен" : "❌ Недоступен"}
         </p>
         <p>
           <strong>Метод:</strong> {method}
