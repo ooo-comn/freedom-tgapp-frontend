@@ -19,8 +19,14 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
       console.log("qrScanner.isOpened:", qrScanner.isOpened);
 
       // Проверяем доступность нового QR сканера
-      const isNewAvailable = qrScanner.open.isAvailable();
-      console.log("New QR Scanner isAvailable:", isNewAvailable);
+      let isNewAvailable = false;
+      try {
+        isNewAvailable = qrScanner.open.isAvailable();
+        console.log("New QR Scanner isAvailable:", isNewAvailable);
+      } catch (error) {
+        console.log("Error checking new QR scanner availability:", error);
+        isNewAvailable = false;
+      }
 
       // Проверяем доступность старого QR сканера
       const isOldAvailable =
@@ -30,12 +36,35 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
       if (isNewAvailable) {
         // Используем новый QR сканер
         console.log("Using new QR scanner...");
-        const result = await qrScanner.open({ text });
-        console.log("New QR Scanner result:", result);
+        try {
+          const result = await qrScanner.open({ text });
+          console.log("New QR Scanner result:", result);
 
-        if (result) {
-          onSuccess?.(result);
-          return result;
+          if (result) {
+            onSuccess?.(result);
+            return result;
+          }
+        } catch (newScannerError) {
+          console.error("New QR scanner error:", newScannerError);
+          // Если новый сканер упал, пробуем старый
+          if (isOldAvailable) {
+            console.log("Falling back to old QR scanner due to error...");
+            return new Promise((resolve, reject) => {
+              window.Telegram.WebApp.showScanQrPopup({
+                text,
+                onResult: (result: string) => {
+                  console.log("Old QR Scanner result (fallback):", result);
+                  onSuccess?.(result);
+                  resolve(result);
+                },
+                onError: (error: any) => {
+                  console.log("Old QR Scanner error (fallback):", error);
+                  onError?.(error);
+                  reject(error);
+                },
+              });
+            });
+          }
         }
       } else if (isOldAvailable) {
         // Fallback на старый QR сканер
@@ -162,11 +191,25 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
   );
 
   // Проверяем доступность при инициализации хука
-  const isNewAvailable = qrScanner.open.isAvailable();
+  let isNewAvailable = false;
+  try {
+    isNewAvailable = qrScanner.open.isAvailable();
+  } catch (error) {
+    console.log("Error checking new QR scanner availability in hook:", error);
+    isNewAvailable = false;
+  }
+
   const isOldAvailable =
     typeof window.Telegram?.WebApp?.showScanQrPopup === "function";
   const isAvailable = isNewAvailable || isOldAvailable;
-  const isOpened = qrScanner.isOpened();
+
+  let isOpened = false;
+  try {
+    isOpened = qrScanner.isOpened();
+  } catch (error) {
+    console.log("Error checking QR scanner opened state:", error);
+    isOpened = false;
+  }
 
   console.log("=== useQRScanner Hook Debug ===");
   console.log("isNewAvailable:", isNewAvailable);

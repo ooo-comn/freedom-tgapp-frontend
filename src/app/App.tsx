@@ -40,6 +40,16 @@ function App() {
       try {
         console.log("=== Initializing Telegram Apps SDK ===");
 
+        // Проверяем, находимся ли мы в Telegram Mini App
+        const isInTelegram = /TelegramWebApp/i.test(navigator.userAgent);
+        console.log("Is in Telegram:", isInTelegram);
+
+        if (!isInTelegram) {
+          console.log("Not in Telegram Mini App, SDK may not work properly");
+          setSdkInitialized(true);
+          return;
+        }
+
         // Получаем launch params
         const lp = retrieveLaunchParams();
         console.log("Launch params:", lp);
@@ -57,7 +67,12 @@ function App() {
         // Инициализируем initData если есть
         if (lp.initData) {
           console.log("Initializing with initData");
-          (initData as any).init(lp.initData);
+          try {
+            (initData as any).init(lp.initData);
+            console.log("initData initialized successfully");
+          } catch (initError) {
+            console.error("Error initializing initData:", initError);
+          }
         }
 
         // Отправляем события для инициализации
@@ -65,11 +80,21 @@ function App() {
           !["macos", "tdesktop", "weba", "web", "webk"].includes(lp.platform)
         ) {
           console.log("Sending web_app_request_fullscreen event");
-          postEvent("web_app_request_fullscreen");
+          try {
+            postEvent("web_app_request_fullscreen");
+          } catch (eventError) {
+            console.error("Error sending postEvent:", eventError);
+          }
         }
 
-        console.log("Telegram Apps SDK initialized successfully");
-        setSdkInitialized(true);
+        // Дополнительная инициализация для SDK
+        console.log("Waiting for SDK to be ready...");
+
+        // Ждем немного, чтобы SDK полностью инициализировался
+        setTimeout(() => {
+          console.log("Telegram Apps SDK initialization completed");
+          setSdkInitialized(true);
+        }, 500);
       } catch (error) {
         console.error("Error initializing Telegram Apps SDK:", error);
         setSdkInitialized(true); // Продолжаем работу даже при ошибке
