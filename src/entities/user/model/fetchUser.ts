@@ -76,11 +76,16 @@ export const authorizeUser = async (payload: any) => {
   try {
     // Преобразуем данные в правильный формат для сервера
     const userData = {
-      id: payload.id,
-      username: payload.username || "",
+      auth_date: payload.auth_date,
       first_name: payload.first_name || "",
+      hash: payload.hash,
+      id: payload.id,
       last_name: payload.last_name || "",
+      photo_url: payload.photo_url || "",
+      username: payload.username || "",
     };
+
+    console.log("Sending authorization data:", userData);
 
     const response = await fetch("https://comnapp.ru/api/v1/authorize", {
       method: "POST",

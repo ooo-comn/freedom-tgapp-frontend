@@ -1,4 +1,4 @@
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import styles from "./QRScanner.module.css";
 
 interface QRScannerProps {
@@ -7,6 +7,8 @@ interface QRScannerProps {
 }
 
 const QRScanner: FC<QRScannerProps> = ({ onScanSuccess, onClose }) => {
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+
   const BackButton = window.Telegram.WebApp.BackButton;
   BackButton.show();
   BackButton.onClick(function () {
@@ -63,6 +65,8 @@ const QRScanner: FC<QRScannerProps> = ({ onScanSuccess, onClose }) => {
             },
           });
           console.log("QR scanner opened successfully");
+          // Скрываем наш компонент после открытия нативного сканера
+          setIsScannerOpen(true);
         } catch (error) {
           console.error("Error calling showScanQrPopup:", error);
           if ("showAlert" in webApp) {
@@ -90,6 +94,11 @@ const QRScanner: FC<QRScannerProps> = ({ onScanSuccess, onClose }) => {
       onClose();
     }
   }, [onScanSuccess, onClose]);
+
+  // Не показываем компонент, если нативный сканер открыт
+  if (isScannerOpen) {
+    return null;
+  }
 
   return (
     <div className={styles["qr-scanner"]}>
