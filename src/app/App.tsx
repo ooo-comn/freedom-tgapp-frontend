@@ -47,22 +47,27 @@ function App() {
 
         webApp.expand();
 
-        if (
-          window.Telegram.WebView.initParams.tgWebAppPlatform !== "tdesktop" &&
-          window.Telegram.WebView.initParams.tgWebAppPlatform !== "macos" &&
-          window.Telegram.WebView.initParams.tgWebAppPlatform !== "weba"
-        ) {
+        const lp = retrieveLaunchParams();
+        if (lp && !["macos", "tdesktop", "weba"].includes(lp.platform)) {
           postEvent("web_app_request_fullscreen");
         }
 
-        if (webApp.isVerticalSwipesEnabled) {
-          webApp.disableVerticalSwipes();
-          console.log("Vertical swipes disabled");
+        // Проверяем доступность методов перед их использованием
+        if (
+          "isVerticalSwipesEnabled" in webApp &&
+          (webApp as any).isVerticalSwipesEnabled
+        ) {
+          if ("disableVerticalSwipes" in webApp) {
+            (webApp as any).disableVerticalSwipes();
+            console.log("Vertical swipes disabled");
+          }
         } else {
           console.log("Vertical swipes were already disabled");
         }
 
-        webApp.enableClosingConfirmation();
+        if ("enableClosingConfirmation" in webApp) {
+          (webApp as any).enableClosingConfirmation();
+        }
 
         // Инициализируем пользователя после загрузки Telegram WebApp
         if (!userInitialized) {
@@ -101,8 +106,8 @@ function App() {
   useEffect(() => {
     if (hasRedirected) return;
 
-    const urlParams = new URLSearchParams(window.Telegram.WebApp.initData);
-    const startParam = urlParams.get("start_param");
+    const lp = retrieveLaunchParams();
+    const startParam = lp?.startParam;
 
     console.log("Start param received:", startParam);
 

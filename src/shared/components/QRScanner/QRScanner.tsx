@@ -10,12 +10,15 @@ const QRScanner: FC<QRScannerProps> = ({ onScanSuccess, onClose }) => {
   useEffect(() => {
     // Проверяем, что Telegram WebApp доступен
     if (window.Telegram?.WebApp) {
+      const webApp = window.Telegram.WebApp;
+
       // Запрашиваем разрешение на доступ к камере
-      window.Telegram.WebApp.requestCameraAccess()
+      webApp
+        .requestCameraAccess()
         .then((hasAccess: boolean) => {
           if (hasAccess) {
             // Открываем нативный QR-сканер Telegram
-            window.Telegram.WebApp.showScanQrPopup({
+            webApp.showScanQrPopup({
               text: "Наведите камеру на QR-код для оплаты",
               onResult: (result: string) => {
                 console.log("QR Code detected:", result);
@@ -24,22 +27,26 @@ const QRScanner: FC<QRScannerProps> = ({ onScanSuccess, onClose }) => {
               onError: (error: any) => {
                 console.log("QR scan error:", error);
                 // В случае ошибки показываем уведомление
-                window.Telegram.WebApp.showAlert("Ошибка сканирования QR-кода");
+                if ("showAlert" in webApp) {
+                  (webApp as any).showAlert("Ошибка сканирования QR-кода");
+                }
               },
             });
           } else {
             // Если доступ к камере не предоставлен
-            window.Telegram.WebApp.showAlert(
-              "Для сканирования QR-кода необходим доступ к камере"
-            );
+            if ("showAlert" in webApp) {
+              (webApp as any).showAlert(
+                "Для сканирования QR-кода необходим доступ к камере"
+              );
+            }
             onClose();
           }
         })
         .catch((error: any) => {
           console.error("Camera access error:", error);
-          window.Telegram.WebApp.showAlert(
-            "Не удалось получить доступ к камере"
-          );
+          if ("showAlert" in webApp) {
+            (webApp as any).showAlert("Не удалось получить доступ к камере");
+          }
           onClose();
         });
     } else {
@@ -51,8 +58,8 @@ const QRScanner: FC<QRScannerProps> = ({ onScanSuccess, onClose }) => {
 
   const handleClose = () => {
     // Закрываем QR-сканер если он открыт
-    if (window.Telegram?.WebApp?.closeScanQrPopup) {
-      window.Telegram.WebApp.closeScanQrPopup();
+    if (window.Telegram?.WebApp && 'closeScanQrPopup' in window.Telegram.WebApp) {
+      (window.Telegram.WebApp as any).closeScanQrPopup();
     }
     onClose();
   };
