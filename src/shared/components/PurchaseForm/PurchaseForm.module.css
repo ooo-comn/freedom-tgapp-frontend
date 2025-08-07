@@ -1,0 +1,191 @@
+.purchase-form {
+  padding: 20px;
+  background: white;
+  border-radius: 16px 16px 0 0;
+  min-height: 60vh;
+}
+
+.purchase-form__drag-handle {
+  width: 40px;
+  height: 4px;
+  background: #e0e0e0;
+  border-radius: 2px;
+  margin: 0 auto 20px;
+}
+
+.purchase-form__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.purchase-form__date {
+  font-size: 14px;
+  color: #666;
+  font-weight: 400;
+}
+
+.purchase-form__close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f5f5f5;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.purchase-form__title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #000;
+  margin: 0 0 8px 0;
+}
+
+.purchase-form__transaction-id {
+  font-size: 14px;
+  color: #666;
+  margin: 0 0 24px 0;
+}
+
+.purchase-form__section {
+  margin-bottom: 24px;
+}
+
+.purchase-form__label {
+  display: block;
+  font-size: 16px;
+  font-weight: 500;
+  color: #000;
+  margin-bottom: 8px;
+}
+
+.purchase-form__input {
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 16px;
+  background: #f8f8f8;
+  box-sizing: border-box;
+}
+
+.purchase-form__input:focus {
+  outline: none;
+  border-color: #f3734e;
+  background: white;
+}
+
+.purchase-form__select {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  background: #f8f8f8;
+  cursor: pointer;
+}
+
+.purchase-form__select-icon {
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.purchase-form__select-text {
+  font-size: 16px;
+  color: #000;
+  font-weight: 500;
+}
+
+.purchase-form__wallet {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  background: #f8f8f8;
+}
+
+.purchase-form__wallet-info {
+  display: flex;
+  align-items: center;
+}
+
+.purchase-form__wallet-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #00d4aa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+}
+
+.purchase-form__wallet-icon span {
+  color: white;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.purchase-form__wallet-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.purchase-form__wallet-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 4px;
+}
+
+.purchase-form__wallet-rate {
+  font-size: 14px;
+  color: #666;
+}
+
+.purchase-form__wallet-balance {
+  text-align: right;
+}
+
+.purchase-form__wallet-balance-rub {
+  font-size: 18px;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 4px;
+}
+
+.purchase-form__wallet-balance-usdt {
+  font-size: 14px;
+  color: #666;
+}
+
+.purchase-form__submit {
+  width: 100%;
+  padding: 16px;
+  background: #f3734e;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 24px;
+  transition: background-color 0.2s;
+}
+
+.purchase-form__submit:hover {
+  background: #e65a3a;
+}
+
+.purchase-form__submit:disabled {
+  background: #e0e0e0;
+  color: #999;
+  cursor: not-allowed;
+}
