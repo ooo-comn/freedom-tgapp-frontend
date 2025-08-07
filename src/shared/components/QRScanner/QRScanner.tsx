@@ -18,13 +18,33 @@ const QRScanner: FC<QRScannerProps> = ({ onScanSuccess, onClose }) => {
     window.history.back();
   });
 
+  // Добавляем глобальный обработчик для qr_text_received
+  (window.Telegram.WebApp as any).onEvent(
+    "qr_text_received",
+    function (event: any) {
+      console.log("Global qr_text_received event:", event);
+      const result = event?.data;
+      if (result) {
+        console.log("QR result from global handler:", result);
+        if (typeof window.Telegram.WebApp.closeScanQrPopup === "function") {
+          window.Telegram.WebApp.closeScanQrPopup();
+        }
+        onScanSuccess(result);
+        onClose();
+      }
+    }
+  );
+
   // Обработчик события qr_text_received
   const handleQrTextReceived = useCallback(
     (event: any) => {
+      console.log("handleQrTextReceived called with:", event);
       const result = event?.data;
       if (result) {
+        console.log("QR result received:", result);
         const webApp = window.Telegram.WebApp;
         if (typeof webApp.closeScanQrPopup === "function") {
+          console.log("Closing QR scanner...");
           webApp.closeScanQrPopup();
         }
         onScanSuccess(result);
@@ -105,16 +125,40 @@ const QRScanner: FC<QRScannerProps> = ({ onScanSuccess, onClose }) => {
         onClose();
       }
 
-      // Добавляем обработчик события qr_text_received
+      // Добавляем обработчик события qr_text_received через несколько способов
+
+      // Способ 1: Через onEvent
       if (typeof webApp.onEvent === "function") {
+        console.log("Adding onEvent handler for qr_text_received");
         (webApp as any).onEvent("qr_text_received", handleQrTextReceived);
       }
 
-      // Очистка обработчика при размонтировании
+      // Способ 2: Через глобальный обработчик событий
+      const globalHandler = (event: any) => {
+        console.log("Global event handler received:", event);
+        if (
+          event.type === "qr_text_received" ||
+          event.detail?.type === "qr_text_received"
+        ) {
+          handleQrTextReceived(event.detail || event);
+        }
+      };
+
+      // Слушаем события на уровне window
+      window.addEventListener("qr_text_received", globalHandler);
+      window.addEventListener("message", (event) => {
+        console.log("Message event received:", event);
+        if (event.data && event.data.type === "qr_text_received") {
+          handleQrTextReceived(event.data);
+        }
+      });
+
+      // Очистка обработчиков при размонтировании
       return () => {
         if (typeof webApp.offEvent === "function") {
           (webApp as any).offEvent("qr_text_received", handleQrTextReceived);
         }
+        window.removeEventListener("qr_text_received", globalHandler);
       };
     } else {
       // Fallback для случаев, когда Telegram WebApp недоступен

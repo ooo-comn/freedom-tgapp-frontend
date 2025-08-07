@@ -24,7 +24,6 @@ export const WalletWidget: FC = () => {
   } | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [formattedBalance, setFormattedBalance] = useState<string>("0");
-  const [loading, setLoading] = useState(true);
 
   const webApp = getTelegramWebApp();
   console.log("initDataUnsafe", webApp?.initDataUnsafe);
@@ -50,8 +49,6 @@ export const WalletWidget: FC = () => {
         }
       } catch (e) {
         console.error(e);
-      } finally {
-        setLoading(false);
       }
     };
     checkAndAuthorizeUser();
@@ -69,10 +66,6 @@ export const WalletWidget: FC = () => {
     if (isYesterday(date)) return "Вчера";
     return format(date, "d MMMM, EEEE", { locale: ru });
   };
-
-  if (loading) {
-    return <div className={styles["wallet"]}>Загрузка...</div>;
-  }
 
   return (
     <div className={styles["wallet"]}>
