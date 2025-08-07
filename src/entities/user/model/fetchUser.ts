@@ -76,7 +76,7 @@ export const authorizeUser = async (payload: any) => {
   try {
     // Преобразуем данные в правильный формат для сервера
     const userData = {
-      auth_date: payload.auth_date,
+      auth_date: Number(payload.auth_date),
       first_name: payload.first_name || "",
       hash: payload.hash,
       id: payload.id,

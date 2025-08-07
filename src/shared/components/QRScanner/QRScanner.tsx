@@ -18,6 +18,19 @@ const QRScanner: FC<QRScannerProps> = ({ onScanSuccess, onClose }) => {
     window.history.back();
   });
 
+  // Обработчик события qr_text_received
+  const handleQrTextReceived = (event: any) => {
+    const result = event?.data;
+    if (result) {
+      const webApp = window.Telegram.WebApp;
+      if (typeof webApp.closeScanQrPopup === "function") {
+        webApp.closeScanQrPopup();
+      }
+      onScanSuccess(result);
+      onClose();
+    }
+  };
+
   useEffect(() => {
     // Проверяем, что Telegram WebApp доступен
     if (window.Telegram?.WebApp) {
@@ -88,12 +101,24 @@ const QRScanner: FC<QRScannerProps> = ({ onScanSuccess, onClose }) => {
         }
         onClose();
       }
+
+      // Добавляем обработчик события qr_text_received
+      if (typeof webApp.onEvent === "function") {
+        (webApp as any).onEvent("qr_text_received", handleQrTextReceived);
+      }
+
+      // Очистка обработчика при размонтировании
+      return () => {
+        if (typeof webApp.offEvent === "function") {
+          (webApp as any).offEvent("qr_text_received", handleQrTextReceived);
+        }
+      };
     } else {
       // Fallback для случаев, когда Telegram WebApp недоступен
       console.error("Telegram WebApp not available");
       onClose();
     }
-  }, [onScanSuccess, onClose]);
+  }, [onScanSuccess, onClose, handleQrTextReceived]);
 
   // Не показываем компонент, если нативный сканер открыт
   if (isScannerOpen) {
