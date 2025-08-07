@@ -54,43 +54,43 @@ const QRScanner: FC<QRScannerProps> = ({ onScanSuccess, onClose }) => {
     };
 
     // Альтернативный вариант с callback стилем (для более детального контроля)
-    const openQRScannerWithCallback = () => {
-      if (!qrScanner.open.isAvailable()) {
-        console.log("QR Scanner is not available!");
-        onClose();
-        return;
-      }
+    // const openQRScannerWithCallback = () => {
+    //   if (!qrScanner.open.isAvailable()) {
+    //     console.log("QR Scanner is not available!");
+    //     onClose();
+    //     return;
+    //   }
 
-      console.log("Opening QR Scanner with callback...");
+    //   console.log("Opening QR Scanner with callback...");
 
-      qrScanner
-        .open({
-          text: "Наведите камеру на QR-код для оплаты",
-          onCaptured: (qr) => {
-            console.log("=== QR Scanner onCaptured ===");
-            console.log("QR content:", qr);
+    //   qrScanner
+    //     .open({
+    //       text: "Наведите камеру на QR-код для оплаты",
+    //       onCaptured: (qr) => {
+    //         console.log("=== QR Scanner onCaptured ===");
+    //         console.log("QR content:", qr);
 
-            // Можно добавить валидацию QR кода здесь
-            if (qr && qr.length > 0) {
-              qrScanner.close();
-              onScanSuccess(qr);
-              onClose();
-            }
-          },
-        })
-        .catch((error) => {
-          console.log("=== QR Scanner Callback Error ===");
-          console.log("Error:", error);
+    //         // Можно добавить валидацию QR кода здесь
+    //         if (qr && qr.length > 0) {
+    //           qrScanner.close();
+    //           onScanSuccess(qr);
+    //           onClose();
+    //         }
+    //       },
+    //     })
+    //     .catch((error) => {
+    //       console.log("=== QR Scanner Callback Error ===");
+    //       console.log("Error:", error);
 
-          if (window.Telegram?.WebApp?.showAlert) {
-            window.Telegram.WebApp.showAlert(
-              "Ошибка сканирования QR-кода. Попробуйте еще раз."
-            );
-          }
+    //       if (window.Telegram?.WebApp?.showAlert) {
+    //         window.Telegram.WebApp.showAlert(
+    //           "Ошибка сканирования QR-кода. Попробуйте еще раз."
+    //         );
+    //       }
 
-          onClose();
-        });
-    };
+    //       onClose();
+    //     });
+    // };
 
     // Используем Promise стиль по умолчанию
     openQRScanner();
