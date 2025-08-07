@@ -12,43 +12,60 @@ const QRScanner: FC<QRScannerProps> = ({ onScanSuccess, onClose }) => {
     if (window.Telegram?.WebApp) {
       const webApp = window.Telegram.WebApp;
 
-      // Запрашиваем разрешение на доступ к камере
-      webApp
-        .requestCameraAccess()
-        .then((hasAccess: boolean) => {
-          if (hasAccess) {
-            // Открываем нативный QR-сканер Telegram
-            webApp.showScanQrPopup({
-              text: "Наведите камеру на QR-код для оплаты",
-              onResult: (result: string) => {
-                console.log("QR Code detected:", result);
-                onScanSuccess(result);
-              },
-              onError: (error: any) => {
-                console.log("QR scan error:", error);
-                // В случае ошибки показываем уведомление
-                if ("showAlert" in webApp) {
-                  (webApp as any).showAlert("Ошибка сканирования QR-кода");
-                }
-              },
-            });
-          } else {
-            // Если доступ к камере не предоставлен
+      // Проверяем, доступен ли метод requestCameraAccess
+      if (typeof webApp.requestCameraAccess === "function") {
+        // Запрашиваем разрешение на доступ к камере
+        webApp
+          .requestCameraAccess()
+          .then((hasAccess: boolean) => {
+            if (hasAccess) {
+              // Открываем нативный QR-сканер Telegram
+              if (typeof webApp.showScanQrPopup === "function") {
+                webApp.showScanQrPopup({
+                  text: "Наведите камеру на QR-код для оплаты",
+                  onResult: (result: string) => {
+                    console.log("QR Code detected:", result);
+                    onScanSuccess(result);
+                  },
+                  onError: (error: any) => {
+                    console.log("QR scan error:", error);
+                    // В случае ошибки показываем уведомление
+                    if ("showAlert" in webApp) {
+                      (webApp as any).showAlert("Ошибка сканирования QR-кода");
+                    }
+                  },
+                });
+              } else {
+                console.error("showScanQrPopup method not available");
+                onClose();
+              }
+            } else {
+              // Если доступ к камере не предоставлен
+              if ("showAlert" in webApp) {
+                (webApp as any).showAlert(
+                  "Для сканирования QR-кода необходим доступ к камере"
+                );
+              }
+              onClose();
+            }
+          })
+          .catch((error: any) => {
+            console.error("Camera access error:", error);
             if ("showAlert" in webApp) {
-              (webApp as any).showAlert(
-                "Для сканирования QR-кода необходим доступ к камере"
-              );
+              (webApp as any).showAlert("Не удалось получить доступ к камере");
             }
             onClose();
-          }
-        })
-        .catch((error: any) => {
-          console.error("Camera access error:", error);
-          if ("showAlert" in webApp) {
-            (webApp as any).showAlert("Не удалось получить доступ к камере");
-          }
-          onClose();
-        });
+          });
+      } else {
+        // Fallback если requestCameraAccess недоступен
+        console.error("requestCameraAccess method not available");
+        if ("showAlert" in webApp) {
+          (webApp as any).showAlert(
+            "QR-сканер недоступен в данной версии Telegram"
+          );
+        }
+        onClose();
+      }
     } else {
       // Fallback для случаев, когда Telegram WebApp недоступен
       console.error("Telegram WebApp not available");
