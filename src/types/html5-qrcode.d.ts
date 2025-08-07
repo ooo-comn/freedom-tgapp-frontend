@@ -7,6 +7,7 @@ declare global {
           show(): void;
           hide(): void;
           onClick(callback: () => void): void;
+          isVisible: boolean;
         };
         onEvent(eventType: string, callback: () => void): void;
         offEvent(eventType: string, callback: () => void): void;
