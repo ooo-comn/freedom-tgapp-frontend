@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 interface UseQRScannerOptions {
   onSuccess?: (result: string) => void;
@@ -8,6 +8,86 @@ interface UseQRScannerOptions {
 
 export const useQRScanner = (options: UseQRScannerOptions = {}) => {
   const { onSuccess, onError, text = "Наведите камеру на QR-код" } = options;
+  const isScanningRef = useRef(false);
+
+  // Обработка событий QR сканера
+  useEffect(() => {
+    const handleQRTextReceived = (eventData: any) => {
+      console.log("=== QR Text Received Event ===");
+      console.log("Event data:", eventData);
+
+      if (eventData.data && isScanningRef.current) {
+        console.log("QR Code scanned via event:", eventData.data);
+        isScanningRef.current = false;
+        onSuccess?.(eventData.data);
+      }
+    };
+
+    const handleScanQRPopupClosed = () => {
+      console.log("=== QR Scanner Popup Closed Event ===");
+      isScanningRef.current = false;
+    };
+
+    // Функция для обработки событий на разных платформах
+    const handleTelegramEvent = (eventType: string, eventData: any) => {
+      switch (eventType) {
+        case "qr_text_received":
+          handleQRTextReceived(eventData);
+          break;
+        case "scan_qr_popup_closed":
+          handleScanQRPopupClosed();
+          break;
+      }
+    };
+
+    // Настраиваем слушатели событий
+    const setupEventListeners = () => {
+      // Для Web версии (iframe)
+      const handleWebMessage = (event: MessageEvent) => {
+        try {
+          if (typeof event.data === "string") {
+            const { eventType, eventData } = JSON.parse(event.data);
+            handleTelegramEvent(eventType, eventData);
+          }
+        } catch (error) {
+          // Игнорируем ошибки парсинга
+        }
+      };
+
+      // Для Desktop, Mobile и Windows Phone
+      const setupNativeEventListeners = () => {
+        // Telegram Desktop
+        if ((window.Telegram as any)?.GameProxy?.receiveEvent) {
+          (window.Telegram as any).GameProxy.receiveEvent = handleTelegramEvent;
+        }
+
+        // Telegram for iOS and Android
+        if ((window.Telegram as any)?.WebView?.receiveEvent) {
+          (window.Telegram as any).WebView.receiveEvent = handleTelegramEvent;
+        }
+
+        // Windows Phone
+        if ((window as any).TelegramGameProxy_receiveEvent) {
+          (window as any).TelegramGameProxy_receiveEvent = handleTelegramEvent;
+        }
+      };
+
+      // Добавляем слушатель для Web версии
+      window.addEventListener("message", handleWebMessage);
+
+      // Настраиваем слушатели для нативных версий
+      setupNativeEventListeners();
+
+      console.log("QR Scanner event listeners setup completed");
+
+      // Очистка при размонтировании
+      return () => {
+        window.removeEventListener("message", handleWebMessage);
+      };
+    };
+
+    setupEventListeners();
+  }, [onSuccess]);
 
   const scanQR = useCallback(async (): Promise<string | null> => {
     try {
@@ -21,16 +101,20 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
       if (isOldAvailable) {
         // Используем старый QR сканер
         console.log("Using old QR scanner...");
+        isScanningRef.current = true;
+
         return new Promise((resolve, reject) => {
           window.Telegram.WebApp.showScanQrPopup({
             text,
             onResult: (result: string) => {
               console.log("Old QR Scanner result:", result);
+              isScanningRef.current = false;
               onSuccess?.(result);
               resolve(result);
             },
             onError: (error: any) => {
               console.log("Old QR Scanner error:", error);
+              isScanningRef.current = false;
               onError?.(error);
               reject(error);
             },
@@ -49,6 +133,7 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
         "Error message:",
         error instanceof Error ? error.message : error
       );
+      isScanningRef.current = false;
       onError?.(error);
       return null;
     }
@@ -70,6 +155,8 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
         if (isOldAvailable) {
           // Используем старый QR сканер с валидацией
           console.log("Using old QR scanner with validation...");
+          isScanningRef.current = true;
+
           return new Promise((resolve, reject) => {
             window.Telegram.WebApp.showScanQrPopup({
               text,
@@ -79,9 +166,11 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
                 console.log("Old QR validation result:", isValid);
 
                 if (isValid) {
+                  isScanningRef.current = false;
                   onSuccess?.(result);
                   resolve(result);
                 } else {
+                  isScanningRef.current = false;
                   if (errorMessage && window.Telegram?.WebApp?.showAlert) {
                     window.Telegram.WebApp.showAlert(errorMessage);
                   }
@@ -90,6 +179,7 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
               },
               onError: (error: any) => {
                 console.log("Old QR Scanner error:", error);
+                isScanningRef.current = false;
                 onError?.(error);
                 reject(error);
               },
@@ -102,6 +192,7 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
         }
       } catch (error) {
         console.error("QR Scanner validation error:", error);
+        isScanningRef.current = false;
         onError?.(error);
         return null;
       }
@@ -117,12 +208,13 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
   console.log("=== useQRScanner Hook Debug ===");
   console.log("isOldAvailable:", isOldAvailable);
   console.log("isAvailable:", isAvailable);
+  console.log("isScanning:", isScanningRef.current);
 
   return {
     scanQR,
     scanQRWithValidation,
     isAvailable,
-    isOpened: false, // Старый API не предоставляет эту информацию
+    isOpened: isScanningRef.current, // Теперь показывает реальное состояние
     isNewAvailable: false, // Новый SDK отключен
     isOldAvailable,
   };

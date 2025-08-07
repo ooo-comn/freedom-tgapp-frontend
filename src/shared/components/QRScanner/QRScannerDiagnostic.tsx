@@ -1,160 +1,195 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import styles from "./QRScannerDiagnostic.module.css";
+
+interface EventLog {
+  timestamp: string;
+  eventType: string;
+  eventData: any;
+}
 
 const QRScannerDiagnostic: React.FC = () => {
-  const [diagnosticInfo, setDiagnosticInfo] = useState<any>({});
+  const [eventLogs, setEventLogs] = useState<EventLog[]>([]);
+  const [isListening, setIsListening] = useState(false);
 
-  useEffect(() => {
-    const runDiagnostic = async () => {
-      const info: any = {};
-
-      // Проверяем Telegram WebApp
-      info.telegramWebApp = {
-        exists: !!window.Telegram,
-        webAppExists: !!window.Telegram?.WebApp,
-        version: (window.Telegram?.WebApp as any)?.version,
-        platform: (window.Telegram?.WebApp as any)?.platform,
-        availableMethods: window.Telegram?.WebApp
-          ? Object.keys(window.Telegram.WebApp)
-          : [],
-      };
-
-      // Проверяем старые методы QR сканера
-      info.oldQRMethods = {
-        showScanQrPopupExists:
-          typeof window.Telegram?.WebApp?.showScanQrPopup === "function",
-        closeScanQrPopupExists:
-          typeof window.Telegram?.WebApp?.closeScanQrPopup === "function",
-      };
-
-      // Проверяем user agent
-      info.userAgent = navigator.userAgent;
-
-      // Проверяем, находимся ли мы в Telegram
-      info.isInTelegram = /TelegramWebApp/i.test(navigator.userAgent);
-
-      // Проверяем URL параметры
-      info.urlParams = {
-        tgWebAppData: new URLSearchParams(window.location.search).get(
-          "tgWebAppData"
-        ),
-        tgWebAppPlatform: new URLSearchParams(window.location.search).get(
-          "tgWebAppPlatform"
-        ),
-        tgWebAppVersion: new URLSearchParams(window.location.search).get(
-          "tgWebAppVersion"
-        ),
-        tgWebAppThemeParams: new URLSearchParams(window.location.search).get(
-          "tgWebAppThemeParams"
-        ),
-        tgWebAppStartParam: new URLSearchParams(window.location.search).get(
-          "tgWebAppStartParam"
-        ),
-      };
-
-      setDiagnosticInfo(info);
-      console.log("=== QR Scanner Diagnostic Info ===", info);
+  // Обработчик событий Telegram
+  const handleTelegramEvent = (eventType: string, eventData: any) => {
+    const newLog: EventLog = {
+      timestamp: new Date().toLocaleTimeString(),
+      eventType,
+      eventData,
     };
 
-    // Запускаем диагностику сразу и через небольшую задержку
-    runDiagnostic();
-    const timer = setTimeout(runDiagnostic, 1000);
+    setEventLogs((prev) => [newLog, ...prev.slice(0, 9)]); // Храним последние 10 событий
+  };
 
-    return () => clearTimeout(timer);
-  }, []);
+  // Настройка слушателей событий
+  useEffect(() => {
+    if (!isListening) return;
 
-  const testOldQRScanner = () => {
+    const setupEventListeners = () => {
+      // Для Web версии (iframe)
+      const handleWebMessage = (event: MessageEvent) => {
+        try {
+          if (typeof event.data === "string") {
+            const { eventType, eventData } = JSON.parse(event.data);
+            handleTelegramEvent(eventType, eventData);
+          }
+        } catch (error) {
+          // Игнорируем ошибки парсинга
+        }
+      };
+
+      // Для Desktop, Mobile и Windows Phone
+      const setupNativeEventListeners = () => {
+        // Telegram Desktop
+        if ((window.Telegram as any)?.GameProxy?.receiveEvent) {
+          (window.Telegram as any).GameProxy.receiveEvent = handleTelegramEvent;
+        }
+
+        // Telegram for iOS and Android
+        if ((window.Telegram as any)?.WebView?.receiveEvent) {
+          (window.Telegram as any).WebView.receiveEvent = handleTelegramEvent;
+        }
+
+        // Windows Phone
+        if ((window as any).TelegramGameProxy_receiveEvent) {
+          (window as any).TelegramGameProxy_receiveEvent = handleTelegramEvent;
+        }
+      };
+
+      // Добавляем слушатель для Web версии
+      window.addEventListener("message", handleWebMessage);
+
+      // Настраиваем слушатели для нативных версий
+      setupNativeEventListeners();
+
+      console.log("Event listeners setup completed");
+
+      return () => {
+        window.removeEventListener("message", handleWebMessage);
+      };
+    };
+
+    setupEventListeners();
+  }, [isListening]);
+
+  const toggleEventListening = () => {
+    setIsListening(!isListening);
+  };
+
+  const clearEventLogs = () => {
+    setEventLogs([]);
+  };
+
+  const testQRScanner = () => {
     if (window.Telegram?.WebApp?.showScanQrPopup) {
-      console.log("Testing old QR scanner...");
+      console.log("Testing QR Scanner...");
       window.Telegram.WebApp.showScanQrPopup({
-        text: "Test QR Scanner",
+        text: "Тестовое сканирование QR-кода",
         onResult: (result: string) => {
-          console.log("Old QR scanner result:", result);
-          alert(`Old QR scanner result: ${result}`);
+          console.log("QR Test result:", result);
+          handleTelegramEvent("qr_text_received", { data: result });
         },
         onError: (error: any) => {
-          console.log("Old QR scanner error:", error);
-          alert(`Old QR scanner error: ${error}`);
+          console.log("QR Test error:", error);
+          handleTelegramEvent("scan_qr_popup_closed", {});
         },
       });
     } else {
-      alert("Old QR scanner methods not available");
+      console.log("QR Scanner not available");
     }
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
+    <div className={styles.diagnostic}>
       <h2>QR Scanner Diagnostic (Old Methods Only)</h2>
 
-      <div style={{ marginBottom: "20px" }}>
-        <button
-          onClick={testOldQRScanner}
-          style={{
-            padding: "10px 20px",
-            backgroundColor: "#0088cc",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Test Old QR Scanner
-        </button>
-      </div>
+      {/* Информация о Telegram WebApp */}
+      <section className={styles.section}>
+        <h3>Telegram WebApp Info</h3>
+        <div className={styles.info}>
+          <p>
+            <strong>WebApp Available:</strong>{" "}
+            {window.Telegram?.WebApp ? "Yes" : "No"}
+          </p>
+          <p>
+            <strong>Version:</strong>{" "}
+            {(window.Telegram?.WebApp as any)?.version || "Unknown"}
+          </p>
+          <p>
+            <strong>Platform:</strong>{" "}
+            {(window.Telegram?.WebApp as any)?.platform || "Unknown"}
+          </p>
+          <p>
+            <strong>QR Scanner Available:</strong>{" "}
+            {typeof window.Telegram?.WebApp?.showScanQrPopup === "function"
+              ? "Yes"
+              : "No"}
+          </p>
+        </div>
+      </section>
 
-      <div style={{ marginBottom: "20px" }}>
-        <h3>Diagnostic Results:</h3>
-        <pre
-          style={{
-            backgroundColor: "#f8f9fa",
-            padding: "15px",
-            borderRadius: "5px",
-            overflow: "auto",
-            fontSize: "12px",
-          }}
-        >
-          {JSON.stringify(diagnosticInfo, null, 2)}
-        </pre>
-      </div>
+      {/* Управление событиями */}
+      <section className={styles.section}>
+        <h3>Event Management</h3>
+        <div className={styles.controls}>
+          <button
+            onClick={toggleEventListening}
+            className={`${styles.button} ${
+              isListening ? styles.buttonActive : ""
+            }`}
+          >
+            {isListening ? "Stop Listening" : "Start Listening"}
+          </button>
+          <button onClick={clearEventLogs} className={styles.button}>
+            Clear Logs
+          </button>
+          <button onClick={testQRScanner} className={styles.button}>
+            Test QR Scanner
+          </button>
+        </div>
+        <p className={styles.status}>
+          Status: {isListening ? "Listening for events..." : "Not listening"}
+        </p>
+      </section>
 
-      <div style={{ marginBottom: "20px" }}>
-        <h3>Summary:</h3>
-        <ul>
-          <li>
-            <strong>In Telegram:</strong>{" "}
-            {diagnosticInfo.isInTelegram ? "✅ Yes" : "❌ No"}
-          </li>
-          <li>
-            <strong>Telegram WebApp:</strong>{" "}
-            {diagnosticInfo.telegramWebApp?.webAppExists
-              ? "✅ Available"
-              : "❌ Not Available"}
-          </li>
-          <li>
-            <strong>Old QR Scanner:</strong>{" "}
-            {diagnosticInfo.oldQRMethods?.showScanQrPopupExists
-              ? "✅ Available"
-              : "❌ Not Available"}
-          </li>
-        </ul>
-      </div>
+      {/* Лог событий */}
+      <section className={styles.section}>
+        <h3>Event Logs</h3>
+        <div className={styles.eventLogs}>
+          {eventLogs.length === 0 ? (
+            <p className={styles.noEvents}>No events received yet</p>
+          ) : (
+            eventLogs.map((log, index) => (
+              <div key={index} className={styles.eventLog}>
+                <div className={styles.eventHeader}>
+                  <span className={styles.timestamp}>{log.timestamp}</span>
+                  <span className={styles.eventType}>{log.eventType}</span>
+                </div>
+                <pre className={styles.eventData}>
+                  {JSON.stringify(log.eventData, null, 2)}
+                </pre>
+              </div>
+            ))
+          )}
+        </div>
+      </section>
 
-      <div style={{ fontSize: "14px", color: "#666" }}>
-        <h3>Recommendations:</h3>
-        <ul>
-          <li>
-            Make sure you&apos;re using the latest version of Telegram (6.1+)
-          </li>
-          <li>
-            Check that you&apos;re accessing the app from within Telegram, not
-            from a browser
-          </li>
+      {/* Рекомендации */}
+      <section className={styles.section}>
+        <h3>Recommendations</h3>
+        <ul className={styles.recommendations}>
+          <li>Make sure you&apos;re testing in Telegram app</li>
+          <li>Check that QR scanner is enabled in your Telegram version</li>
           <li>Try refreshing the page and testing again</li>
           <li>
             If QR scanner is not working, check that the app is properly
             configured in BotFather
           </li>
+          <li>Start event listening to see real-time events</li>
+          <li>Use &quot;Test QR Scanner&quot; to trigger a test scan</li>
         </ul>
-      </div>
+      </section>
     </div>
   );
 };

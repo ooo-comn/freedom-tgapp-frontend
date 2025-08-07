@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQRScanner } from "src/shared/components/QRScanner";
 import PurchaseForm, {
@@ -40,6 +40,14 @@ const QRPayment: FC = () => {
     text: "Наведите камеру на QR-код для оплаты",
   });
 
+  // Автоматически открываем QR сканер при загрузке страницы
+  useEffect(() => {
+    if (isAvailable && showScanner) {
+      console.log("Auto-opening QR scanner...");
+      handleManualScan();
+    }
+  }, [isAvailable, showScanner]);
+
   const handleScanSuccess = (result: string) => {
     console.log("QR Code scanned:", result);
     console.log("QR Data type:", typeof result);
@@ -63,6 +71,7 @@ const QRPayment: FC = () => {
 
   const handleManualScan = async () => {
     if (isAvailable) {
+      console.log("Starting QR scan...");
       const result = await scanQR();
       if (result) {
         handleScanSuccess(result);
@@ -119,14 +128,16 @@ const QRPayment: FC = () => {
                     strokeLinejoin="round"
                   />
                 </svg>
-                <h3>QR Сканер</h3>
-                <p>Нажмите кнопку ниже, чтобы открыть сканер QR-кода</p>
-                <button
-                  onClick={handleManualScan}
-                  className={styles["scan-button"]}
-                >
-                  Открыть QR Сканер
-                </button>
+                <h3>Открываем QR Сканер...</h3>
+                <p>Пожалуйста, подождите</p>
+                <div style={{ marginTop: "20px" }}>
+                  <button
+                    onClick={handleManualScan}
+                    className={styles["scan-button"]}
+                  >
+                    Открыть QR Сканер
+                  </button>
+                </div>
               </div>
             </div>
           ) : (

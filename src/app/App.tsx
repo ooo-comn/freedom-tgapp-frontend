@@ -32,6 +32,102 @@ function App() {
 
   const navigate = useNavigate();
 
+  // Обработка событий Telegram Mini Apps
+  useEffect(() => {
+    const handleTelegramEvent = (eventType: string, eventData: any) => {
+      console.log("=== Telegram Event Received ===");
+      console.log("Event Type:", eventType);
+      console.log("Event Data:", eventData);
+
+      switch (eventType) {
+        case "qr_text_received":
+          console.log("QR Code scanned:", eventData.data);
+          // Здесь можно добавить глобальную обработку QR кодов
+          break;
+
+        case "scan_qr_popup_closed":
+          console.log("QR Scanner popup closed");
+          break;
+
+        case "popup_closed":
+          console.log("Popup closed, button_id:", eventData.button_id);
+          break;
+
+        case "main_button_pressed":
+          console.log("Main button pressed");
+          break;
+
+        case "back_button_pressed":
+          console.log("Back button pressed");
+          // Можно добавить навигацию назад
+          break;
+
+        case "viewport_changed":
+          console.log("Viewport changed:", eventData);
+          break;
+
+        case "theme_changed":
+          console.log("Theme changed:", eventData.theme_params);
+          break;
+
+        case "invoice_closed":
+          console.log("Invoice closed:", eventData);
+          break;
+
+        default:
+          console.log("Unknown event type:", eventType);
+      }
+    };
+
+    // Функция для обработки событий на разных платформах
+    const setupEventListeners = () => {
+      // Для Web версии (iframe)
+      const handleWebMessage = (event: MessageEvent) => {
+        try {
+          if (typeof event.data === "string") {
+            const { eventType, eventData } = JSON.parse(event.data);
+            handleTelegramEvent(eventType, eventData);
+          }
+        } catch (error) {
+          // Игнорируем ошибки парсинга, так как не все сообщения от Telegram
+        }
+      };
+
+      // Для Desktop, Mobile и Windows Phone
+      const setupNativeEventListeners = () => {
+        // Telegram Desktop
+        if ((window.Telegram as any)?.GameProxy?.receiveEvent) {
+          (window.Telegram as any).GameProxy.receiveEvent = handleTelegramEvent;
+        }
+
+        // Telegram for iOS and Android
+        if ((window.Telegram as any)?.WebView?.receiveEvent) {
+          (window.Telegram as any).WebView.receiveEvent = handleTelegramEvent;
+        }
+
+        // Windows Phone
+        if ((window as any).TelegramGameProxy_receiveEvent) {
+          (window as any).TelegramGameProxy_receiveEvent = handleTelegramEvent;
+        }
+      };
+
+      // Добавляем слушатель для Web версии
+      window.addEventListener("message", handleWebMessage);
+
+      // Настраиваем слушатели для нативных версий
+      setupNativeEventListeners();
+
+      console.log("Telegram event listeners setup completed");
+
+      // Очистка при размонтировании
+      return () => {
+        window.removeEventListener("message", handleWebMessage);
+      };
+    };
+
+    setupEventListeners();
+  }, []);
+
   // Инициализация старого Telegram WebApp
   useEffect(() => {
     const script = document.createElement("script");
