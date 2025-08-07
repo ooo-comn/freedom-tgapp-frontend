@@ -1,4 +1,3 @@
-import { postEvent, retrieveLaunchParams, initData } from "@telegram-apps/sdk";
 import { TonConnectUIProvider } from "@tonconnect/ui-react";
 import { useEffect, useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
@@ -27,87 +26,14 @@ import "./App.css";
 function App() {
   const [hasRedirected, setHasRedirected] = useState(false);
   const [userInitialized, setUserInitialized] = useState(false);
-  const [sdkInitialized, setSdkInitialized] = useState(false);
 
   const { theme } = useTheme();
   console.log("theme", theme);
 
   const navigate = useNavigate();
 
-  // Инициализация Telegram Apps SDK
+  // Инициализация старого Telegram WebApp
   useEffect(() => {
-    const initializeSDK = async () => {
-      try {
-        console.log("=== Initializing Telegram Apps SDK ===");
-
-        // Проверяем, находимся ли мы в Telegram Mini App
-        const isInTelegram = /TelegramWebApp/i.test(navigator.userAgent);
-        console.log("Is in Telegram:", isInTelegram);
-
-        if (!isInTelegram) {
-          console.log("Not in Telegram Mini App, SDK may not work properly");
-          setSdkInitialized(true);
-          return;
-        }
-
-        // Получаем launch params
-        const lp = retrieveLaunchParams();
-        console.log("Launch params:", lp);
-
-        if (!lp) {
-          console.log("No launch params found, SDK may not work properly");
-          setSdkInitialized(true);
-          return;
-        }
-
-        // Проверяем платформу
-        console.log("Platform:", lp.platform);
-        console.log("Version:", lp.version);
-
-        // Инициализируем initData если есть
-        if (lp.initData) {
-          console.log("Initializing with initData");
-          try {
-            (initData as any).init(lp.initData);
-            console.log("initData initialized successfully");
-          } catch (initError) {
-            console.error("Error initializing initData:", initError);
-          }
-        }
-
-        // Отправляем события для инициализации
-        if (
-          !["macos", "tdesktop", "weba", "web", "webk"].includes(lp.platform)
-        ) {
-          console.log("Sending web_app_request_fullscreen event");
-          try {
-            postEvent("web_app_request_fullscreen");
-          } catch (eventError) {
-            console.error("Error sending postEvent:", eventError);
-          }
-        }
-
-        // Дополнительная инициализация для SDK
-        console.log("Waiting for SDK to be ready...");
-
-        // Ждем немного, чтобы SDK полностью инициализировался
-        setTimeout(() => {
-          console.log("Telegram Apps SDK initialization completed");
-          setSdkInitialized(true);
-        }, 500);
-      } catch (error) {
-        console.error("Error initializing Telegram Apps SDK:", error);
-        setSdkInitialized(true); // Продолжаем работу даже при ошибке
-      }
-    };
-
-    initializeSDK();
-  }, []);
-
-  // Инициализация старого Telegram WebApp (для совместимости)
-  useEffect(() => {
-    if (!sdkInitialized) return;
-
     const script = document.createElement("script");
     script.src = "https://telegram.org/js/telegram-web-app.js";
     script.async = true;
@@ -158,28 +84,16 @@ function App() {
         document.body.removeChild(script);
       }
     };
-  }, [sdkInitialized, userInitialized]);
+  }, [userInitialized]);
 
   useEffect(() => {
-    const lp = retrieveLaunchParams();
-
-    if (
-      !lp ||
-      ["macos", "tdesktop", "weba", "web", "webk"].includes(lp.platform)
-    ) {
-      return;
-    }
-
-    document.body.classList.add("mobile-body");
-    document.getElementById("wrap")?.classList.add("mobile-wrap");
-    document.getElementById("content")?.classList.add("mobile-content");
-  }, []);
-
-  useEffect(() => {
-    if (hasRedirected) return;
-
-    const lp = retrieveLaunchParams();
-    const startParam = lp?.startParam;
+    // Получаем start param из URL параметров
+    const urlParams = new URLSearchParams(window.location.search);
+    const startParam =
+      urlParams.get("tgWebAppStartParam") ||
+      new URLSearchParams(window.location.hash.substring(1)).get(
+        "tgWebAppStartParam"
+      );
 
     console.log("Start param received:", startParam);
 
