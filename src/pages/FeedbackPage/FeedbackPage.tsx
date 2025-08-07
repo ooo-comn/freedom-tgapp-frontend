@@ -66,12 +66,12 @@ const FeedbackPage: FC<{ isFullCourses: boolean }> = ({ isFullCourses }) => {
     return hasReviewed;
   }, [feedbacks, currentLoggedUserId]);
 
-  const BackButton = window.Telegram.WebApp.BackButton;
+  const BackButton = (getTelegramWebApp() as any)?.BackButton;
   BackButton.show();
   BackButton.onClick(function () {
     BackButton.hide();
   });
-  window.Telegram.WebApp.onEvent("backButtonClicked", function () {
+  (getTelegramWebApp() as any)?.onEvent("backButtonClicked", function () {
     window.history.back();
     // navigate(`/course/${id}`)
   });

@@ -1,4 +1,5 @@
 import { API_BASE_URL } from '../../../shared/config/api'
+import { getTelegramAuthHeader } from "../../../shared/lib/telegram";
 
 export const fetchCreateReturnRequest = async ({
 	tid,
@@ -14,7 +15,7 @@ export const fetchCreateReturnRequest = async ({
 	const response = await fetch(`${API_BASE_URL}/create-return-request/`, {
 		method: 'POST',
 		headers: {
-			Authorization: `tma ${window.Telegram.WebApp.initData}`,
+			Authorization: getTelegramAuthHeader(),
 			'Content-Type': 'application/json; charset=UTF-8',
 		},
 		body: JSON.stringify({ tid, reason, email, receipt }),

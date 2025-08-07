@@ -1,11 +1,12 @@
 import { API_BASE_URL } from '../../../shared/config/api'
+import { getTelegramAuthHeader } from "../../../shared/lib/telegram";
 
 export const fetchCreatePassportData = async (formDataToSend: FormData) => {
 	try {
 		const response = await fetch(`${API_BASE_URL}/create-passport-data/`, {
 			method: 'POST',
 			headers: {
-				Authorization: `tma ${window.Telegram.WebApp.initData}`,
+				Authorization: getTelegramAuthHeader(),
 			},
 			body: formDataToSend,
 		})

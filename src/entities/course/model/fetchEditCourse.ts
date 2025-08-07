@@ -1,4 +1,5 @@
 import { API_BASE_URL } from '../../../shared/config/api'
+import { getTelegramAuthHeader } from "../../../shared/lib/telegram";
 
 export const publishCourse = async (cid: string, formData: any) => {
 	const { Price, Univ, Desc, Subject, topics } = formData
@@ -11,7 +12,7 @@ export const publishCourse = async (cid: string, formData: any) => {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: `tma ${window.Telegram.WebApp.initData}`,
+				Authorization: getTelegramAuthHeader(),
 			},
 			body: JSON.stringify({
 				cid,

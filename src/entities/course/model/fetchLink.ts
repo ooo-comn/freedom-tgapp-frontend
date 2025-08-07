@@ -1,4 +1,5 @@
 import { API_BASE_URL } from '../../../shared/config/api'
+import { getTelegramAuthHeader } from "../../../shared/lib/telegram";
 
 export const fetchPaymentLink = async (courseId: string, userId: string) => {
 	try {
@@ -6,7 +7,7 @@ export const fetchPaymentLink = async (courseId: string, userId: string) => {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: `tma ${window.Telegram.WebApp.initData}`,
+				Authorization: getTelegramAuthHeader(),
 			},
 			body: JSON.stringify({ course_id: courseId, user_id: userId }),
 		})

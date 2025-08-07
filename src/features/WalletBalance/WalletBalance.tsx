@@ -1,5 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { fetchUserTransactions } from "src/entities/wallet/model/fetchUserTransactions";
+import { getTelegramUserId } from "src/shared/lib/telegram";
 import { WalletBalanceDisplay } from "./ui/WalletBalanceDisplay/WalletBalanceDisplay";
 import { WalletBalanceActions } from "./ui/WalletBalanceActions/WalletBalanceActions";
 import styles from "./WalletBalance.module.css";
@@ -9,7 +10,7 @@ interface WalletBalanceProps {
 }
 
 export const WalletBalance: FC<WalletBalanceProps> = ({ onBalanceChange }) => {
-  const { id } = window.Telegram.WebApp.initDataUnsafe.user;
+  const id = getTelegramUserId();
   const [balance, setBalance] = useState<number>(0);
 
   useEffect(() => {

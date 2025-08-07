@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ITelegramUser } from "../../../entities/course/model/types";
-import { API_BASE_URL } from "../../../shared/config/api";
+import { API_BASE_URL } from "../../../shared/config/api"
+import { getTelegramAuthHeader } from "../../../shared/lib/telegram";;
 
 const useUserContactsData = (
   user_id: number,
@@ -27,7 +28,7 @@ const useUserContactsData = (
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `tma ${window.Telegram.WebApp.initData}`,
+              Authorization: getTelegramAuthHeader(),
             },
           }
         );

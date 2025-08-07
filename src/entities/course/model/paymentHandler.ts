@@ -1,4 +1,5 @@
 import { API_BASE_URL } from '../../../shared/config/api'
+import { getTelegramAuthHeader } from "../../../shared/lib/telegram";
 
 interface PaymentData {
 	id: string
@@ -33,7 +34,7 @@ export const handlePay = async (
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: `tma ${window.Telegram.WebApp.initData}`,
+				Authorization: getTelegramAuthHeader(),
 			},
 			body: JSON.stringify({ cid, price, method, baddress, saddress }),
 		}).then(() => navigate(`/course/${data.id}`))

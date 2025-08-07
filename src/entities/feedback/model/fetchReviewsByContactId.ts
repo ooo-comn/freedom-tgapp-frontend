@@ -1,5 +1,6 @@
 import { IReview } from "src/entities/course/model/types";
-import { API_BASE_URL } from "../../../shared/config/api";
+import { API_BASE_URL } from "../../../shared/config/api"
+import { getTelegramAuthHeader } from "../../../shared/lib/telegram";;
 
 export const fetchReviewsByContactId = async (
   contactId: number
@@ -12,7 +13,7 @@ export const fetchReviewsByContactId = async (
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `tma ${window.Telegram.WebApp.initData}`,
+        Authorization: getTelegramAuthHeader(),
       },
     });
 

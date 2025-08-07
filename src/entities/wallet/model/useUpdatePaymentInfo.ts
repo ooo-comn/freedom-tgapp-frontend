@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { API_BASE_URL } from '../../../shared/config/api'
+import { getTelegramAuthHeader } from "../../../shared/lib/telegram";
 
 export const useUpdatePaymentInfo = (
 	formData: { number: string },
@@ -19,7 +20,7 @@ export const useUpdatePaymentInfo = (
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: `tma ${window.Telegram.WebApp.initData}`,
+				Authorization: getTelegramAuthHeader(),
 			},
 			body: JSON.stringify({ number }),
 		})

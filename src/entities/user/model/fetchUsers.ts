@@ -1,5 +1,6 @@
 import { ITelegramUser } from "src/entities/course/model/types";
 import { API_BASE_URL } from "../../../shared/config/api";
+import { getTelegramAuthHeader } from "../../../shared/lib/telegram";
 
 export const fetchAllUsers = async (): Promise<ITelegramUser[]> => {
   try {
@@ -7,7 +8,7 @@ export const fetchAllUsers = async (): Promise<ITelegramUser[]> => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `tma ${window.Telegram.WebApp.initData}`,
+        Authorization: getTelegramAuthHeader(),
       },
     });
 

@@ -1,11 +1,16 @@
 import { API_BASE_URL } from "../../../shared/config/api";
+import {
+  getTelegramUser,
+  getTelegramAuthHeader,
+  getTelegramWebApp,
+} from "../../../shared/lib/telegram";
 
 export const createUser = async (userId: number): Promise<boolean> => {
   try {
     console.log(`Creating user with ID: ${userId}`);
 
     // Получаем данные пользователя из Telegram
-    const telegramUser = window.Telegram.WebApp.initDataUnsafe.user;
+    const telegramUser = getTelegramUser();
 
     console.log("Telegram user object for creation:", telegramUser);
     console.log("userId parameter:", userId, "type:", typeof userId);
@@ -29,7 +34,7 @@ export const createUser = async (userId: number): Promise<boolean> => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `tma ${window.Telegram.WebApp.initData}`,
+        Authorization: getTelegramAuthHeader(),
       },
       body: JSON.stringify(userData),
     });
@@ -64,7 +69,7 @@ export const checkUserExists = async (userId: number): Promise<boolean> => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `tma ${window.Telegram.WebApp.initData}`,
+        Authorization: getTelegramAuthHeader(),
       },
     });
 
@@ -104,7 +109,7 @@ export const checkUserExists = async (userId: number): Promise<boolean> => {
 
 export const initializeUser = async (): Promise<boolean> => {
   try {
-    const telegramData = window.Telegram.WebApp.initDataUnsafe;
+    const telegramData = getTelegramWebApp()?.initDataUnsafe;
     console.log("Full Telegram data:", telegramData);
 
     const userId = telegramData.user?.id;

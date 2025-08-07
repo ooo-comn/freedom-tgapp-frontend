@@ -13,9 +13,10 @@ import {
   authorizeUser,
 } from "src/entities/user/model/fetchUser";
 import MyDataCard from "src/shared/components/MyDataCard/MyDataCard";
+import { getTelegramUserId, getTelegramWebApp } from "src/shared/lib/telegram";
 
 export const WalletWidget: FC = () => {
-  const { id } = window.Telegram.WebApp.initDataUnsafe.user;
+  const id = getTelegramUserId();
 
   const [selectedTransaction, setSelectedTransaction] = useState<{
     transaction: ITransaction;
@@ -25,7 +26,8 @@ export const WalletWidget: FC = () => {
   const [formattedBalance, setFormattedBalance] = useState<string>("0");
   const [loading, setLoading] = useState(true);
 
-  console.log("initDataUnsafe", window.Telegram.WebApp.initDataUnsafe);
+  const webApp = getTelegramWebApp();
+  console.log("initDataUnsafe", webApp?.initDataUnsafe);
 
   useEffect(() => {
     const checkAndAuthorizeUser = async () => {
@@ -33,7 +35,7 @@ export const WalletWidget: FC = () => {
         const user = await fetchUserByTelegramIdV1(id);
         if (!user) {
           // Собираем все нужные данные из initDataUnsafe
-          const tgData = window.Telegram.WebApp.initDataUnsafe;
+          const tgData = webApp?.initDataUnsafe;
           const payload = {
             auth_date: tgData.auth_date,
             first_name: tgData.user?.first_name,

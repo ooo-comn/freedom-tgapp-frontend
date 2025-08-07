@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { API_BASE_URL } from "../../../shared/config/api";
+import { API_BASE_URL } from "../../../shared/config/api"
+import { getTelegramAuthHeader } from "../../../shared/lib/telegram";;
 
 interface WalletBalanceResponse {
   balance: number;
@@ -10,7 +11,7 @@ const fetchWalletBalance = async (): Promise<WalletBalanceResponse> => {
   const response = await fetch(`${API_BASE_URL}/wallet/balance/`, {
     method: "GET",
     headers: {
-      Authorization: `tma ${window.Telegram.WebApp.initData}`,
+      Authorization: getTelegramAuthHeader(),
       "Content-Type": "application/json",
     },
   });

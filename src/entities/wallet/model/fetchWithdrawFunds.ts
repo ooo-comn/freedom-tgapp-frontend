@@ -1,4 +1,5 @@
-import { API_BASE_URL } from "../../../shared/config/api";
+import { API_BASE_URL } from "../../../shared/config/api"
+import { getTelegramAuthHeader } from "../../../shared/lib/telegram";;
 
 interface WithdrawRequest {
   address: string;
@@ -17,7 +18,7 @@ export const fetchWithdrawFunds = async (
   const response = await fetch(`${API_BASE_URL}/wallet/withdraw/`, {
     method: "POST",
     headers: {
-      Authorization: `tma ${window.Telegram.WebApp.initData}`,
+      Authorization: getTelegramAuthHeader(),
       "Content-Type": "application/json",
     },
     body: JSON.stringify(request),

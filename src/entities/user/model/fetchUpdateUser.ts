@@ -1,4 +1,5 @@
-import { API_BASE_URL } from "../../../shared/config/api";
+import { API_BASE_URL } from "../../../shared/config/api"
+import { getTelegramAuthHeader } from "../../../shared/lib/telegram";;
 
 // Функция для извлечения Telegram ID из initData
 const extractTelegramId = (initData: string): number => {
@@ -154,7 +155,7 @@ export const updateUserProfile = async (
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `tma ${window.Telegram.WebApp.initData}`,
+        Authorization: getTelegramAuthHeader(),
       },
       body: JSON.stringify(updateData),
     });

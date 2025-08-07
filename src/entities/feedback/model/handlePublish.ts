@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../../../shared/config/api";
+import { getTelegramAuthHeader } from "../../../shared/lib/telegram";
 
 const handlePublish = (
   revValue: string,
@@ -13,7 +14,7 @@ const handlePublish = (
     setModalFillOpen(true);
   } else {
     // Получаем ID текущего пользователя (автор отзыва)
-    const authorId = window.Telegram.WebApp.initDataUnsafe.user.id;
+    const authorId = (window.Telegram.WebApp.initDataUnsafe.user as any)?.id;
 
     // Подготавливаем данные для отправки
     const reviewData = {
@@ -29,7 +30,7 @@ const handlePublish = (
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `tma ${window.Telegram.WebApp.initData}`,
+        Authorization: getTelegramAuthHeader(),
       },
       body: JSON.stringify(reviewData),
     })

@@ -1,5 +1,6 @@
 import { IContact } from "src/entities/course/model/types";
 import { API_BASE_URL } from "../../../shared/config/api";
+import { getTelegramAuthHeader } from "../../../shared/lib/telegram";
 
 export interface ContactsParams {
   favorites?: boolean;
@@ -75,10 +76,10 @@ const filterContactsOnClient = (
 // Функция для получения избранных контактов пользователя
 export const fetchUserFavoriteContacts = async (): Promise<IContact[]> => {
   try {
-    const userId = window.Telegram.WebApp.initDataUnsafe.user.id;
+    const userId = (window.Telegram.WebApp.initDataUnsafe.user as any)?.id;
     const url = `${API_BASE_URL}/contacts/favorites/user/${userId}`;
 
-    const initData = window.Telegram.WebApp.initData;
+    const initData = getTelegramAuthHeader();
     console.log("Fetching user favorites from:", url);
 
     const response = await fetch(url, {
@@ -146,7 +147,7 @@ export const fetchContacts = async (
       }
 
       // Добавляем user_id для корректной работы API
-      const userId = window.Telegram.WebApp.initDataUnsafe.user.id;
+      const userId = (window.Telegram.WebApp.initDataUnsafe.user as any)?.id;
       if (userId) {
         queryParams.append("user_id", userId.toString());
       }
@@ -158,7 +159,7 @@ export const fetchContacts = async (
     }
 
     // Получаем токен авторизации
-    const initData = window.Telegram.WebApp.initData;
+    const initData = getTelegramAuthHeader();
     console.log("Sending request to:", url);
     console.log(
       "Using authorization token:",

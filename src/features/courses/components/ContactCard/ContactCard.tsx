@@ -2,6 +2,10 @@ import { FC, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { API_BASE_URL } from "src/shared/config/api";
 import { checkContactIsFavorite } from "src/entities/user/model/fetchContacts";
+import {
+  getTelegramUserId,
+  getTelegramAuthHeader,
+} from "src/shared/lib/telegram";
 import Star from "../../../../shared/assets/course/StarFeedback.svg";
 import Heart from "../../../../shared/assets/feed/Heart.svg";
 import HeartFill from "../../../../shared/assets/feed/HeartFill.svg";
@@ -53,7 +57,7 @@ const ContactCard: FC<IContactCard> = ({
     }
 
     try {
-      const { id: userId } = window.Telegram.WebApp.initDataUnsafe.user;
+      const userId = getTelegramUserId();
 
       console.log(
         "Toggling favorite for contact:",
@@ -70,7 +74,7 @@ const ContactCard: FC<IContactCard> = ({
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `tma ${window.Telegram.WebApp.initData}`,
+            Authorization: getTelegramAuthHeader(),
           },
         }
       );

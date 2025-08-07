@@ -3,6 +3,7 @@ import { ru } from "date-fns/locale";
 import { FC, useEffect, useState } from "react";
 import { ITransaction } from "src/entities/course/model/types";
 import { fetchUserTransactions } from "src/entities/wallet/model/fetchUserTransactions";
+import { getTelegramUserId } from "src/shared/lib/telegram";
 import TransactionCard from "src/shared/components/TransactionCard/TransactionCard";
 import LogoTransaction from "../../../shared/assets/wallet/LogoTransaction.svg";
 import styles from "./TransactionsHistoryList.module.css";
@@ -33,7 +34,7 @@ export const TransactionsHistoryList: FC<{
     tType: string;
   }) => void;
 }> = ({ onSelectTransaction }) => {
-  const { id } = window.Telegram.WebApp.initDataUnsafe.user;
+  const id = getTelegramUserId();
 
   const [coursesPaid, setCoursesPaid] = useState<ITransaction[]>([]);
   const [coursesSelled, setCoursesSelled] = useState<ITransaction[]>([]);
