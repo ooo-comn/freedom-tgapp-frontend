@@ -26,6 +26,8 @@ const QRScanner: FC<QRScannerProps> = ({ onScanSuccess, onClose }) => {
       const result = event?.data;
       if (result) {
         console.log("QR result from global handler:", result);
+        // Сохраняем результат в sessionStorage для других обработчиков
+        sessionStorage.setItem("qr_result", result);
         if (typeof window.Telegram.WebApp.closeScanQrPopup === "function") {
           window.Telegram.WebApp.closeScanQrPopup();
         }
@@ -153,12 +155,71 @@ const QRScanner: FC<QRScannerProps> = ({ onScanSuccess, onClose }) => {
         }
       });
 
+      // Способ 3: Перехватываем все события через MutationObserver
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.type === "childList") {
+            // Проверяем, не появилось ли событие qr_text_received
+            const qrEvent = document.querySelector("[data-qr-event]");
+            if (qrEvent) {
+              const eventData = qrEvent.getAttribute("data-qr-event");
+              if (eventData) {
+                try {
+                  const parsed = JSON.parse(eventData);
+                  if (parsed.type === "qr_text_received") {
+                    handleQrTextReceived(parsed);
+                  }
+                } catch (e) {
+                  console.error("Error parsing QR event:", e);
+                }
+              }
+            }
+          }
+        });
+      });
+
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+      });
+
+      // Способ 4: Проверяем результат через setInterval
+      let qrResultReceived = false;
+      const checkInterval = setInterval(() => {
+        // Проверяем, не было ли уже получено событие qr_text_received
+        if (qrResultReceived) {
+          clearInterval(checkInterval);
+          return;
+        }
+
+        // Проверяем, есть ли в консоли или DOM информация о QR-результате
+        const qrResult = sessionStorage.getItem("qr_result");
+        if (qrResult) {
+          console.log("QR result found in sessionStorage:", qrResult);
+          sessionStorage.removeItem("qr_result");
+          qrResultReceived = true;
+
+          if (typeof webApp.closeScanQrPopup === "function") {
+            webApp.closeScanQrPopup();
+          }
+          onScanSuccess(qrResult);
+          onClose();
+          clearInterval(checkInterval);
+        }
+      }, 100); // Проверяем каждые 100мс
+
+      // Очищаем интервал через 30 секунд
+      setTimeout(() => {
+        clearInterval(checkInterval);
+      }, 30000);
+
       // Очистка обработчиков при размонтировании
       return () => {
         if (typeof webApp.offEvent === "function") {
           (webApp as any).offEvent("qr_text_received", handleQrTextReceived);
         }
         window.removeEventListener("qr_text_received", globalHandler);
+        observer.disconnect();
       };
     } else {
       // Fallback для случаев, когда Telegram WebApp недоступен
