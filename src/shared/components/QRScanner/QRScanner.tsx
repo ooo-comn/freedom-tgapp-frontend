@@ -11,19 +11,48 @@ const QRScanner: FC<QRScannerProps> = ({ onScanSuccess, onClose }) => {
     if (window.Telegram?.WebApp) {
       const webApp = window.Telegram.WebApp;
 
+      console.log("=== QR Scanner Debug Info ===");
+      console.log("WebApp version:", (webApp as any).version);
+      console.log("Platform:", (webApp as any).platform);
+      console.log("Available methods:", Object.keys(webApp));
+      console.log(
+        "showScanQrPopup available:",
+        typeof webApp.showScanQrPopup === "function"
+      );
+      console.log(
+        "closeScanQrPopup available:",
+        typeof webApp.closeScanQrPopup === "function"
+      );
+      console.log(
+        "showAlert available:",
+        typeof webApp.showAlert === "function"
+      );
+
       if (typeof webApp.showScanQrPopup === "function") {
         try {
-          webApp.showScanQrPopup({
+          console.log("Calling showScanQrPopup...");
+          const result = webApp.showScanQrPopup({
             text: "Наведите камеру на QR-код для оплаты",
             onResult: (result: string) => {
+              console.log("=== QR Scanner onResult called ===");
+              console.log("Result:", result);
+              console.log("Result type:", typeof result);
+              console.log("Result length:", result.length);
+
               if (typeof webApp.closeScanQrPopup === "function") {
+                console.log("Calling closeScanQrPopup...");
                 webApp.closeScanQrPopup();
               }
               onScanSuccess(result);
               onClose();
             },
             onError: (error: any) => {
+              console.log("=== QR Scanner onError called ===");
+              console.log("Error:", error);
+              console.log("Error type:", typeof error);
+
               if (typeof webApp.closeScanQrPopup === "function") {
+                console.log("Calling closeScanQrPopup from error...");
                 webApp.closeScanQrPopup();
               }
               if (typeof webApp.showAlert === "function") {
@@ -34,7 +63,12 @@ const QRScanner: FC<QRScannerProps> = ({ onScanSuccess, onClose }) => {
               onClose();
             },
           });
+          console.log("showScanQrPopup result:", result);
         } catch (error) {
+          console.log("=== QR Scanner Exception ===");
+          console.log("Exception:", error);
+          console.log("Exception type:", typeof error);
+
           if (typeof webApp.showAlert === "function") {
             webApp.showAlert(
               "Ошибка при открытии QR-сканера. Попробуйте еще раз."
@@ -43,12 +77,14 @@ const QRScanner: FC<QRScannerProps> = ({ onScanSuccess, onClose }) => {
           onClose();
         }
       } else {
+        console.log("showScanQrPopup method not available!");
         if (typeof webApp.showAlert === "function") {
           webApp.showAlert("QR-сканер недоступен в данной версии Telegram.");
         }
         onClose();
       }
     } else {
+      console.log("Telegram WebApp not available!");
       onClose();
     }
   }, [onScanSuccess, onClose]);
