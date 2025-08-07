@@ -155,6 +155,28 @@ const QRScanner: FC<QRScannerProps> = ({ onScanSuccess, onClose }) => {
         }
       });
 
+      // Способ 2.5: Перехватываем события через Proxy
+      const originalAddEventListener = window.addEventListener;
+      window.addEventListener = function (type, listener, options) {
+        console.log("Intercepted addEventListener:", type);
+        if (type === "message") {
+          const wrappedListener = (event: any) => {
+            console.log("Wrapped message listener:", event);
+            if (event.data && event.data.type === "qr_text_received") {
+              handleQrTextReceived(event.data);
+            }
+            return listener.call(this, event);
+          };
+          return originalAddEventListener.call(
+            this,
+            type,
+            wrappedListener,
+            options
+          );
+        }
+        return originalAddEventListener.call(this, type, listener, options);
+      };
+
       // Способ 3: Перехватываем все события через MutationObserver
       const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
@@ -213,6 +235,36 @@ const QRScanner: FC<QRScannerProps> = ({ onScanSuccess, onClose }) => {
         clearInterval(checkInterval);
       }, 30000);
 
+      // Способ 5: Эмулируем событие qr_text_received когда видим его в консоли
+      const originalConsoleLog = console.log;
+      console.log = function (...args) {
+        originalConsoleLog.apply(console, args);
+
+        // Проверяем, не содержит ли лог информацию о qr_text_received
+        const logString = args.join(" ");
+        if (
+          logString.includes("qr_text_received") &&
+          logString.includes("data:")
+        ) {
+          console.log(
+            "Detected qr_text_received in console log, emulating event..."
+          );
+
+          // Извлекаем URL из лога
+          const urlMatch = logString.match(/data: '([^']+)'/);
+          if (urlMatch && urlMatch[1]) {
+            const qrData = urlMatch[1];
+            console.log("Extracted QR data:", qrData);
+
+            if (typeof webApp.closeScanQrPopup === "function") {
+              webApp.closeScanQrPopup();
+            }
+            onScanSuccess(qrData);
+            onClose();
+          }
+        }
+      };
+
       // Очистка обработчиков при размонтировании
       return () => {
         if (typeof webApp.offEvent === "function") {
@@ -220,6 +272,9 @@ const QRScanner: FC<QRScannerProps> = ({ onScanSuccess, onClose }) => {
         }
         window.removeEventListener("qr_text_received", globalHandler);
         observer.disconnect();
+        clearInterval(checkInterval);
+        // Восстанавливаем оригинальный console.log
+        console.log = originalConsoleLog;
       };
     } else {
       // Fallback для случаев, когда Telegram WebApp недоступен
