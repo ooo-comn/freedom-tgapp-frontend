@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from "react";
+import { FC, useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQRScanner } from "src/shared/components/QRScanner";
 import PurchaseForm, {
@@ -40,15 +40,7 @@ const QRPayment: FC = () => {
     text: "Наведите камеру на QR-код для оплаты",
   });
 
-  // Автоматически открываем QR сканер при загрузке страницы
-  useEffect(() => {
-    if (isAvailable && showScanner) {
-      console.log("Auto-opening QR scanner...");
-      handleManualScan();
-    }
-  }, [isAvailable, showScanner]);
-
-  const handleScanSuccess = (result: string) => {
+  const handleScanSuccess = useCallback((result: string) => {
     console.log("QR Code scanned:", result);
     console.log("QR Data type:", typeof result);
     console.log("QR Data length:", result.length);
@@ -61,15 +53,9 @@ const QRPayment: FC = () => {
     console.log(
       "State updated - scanner closed, purchase form should be visible"
     );
-  };
+  }, []);
 
-  const handleScannerClose = () => {
-    setShowScanner(false);
-    // Здесь можно добавить навигацию назад
-    window.history.back();
-  };
-
-  const handleManualScan = async () => {
+  const handleManualScan = useCallback(async () => {
     if (isAvailable) {
       console.log("Starting QR scan...");
       const result = await scanQR();
@@ -84,6 +70,20 @@ const QRPayment: FC = () => {
         );
       }
     }
+  }, [isAvailable, scanQR, handleScanSuccess]);
+
+  // Автоматически открываем QR сканер при загрузке страницы
+  useEffect(() => {
+    if (isAvailable && showScanner) {
+      console.log("Auto-opening QR scanner...");
+      handleManualScan();
+    }
+  }, [isAvailable, showScanner, handleManualScan]);
+
+  const handleScannerClose = () => {
+    setShowScanner(false);
+    // Здесь можно добавить навигацию назад
+    window.history.back();
   };
 
   const handlePurchaseFormClose = () => {
