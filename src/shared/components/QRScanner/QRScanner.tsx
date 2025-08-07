@@ -91,17 +91,6 @@ const QRScanner: FC<QRScannerProps> = ({ onScanSuccess, onClose }) => {
     }
   }, [onScanSuccess, onClose]);
 
-  const handleClose = () => {
-    // Закрываем QR-сканер если он открыт
-    if (
-      window.Telegram?.WebApp &&
-      "closeScanQrPopup" in window.Telegram.WebApp
-    ) {
-      (window.Telegram.WebApp as any).closeScanQrPopup();
-    }
-    onClose();
-  };
-
   return (
     <div className={styles["qr-scanner"]}>
       <div className={styles["qr-scanner__content"]}>
