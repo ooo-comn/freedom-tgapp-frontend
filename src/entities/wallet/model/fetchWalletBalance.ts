@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { API_BASE_URL } from "../../../shared/config/api"
-import { getTelegramAuthHeader } from "../../../shared/lib/telegram";;
+import { API_BASE_URL } from "../../../shared/config/api";
+import { getTelegramAuthHeader } from "../../../shared/lib/telegram";
 
 interface WalletBalanceResponse {
   balance: number;

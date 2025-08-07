@@ -16,10 +16,10 @@ export interface PurchaseFormData {
   transactionId: string;
 }
 
-const PurchaseForm: FC<PurchaseFormProps> = ({ qrData, onClose, onSubmit }) => {
+const PurchaseForm: FC<PurchaseFormProps> = ({ onClose, onSubmit }) => {
   const [amount, setAmount] = useState<number>(0);
-  const [paymentMethod, setPaymentMethod] = useState<string>("Оплата по СБП");
-  const [wallet, setWallet] = useState<string>("USDT");
+  const paymentMethod = "Оплата по СБП";
+  const wallet = "USDT";
 
   const transactionId = "19876543456"; // В реальном приложении это будет генерироваться
   const currentDate = format(new Date(), "d MMMM yyyy", { locale: ru });

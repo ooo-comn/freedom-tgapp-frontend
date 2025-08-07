@@ -1,5 +1,5 @@
-import { API_BASE_URL } from "../../../shared/config/api"
-import { getTelegramAuthHeader } from "../../../shared/lib/telegram";;
+import { API_BASE_URL } from "../../../shared/config/api";
+import { getTelegramAuthHeader } from "../../../shared/lib/telegram";
 
 // Функция для извлечения Telegram ID из initData
 const extractTelegramId = (initData: string): number => {

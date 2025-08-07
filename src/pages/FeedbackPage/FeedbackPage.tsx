@@ -1,6 +1,7 @@
 import { FC, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { calculateRating } from "src/entities/course/lib/calculateRating";
+import { getTelegramWebApp } from "src/shared/lib/telegram";
 import {
   IContact,
   IReview,

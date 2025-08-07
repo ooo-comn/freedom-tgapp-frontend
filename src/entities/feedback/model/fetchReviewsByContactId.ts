@@ -1,6 +1,6 @@
 import { IReview } from "src/entities/course/model/types";
-import { API_BASE_URL } from "../../../shared/config/api"
-import { getTelegramAuthHeader } from "../../../shared/lib/telegram";;
+import { API_BASE_URL } from "../../../shared/config/api";
+import { getTelegramAuthHeader } from "../../../shared/lib/telegram";
 
 export const fetchReviewsByContactId = async (
   contactId: number
