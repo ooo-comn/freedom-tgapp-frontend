@@ -7,6 +7,15 @@ interface QRScannerProps {
 }
 
 const QRScanner: FC<QRScannerProps> = ({ onScanSuccess, onClose }) => {
+  const BackButton = window.Telegram.WebApp.BackButton;
+  BackButton.show();
+  BackButton.onClick(function () {
+    BackButton.hide();
+  });
+  window.Telegram.WebApp.onEvent("backButtonClicked", function () {
+    window.history.back();
+  });
+
   useEffect(() => {
     // Проверяем, что Telegram WebApp доступен
     if (window.Telegram?.WebApp) {
@@ -19,23 +28,47 @@ const QRScanner: FC<QRScannerProps> = ({ onScanSuccess, onClose }) => {
       // Попробуем прямой вызов showScanQrPopup без requestCameraAccess
       if (typeof webApp.showScanQrPopup === "function") {
         try {
+          console.log("Opening QR scanner...");
           webApp.showScanQrPopup({
             text: "Наведите камеру на QR-код для оплаты",
             onResult: (result: string) => {
               console.log("QR Code detected:", result);
+              console.log("Result type:", typeof result);
+              console.log("Result length:", result.length);
+
+              // Закрываем сканер после успешного сканирования
+              if (typeof webApp.closeScanQrPopup === "function") {
+                webApp.closeScanQrPopup();
+              }
+
+              // Вызываем callback с результатом
               onScanSuccess(result);
+              onClose();
             },
             onError: (error: any) => {
               console.log("QR scan error:", error);
-              if ("showAlert" in webApp) {
-                (webApp as any).showAlert("Ошибка сканирования QR-кода");
+              console.error("Error details:", error);
+
+              // Закрываем сканер при ошибке
+              if (typeof webApp.closeScanQrPopup === "function") {
+                webApp.closeScanQrPopup();
               }
+
+              if ("showAlert" in webApp) {
+                (webApp as any).showAlert(
+                  "Ошибка сканирования QR-кода: " + (error?.message || error)
+                );
+              }
+              onClose();
             },
           });
+          console.log("QR scanner opened successfully");
         } catch (error) {
           console.error("Error calling showScanQrPopup:", error);
           if ("showAlert" in webApp) {
-            (webApp as any).showAlert("Ошибка при открытии QR-сканера");
+            (webApp as any).showAlert(
+              "Ошибка при открытии QR-сканера: " + (error?.message || error)
+            );
           }
           onClose();
         }
@@ -71,27 +104,6 @@ const QRScanner: FC<QRScannerProps> = ({ onScanSuccess, onClose }) => {
 
   return (
     <div className={styles["qr-scanner"]}>
-      <div className={styles["qr-scanner__header"]}>
-        <button className={styles["qr-scanner__close"]} onClick={handleClose}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-          >
-            <path
-              d="M18 6L6 18M6 6L18 18"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
-        <h2 className={styles["qr-scanner__title"]}>Сканировать QR-код</h2>
-      </div>
-
       <div className={styles["qr-scanner__content"]}>
         <div className={styles["qr-scanner__placeholder"]}>
           <div className={styles["qr-scanner__loading"]}>

@@ -15,9 +15,17 @@ const QRPayment: FC = () => {
 
   const handleScanSuccess = (result: string) => {
     console.log("QR Code scanned:", result);
+    console.log("QR Data type:", typeof result);
+    console.log("QR Data length:", result.length);
+    console.log("Setting QR data and showing purchase form...");
+
     setQrData(result);
     setShowScanner(false);
     setShowPurchaseForm(true);
+
+    console.log(
+      "State updated - scanner closed, purchase form should be visible"
+    );
   };
 
   const handleScannerClose = () => {
