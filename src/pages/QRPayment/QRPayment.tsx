@@ -52,7 +52,7 @@ const QRPayment: FC = () => {
     window.location.href = "/";
   });
 
-  const { scanQR, isAvailable, closeQRScanner } = useQRScanner({
+  const { scanQR, isAvailable } = useQRScanner({
     onSuccess: (result) => {
       console.log("QR Code scanned:", result);
       console.log("QR Data type:", typeof result);
