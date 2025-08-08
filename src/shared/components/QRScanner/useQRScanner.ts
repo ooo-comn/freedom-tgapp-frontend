@@ -49,9 +49,6 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
         console.log("QR Code scanned via event:", eventData.data);
         isScanningRef.current = false;
 
-        // Закрываем QR сканер после получения результата
-        closeQRScanner();
-
         // Вызываем callback и resolve Promise
         onSuccess?.(eventData.data);
         if (resolveRef.current) {
@@ -59,6 +56,9 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
           resolveRef.current = null;
           rejectRef.current = null;
         }
+
+        // Закрываем QR сканер после получения результата
+        closeQRScanner();
       } else {
         console.log("QR event received but scanner is not active or no data");
       }
@@ -76,62 +76,35 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
       }
     };
 
-    const handleTelegramEvent = (eventType: string, eventData: any) => {
-      switch (eventType) {
-        case "qr_text_received":
-          handleQRTextReceived(eventData);
-          break;
-        case "scan_qr_popup_closed":
-          handleScanQRPopupClosed();
-          break;
+    // Используем официальный Telegram.WebApp.onEvent API
+    if (window.Telegram?.WebApp?.onEvent) {
+      (window.Telegram.WebApp as any).onEvent(
+        "qrTextReceived",
+        handleQRTextReceived
+      );
+      (window.Telegram.WebApp as any).onEvent(
+        "scanQrPopupClosed",
+        handleScanQRPopupClosed
+      );
+    }
+
+    console.log(
+      "QR Scanner event listeners setup completed using Telegram.WebApp.onEvent"
+    );
+
+    // Очистка при размонтировании
+    return () => {
+      if (window.Telegram?.WebApp?.offEvent) {
+        (window.Telegram.WebApp as any).offEvent(
+          "qrTextReceived",
+          handleQRTextReceived
+        );
+        (window.Telegram.WebApp as any).offEvent(
+          "scanQrPopupClosed",
+          handleScanQRPopupClosed
+        );
       }
     };
-
-    const setupEventListeners = () => {
-      const handleWebMessage = (event: MessageEvent) => {
-        try {
-          if (typeof event.data === "string") {
-            const { eventType, eventData } = JSON.parse(event.data);
-            handleTelegramEvent(eventType, eventData);
-          }
-        } catch (error) {
-          // ignore
-        }
-      };
-
-      // Для Desktop, Mobile и Windows Phone
-      const setupNativeEventListeners = () => {
-        // Telegram Desktop
-        if ((window.Telegram as any)?.GameProxy?.receiveEvent) {
-          (window.Telegram as any).GameProxy.receiveEvent = handleTelegramEvent;
-        }
-
-        // Telegram for iOS and Android
-        if ((window.Telegram as any)?.WebView?.receiveEvent) {
-          (window.Telegram as any).WebView.receiveEvent = handleTelegramEvent;
-        }
-
-        // Windows Phone
-        if ((window as any).TelegramGameProxy_receiveEvent) {
-          (window as any).TelegramGameProxy_receiveEvent = handleTelegramEvent;
-        }
-      };
-
-      // Добавляем слушатель для Web версии
-      window.addEventListener("message", handleWebMessage);
-
-      // Настраиваем слушатели для нативных версий
-      setupNativeEventListeners();
-
-      console.log("QR Scanner event listeners setup completed");
-
-      // Очистка при размонтировании
-      return () => {
-        window.removeEventListener("message", handleWebMessage);
-      };
-    };
-
-    setupEventListeners();
   }, [onSuccess, closeQRScanner]);
 
   const scanQR = useCallback(async (): Promise<string | null> => {
