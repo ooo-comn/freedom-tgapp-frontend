@@ -125,32 +125,6 @@ const QRPayment: FC = () => {
     }
   }, [isAvailable, showScanner, handleManualScan]);
 
-  // Debug: Listen for QR scanner events
-  useEffect(() => {
-    const handleQRTextReceived = () => {
-      console.log("=== QR TEXT RECEIVED EVENT ===");
-      // The event data is available in the global scope or through other means
-      console.log("QR text received event triggered");
-    };
-
-    const handleScanQRPopupClosed = () => {
-      console.log("=== QR SCANNER POPUP CLOSED ===");
-    };
-
-    // Listen for Telegram WebApp events
-    if (window.Telegram?.WebApp?.onEvent) {
-      window.Telegram.WebApp.onEvent("qr_text_received", handleQRTextReceived);
-      window.Telegram.WebApp.onEvent(
-        "scan_qr_popup_closed",
-        handleScanQRPopupClosed
-      );
-    }
-
-    return () => {
-      // Cleanup event listeners if needed
-    };
-  }, []);
-
   // Простая обработка закрытия сканера без сканирования
   useEffect(() => {
     // Не запускаем таймаут, если сканирование уже успешно

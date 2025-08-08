@@ -3,3 +3,84 @@
   gap: 2.051vw;
   flex-direction: column;
 }
+.wallet-balance__wrapper {
+  display: flex;
+  height: 20.769vw;
+  padding: 2.051vw 2.564vw;
+  align-items: center;
+  gap: 2.051vw;
+  flex: 1 0 0;
+  border-radius: 1.538vw;
+  background: var(--mini-background);
+}
+
+.wallet-balance__img {
+  width: 11.795vw;
+  height: 11.795vw;
+}
+
+.wallet-balance__info-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.026vw;
+  flex: 1 0 0;
+}
+
+.wallet-balance__info,
+.wallet-balance__amount {
+  display: flex;
+  justify-content: space-between;
+  width: 72.308vw;
+  align-items: center;
+}
+
+.wallet-balance__currency,
+.wallet-balance__value {
+  color: var(--main-text);
+  font-family: "Geologica";
+  font-size: 4.615vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.wallet-balance__rate,
+.wallet-balance__crypto {
+  color: var(--second-text);
+  font-family: "Geologica";
+  font-size: 3.077vw;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+}
+
+.wallet-balance__actions {
+  display: flex;
+  align-items: flex-start;
+  gap: 2.051vw;
+  align-self: stretch;
+}
+
+.wallet-balance__button {
+  display: flex;
+  padding: 2.564vw 2.051vw;
+  width: 44.615vw;
+  align-items: center;
+  gap: 2.051vw;
+  flex: 1 0 0;
+  align-self: stretch;
+  border-radius: 1.538vw;
+  background: var(--mini-background);
+  border: none;
+  color: var(--main-text);
+  font-family: "Geologica";
+  font-size: 3.077vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.wallet-balance__button-icon {
+  width: 6.154vw;
+  height: 6.154vw;
+}

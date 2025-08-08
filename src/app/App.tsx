@@ -42,6 +42,14 @@ function App() {
       switch (eventType) {
         case "qr_text_received":
           console.log("QR Code scanned:", eventData.data);
+          // Автоматически закрываем QR сканер после получения результата
+          if (window.Telegram?.WebApp?.closeScanQrPopup) {
+            console.log("Closing QR scanner after successful scan");
+            // Добавляем небольшую задержку для корректной обработки
+            setTimeout(() => {
+              window.Telegram.WebApp.closeScanQrPopup();
+            }, 100);
+          }
           // Здесь можно добавить глобальную обработку QR кодов
           break;
 

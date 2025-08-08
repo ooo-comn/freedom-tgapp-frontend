@@ -23,6 +23,11 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
         window.Telegram.WebApp.closeScanQrPopup();
         isScanningRef.current = false;
         console.log("QR Scanner closed via closeScanQrPopup");
+      } else if (typeof window.Telegram?.WebApp?.close === "function") {
+        console.log("Using close API as fallback...");
+        window.Telegram.WebApp.close();
+        isScanningRef.current = false;
+        console.log("QR Scanner closed via close API");
       } else {
         console.log("No native close API available, setting flag to false");
         isScanningRef.current = false;
@@ -36,7 +41,9 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
   // Обработка событий QR сканера
   useEffect(() => {
     const handleQRTextReceived = (eventData: any) => {
+      console.log("=== QR Text Received Event in useQRScanner ===");
       console.log("Event data:", eventData);
+      console.log("isScanningRef.current:", isScanningRef.current);
 
       if (eventData.data && isScanningRef.current) {
         console.log("QR Code scanned via event:", eventData.data);
@@ -47,15 +54,26 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
 
         // Вызываем callback и resolve Promise
         onSuccess?.(eventData.data);
-        resolveRef.current?.(eventData.data);
-        resolveRef.current = null;
-        rejectRef.current = null;
+        if (resolveRef.current) {
+          resolveRef.current(eventData.data);
+          resolveRef.current = null;
+          rejectRef.current = null;
+        }
+      } else {
+        console.log("QR event received but scanner is not active or no data");
       }
     };
 
     const handleScanQRPopupClosed = () => {
       console.log("=== QR Scanner Popup Closed Event ===");
       isScanningRef.current = false;
+
+      // Очищаем ссылки на Promise
+      if (resolveRef.current) {
+        rejectRef.current?.(new Error("QR Scanner closed by user"));
+        resolveRef.current = null;
+        rejectRef.current = null;
+      }
     };
 
     const handleTelegramEvent = (eventType: string, eventData: any) => {
