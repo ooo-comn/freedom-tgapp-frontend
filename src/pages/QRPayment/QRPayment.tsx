@@ -52,7 +52,7 @@ const QRPayment: FC = () => {
     window.location.href = "/";
   });
 
-  const { scanQR, isAvailable, isOpened, closeQRScanner } = useQRScanner({
+  const { scanQR, isAvailable, closeQRScanner } = useQRScanner({
     onSuccess: (result) => {
       console.log("QR Code scanned:", result);
       console.log("QR Data type:", typeof result);
@@ -63,12 +63,6 @@ const QRPayment: FC = () => {
       setQrData(result);
       setShowScanner(false);
       setShowPurchaseForm(true);
-
-      // Дополнительно закрываем сканер нативно (на случай если он еще открыт)
-      if (isOpened) {
-        console.log("Closing scanner natively after successful scan...");
-        closeQRScanner();
-      }
 
       console.log(
         "State updated - scanner closed, purchase form should be visible"
@@ -87,30 +81,21 @@ const QRPayment: FC = () => {
     text: "Наведите камеру на QR-код для оплаты",
   });
 
-  const handleScanSuccess = useCallback(
-    (result: string) => {
-      console.log("QR Code scanned:", result);
-      console.log("QR Data type:", typeof result);
-      console.log("QR Data length:", result.length);
-      console.log("Setting QR data and showing purchase form...");
+  const handleScanSuccess = useCallback((result: string) => {
+    console.log("QR Code scanned:", result);
+    console.log("QR Data type:", typeof result);
+    console.log("QR Data length:", result.length);
+    console.log("Setting QR data and showing purchase form...");
 
-      setScanSuccessful(true);
-      setQrData(result);
-      setShowScanner(false);
-      setShowPurchaseForm(true);
+    setScanSuccessful(true);
+    setQrData(result);
+    setShowScanner(false);
+    setShowPurchaseForm(true);
 
-      // Дополнительно закрываем сканер нативно (на случай если он еще открыт)
-      if (isOpened) {
-        console.log("Closing scanner natively after successful scan...");
-        closeQRScanner();
-      }
-
-      console.log(
-        "State updated - scanner closed, purchase form should be visible"
-      );
-    },
-    [isOpened, closeQRScanner]
-  );
+    console.log(
+      "State updated - scanner closed, purchase form should be visible"
+    );
+  }, []);
 
   const handleManualScan = useCallback(async () => {
     if (isAvailable) {
@@ -137,41 +122,17 @@ const QRPayment: FC = () => {
     }
   }, [isAvailable, showScanner, handleManualScan]);
 
-  // Синхронизируем состояние сканера с isOpened из хука
+  // Простая обработка закрытия сканера без сканирования
   useEffect(() => {
-    console.log(
-      "Scanner state sync - isOpened:",
-      isOpened,
-      "showScanner:",
-      showScanner
-    );
-
-    // Если сканер закрылся в хуке, но локальное состояние все еще показывает его открытым
-    if (!isOpened && showScanner) {
-      console.log("Scanner closed in hook, updating local state...");
-      setShowScanner(false);
-
-      // Если сканер закрылся без успешного сканирования,
-      // возвращаемся на главную страницу
-      if (!scanSuccessful) {
-        console.log(
-          "Scanner closed without successful scan, navigating to main page..."
-        );
-        // Добавляем задержку, чтобы onSuccess успел сработать
-        setTimeout(() => {
-          if (!scanSuccessful) {
-            window.location.href = "/";
-          }
-        }, 100);
+    const timer = setTimeout(() => {
+      if (showScanner && !scanSuccessful) {
+        console.log("Scanner timeout - navigating to main page...");
+        window.location.href = "/";
       }
-    }
+    }, 5000); // 5 секунд таймаут
 
-    // Если сканер открылся в хуке, но локальное состояние показывает его закрытым
-    if (isOpened && !showScanner) {
-      console.log("Scanner opened in hook, updating local state...");
-      setShowScanner(true);
-    }
-  }, [isOpened, showScanner, scanSuccessful]);
+    return () => clearTimeout(timer);
+  }, [showScanner, scanSuccessful]);
 
   const handlePurchaseFormClose = () => {
     setShowPurchaseForm(false);
