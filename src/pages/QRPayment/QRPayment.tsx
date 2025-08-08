@@ -59,7 +59,10 @@ const QRPayment: FC = () => {
       console.log("QR Data length:", result.length);
       console.log("Setting QR data and showing purchase form...");
 
+      // Сначала устанавливаем scanSuccessful, чтобы отменить таймаут
       setScanSuccessful(true);
+
+      // Затем обновляем остальные состояния
       setQrData(result);
       setShowScanner(false);
       setShowPurchaseForm(true);
@@ -124,14 +127,24 @@ const QRPayment: FC = () => {
 
   // Простая обработка закрытия сканера без сканирования
   useEffect(() => {
+    // Не запускаем таймаут, если сканирование уже успешно
+    if (scanSuccessful) {
+      console.log("Scan successful, skipping timeout");
+      return;
+    }
+
+    console.log("Setting up scanner timeout...");
     const timer = setTimeout(() => {
       if (showScanner && !scanSuccessful) {
         console.log("Scanner timeout - navigating to main page...");
         window.location.href = "/";
       }
-    }, 1000); // 1 секунда таймаут
+    }, 2000); // 1 секунда таймаут
 
-    return () => clearTimeout(timer);
+    return () => {
+      console.log("Clearing scanner timeout");
+      clearTimeout(timer);
+    };
   }, [showScanner, scanSuccessful]);
 
   const handlePurchaseFormClose = () => {
