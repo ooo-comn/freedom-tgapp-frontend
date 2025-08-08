@@ -29,7 +29,10 @@ const sendPaymentRequest = async (initData: string, paymentLink: string) => {
     return { success: true, data };
   } catch (error) {
     console.error("Payment request error:", error);
-    return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
   }
 };
 
@@ -178,14 +181,14 @@ const QRPayment: FC = () => {
 
   const handlePurchaseSubmit = async (data: PurchaseFormData) => {
     console.log("Purchase submitted:", data);
-    
+
     try {
       // Получаем init_data из Telegram WebApp
       const initData = window.Telegram?.WebApp?.initData || "";
-      
+
       // Отправляем запрос на API
       const result = await sendPaymentRequest(initData, qrData);
-      
+
       if (result.success) {
         console.log("Payment request successful:", result.data);
         setShowPurchaseForm(false);
