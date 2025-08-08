@@ -12,6 +12,7 @@ const QRPayment: FC = () => {
   const [showPurchaseForm, setShowPurchaseForm] = useState(false);
   const [qrData, setQrData] = useState<string>("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [scanSuccessful, setScanSuccessful] = useState(false);
 
   const BackButton = window.Telegram.WebApp.BackButton;
   BackButton.show();
@@ -19,7 +20,7 @@ const QRPayment: FC = () => {
     BackButton.hide();
   });
   window.Telegram.WebApp.onEvent("backButtonClicked", function () {
-    window.history.back();
+    window.location.href = "/";
   });
 
   const { scanQR, isAvailable, isOpened, closeQRScanner } = useQRScanner({
@@ -29,6 +30,7 @@ const QRPayment: FC = () => {
       console.log("QR Data length:", result.length);
       console.log("Setting QR data and showing purchase form...");
 
+      setScanSuccessful(true);
       setQrData(result);
       setShowScanner(false);
       setShowPurchaseForm(true);
@@ -54,11 +56,13 @@ const QRPayment: FC = () => {
     },
     onClose: () => {
       console.log("QR Scanner closed by user");
-      // Если сканер закрылся пользователем и форма покупки не показана,
+      // Если сканер закрылся пользователем без успешного сканирования,
       // возвращаемся на главную страницу
-      if (!showPurchaseForm) {
-        console.log("Navigating back to main page...");
-        window.history.back();
+      if (!scanSuccessful) {
+        console.log(
+          "Scanner closed without successful scan, navigating to main page..."
+        );
+        window.location.href = "/";
       }
     },
     text: "Наведите камеру на QR-код для оплаты",
@@ -71,6 +75,7 @@ const QRPayment: FC = () => {
       console.log("QR Data length:", result.length);
       console.log("Setting QR data and showing purchase form...");
 
+      setScanSuccessful(true);
       setQrData(result);
       setShowScanner(false);
       setShowPurchaseForm(true);
@@ -127,11 +132,13 @@ const QRPayment: FC = () => {
       console.log("Scanner closed in hook, updating local state...");
       setShowScanner(false);
 
-      // Если сканер закрылся без сканирования и форма покупки не показана,
+      // Если сканер закрылся без успешного сканирования,
       // возвращаемся на главную страницу
-      if (!showPurchaseForm) {
-        console.log("Scanner closed without scanning, navigating back...");
-        window.history.back();
+      if (!scanSuccessful) {
+        console.log(
+          "Scanner closed without successful scan, navigating to main page..."
+        );
+        window.location.href = "/";
       }
     }
 
@@ -140,11 +147,12 @@ const QRPayment: FC = () => {
       console.log("Scanner opened in hook, updating local state...");
       setShowScanner(true);
     }
-  }, [isOpened, showScanner, showPurchaseForm]);
+  }, [isOpened, showScanner, scanSuccessful]);
 
   const handlePurchaseFormClose = () => {
     setShowPurchaseForm(false);
     setShowScanner(true);
+    setScanSuccessful(false);
   };
 
   const handlePurchaseSubmit = (data: PurchaseFormData) => {
@@ -159,6 +167,7 @@ const QRPayment: FC = () => {
   const handleSuccessModalClose = () => {
     setShowSuccessModal(false);
     setShowScanner(true);
+    setScanSuccessful(false);
   };
 
   return (

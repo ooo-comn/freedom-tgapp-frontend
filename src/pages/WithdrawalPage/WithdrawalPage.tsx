@@ -14,7 +14,7 @@ const WithdrawalPage: FC = () => {
     BackButton.hide();
   });
   window.Telegram.WebApp.onEvent("backButtonClicked", function () {
-    window.history.back();
+    window.location.href = "/";
   });
   const navigate = useNavigate();
   const [address, setAddress] = useState("");
