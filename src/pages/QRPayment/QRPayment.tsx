@@ -13,6 +13,15 @@ const QRPayment: FC = () => {
   const [qrData, setQrData] = useState<string>("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
+  const BackButton = window.Telegram.WebApp.BackButton;
+  BackButton.show();
+  BackButton.onClick(function () {
+    BackButton.hide();
+  });
+  window.Telegram.WebApp.onEvent("backButtonClicked", function () {
+    window.history.back();
+  });
+
   const { scanQR, isAvailable, isOpened, closeQRScanner } = useQRScanner({
     onSuccess: (result) => {
       console.log("QR Code scanned:", result);
@@ -117,19 +126,6 @@ const QRPayment: FC = () => {
     }
   }, [isOpened, showScanner]);
 
-  const handleScannerClose = () => {
-    console.log("Manual scanner close - isOpened:", isOpened);
-    setShowScanner(false);
-
-    // Нативно закрываем QR сканер если он открыт
-    if (isOpened) {
-      console.log("Scanner is still opened in hook, closing natively...");
-      closeQRScanner();
-    }
-
-    window.history.back();
-  };
-
   const handlePurchaseFormClose = () => {
     setShowPurchaseForm(false);
     setShowScanner(true);
@@ -151,77 +147,6 @@ const QRPayment: FC = () => {
 
   return (
     <div className={styles["qr-payment"]}>
-      {showScanner && (
-        <div className={styles["qr-scanner-container"]}>
-          {isAvailable ? (
-            <div className={styles["qr-scanner-placeholder"]}>
-              <div className={styles["qr-scanner-content"]}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="64"
-                  height="64"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  style={{ marginBottom: "20px" }}
-                >
-                  <path
-                    d="M3 9h6v11H3V9zM9 3h6v17H9V3zM15 9h6v11h-6V9z"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                <h3>Открываем QR Сканер...</h3>
-                <p>Пожалуйста, подождите</p>
-                <p
-                  style={{ fontSize: "12px", color: "#666", marginTop: "10px" }}
-                >
-                  Состояние сканера: {isOpened ? "Открыт" : "Закрыт"}
-                </p>
-                <div style={{ marginTop: "20px" }}>
-                  <button
-                    onClick={handleManualScan}
-                    className={styles["scan-button"]}
-                  >
-                    Открыть QR Сканер
-                  </button>
-                  {isOpened && (
-                    <button
-                      onClick={closeQRScanner}
-                      style={{
-                        marginLeft: "10px",
-                        padding: "10px 20px",
-                        backgroundColor: "#dc3545",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "5px",
-                        cursor: "pointer",
-                      }}
-                    >
-                      Принудительно закрыть
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className={styles["qr-scanner-placeholder"]}>
-              <div className={styles["qr-scanner-content"]}>
-                <h3>QR Сканер недоступен</h3>
-                <p>QR сканер недоступен в данной версии Telegram.</p>
-                <button
-                  onClick={handleScannerClose}
-                  className={styles["back-button"]}
-                >
-                  Назад
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
       <AnimatePresence>
         {showPurchaseForm && (
           <motion.div

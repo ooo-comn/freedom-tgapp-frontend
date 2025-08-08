@@ -61,7 +61,7 @@ const PurchaseForm: FC<PurchaseFormProps> = ({ onClose, onSubmit }) => {
           >
             <path
               d="M12 4L4 12M4 4L12 12"
-              stroke="#666"
+              stroke="#333"
               strokeWidth="1.5"
               strokeLinecap="round"
               strokeLinejoin="round"

@@ -12,7 +12,7 @@ import {
   fetchUserByTelegramIdV1,
   authorizeUser,
 } from "src/entities/user/model/fetchUser";
-import MyDataCard from "src/shared/components/MyDataCard/MyDataCard";
+// import MyDataCard from "src/shared/components/MyDataCard/MyDataCard";
 import { getTelegramUserId, getTelegramWebApp } from "src/shared/lib/telegram";
 
 export const WalletWidget: FC = () => {
@@ -73,12 +73,12 @@ export const WalletWidget: FC = () => {
 
       <WalletBalance onBalanceChange={setFormattedBalance} />
 
-      <MyDataCard
+      {/* <MyDataCard
         title="Пройдите верификацию"
         description="Пройди верификацию, чтобы получить доступ к расширенному функционалу"
         verifyed="На модерации"
         path="/"
-      />
+      /> */}
 
       <TransactionsHistory
         onSelectTransaction={(data) => {
