@@ -1,7 +1,7 @@
 .purchase-form {
-  padding: 20px;
-  background: white;
-  border-radius: 16px 16px 0 0;
+  padding: 5.13vw;
+  background-color: var(--background);
+  border-radius: 4.1vw 4.1vw 0 0;
   min-height: 60vh;
 }
 
@@ -21,9 +21,12 @@
 }
 
 .purchase-form__date {
-  font-size: 14px;
-  color: #666;
+  color: var(--main-text);
+  font-family: "Geologica";
+  font-size: 3.59vw;
+  font-style: normal;
   font-weight: 400;
+  line-height: normal;
 }
 
 .purchase-form__close {
@@ -39,16 +42,21 @@
 }
 
 .purchase-form__title {
-  font-size: 24px;
-  font-weight: 600;
-  color: #000;
-  margin: 0 0 8px 0;
+  color: var(--main-text);
+  font-family: "Geologica";
+  font-size: 4.62vw;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
 }
 
 .purchase-form__transaction-id {
-  font-size: 14px;
-  color: #666;
-  margin: 0 0 24px 0;
+  color: var(--main-text);
+  font-family: "Geologica";
+  font-size: 3.08vw;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
 }
 
 .purchase-form__section {
@@ -57,48 +65,51 @@
 
 .purchase-form__label {
   display: block;
-  font-size: 16px;
-  font-weight: 500;
-  color: #000;
-  margin-bottom: 8px;
+  color: var(--second-text);
+  font-family: "Geologica";
+  font-size: 3.08vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
 }
 
 .purchase-form__input {
   width: 100%;
-  padding: 16px;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  font-size: 16px;
-  background: #f8f8f8;
-  box-sizing: border-box;
-}
-
-.purchase-form__input:focus {
-  outline: none;
-  border-color: #f3734e;
-  background: white;
+  padding: 2.56vw 2.05vw;
+  border: none;
+  border-radius: 1.54vw;
+  font-family: "Geologica";
+  font-size: 3.59vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  background-color: var(--mini-background);
 }
 
 .purchase-form__select {
   display: flex;
   align-items: center;
-  padding: 16px;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  background: #f8f8f8;
-  cursor: pointer;
+  padding: 2.56vw 2.05vw;
+  gap: 2.05vw;
+  border: none;
+  border-radius: 1.54vw;
+  background: var(--mini-background);
 }
 
 .purchase-form__select-icon {
-  margin-right: 12px;
-  display: flex;
-  align-items: center;
+  > svg {
+    width: 6.15vw;
+    height: 6.15vw;
+  }
 }
 
 .purchase-form__select-text {
-  font-size: 16px;
-  color: #000;
-  font-weight: 500;
+  color: var(--main-text);
+  font-family: "Geologica";
+  font-size: 3.08vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
 }
 
 .purchase-form__wallet {
@@ -168,16 +179,16 @@
 
 .purchase-form__submit {
   width: 100%;
-  padding: 16px;
+  padding: 2.56vw;
   background: #f3734e;
   color: white;
   border: none;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 24px;
-  transition: background-color 0.2s;
+  border-radius: 1.54vw;
+  font-family: "Geologica";
+  font-size: 3.59vw;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
 }
 
 .purchase-form__submit:hover {
