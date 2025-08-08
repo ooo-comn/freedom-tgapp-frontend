@@ -19,7 +19,7 @@ export interface PurchaseFormData {
 }
 
 const PurchaseForm: FC<PurchaseFormProps> = ({ onClose, onSubmit }) => {
-  const [amount, setAmount] = useState<number>(0);
+  const [amount, setAmount] = useState<number | null>(null);
   const paymentMethod = "Оплата по СБП";
   const wallet = "USDT";
   const { data: balance = 0 } = useUserBalance();
@@ -28,7 +28,7 @@ const PurchaseForm: FC<PurchaseFormProps> = ({ onClose, onSubmit }) => {
   const currentDate = format(new Date(), "d MMMM yyyy", { locale: ru });
 
   const handleSubmit = () => {
-    if (amount > 0) {
+    if (amount && amount > 0) {
       onSubmit({
         amount,
         paymentMethod,
@@ -39,7 +39,8 @@ const PurchaseForm: FC<PurchaseFormProps> = ({ onClose, onSubmit }) => {
   };
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value) || 0;
+    const value =
+      e.target.value === "" ? null : parseFloat(e.target.value) || 0;
     setAmount(value);
   };
 
@@ -83,7 +84,7 @@ const PurchaseForm: FC<PurchaseFormProps> = ({ onClose, onSubmit }) => {
         <input
           type="number"
           className={styles["purchase-form__input"]}
-          value={amount}
+          value={amount || ""}
           onChange={handleAmountChange}
           placeholder="0.00 ₽"
           min="0"
@@ -125,7 +126,7 @@ const PurchaseForm: FC<PurchaseFormProps> = ({ onClose, onSubmit }) => {
       <button
         className={styles["purchase-form__submit"]}
         onClick={handleSubmit}
-        disabled={amount <= 0}
+        disabled={!amount || amount <= 0}
       >
         Оформить заказ
       </button>

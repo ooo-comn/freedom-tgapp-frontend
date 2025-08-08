@@ -1,5 +1,5 @@
 .purchase-form {
-  padding: 2.05vw 4.1vw 40 4.1vw;
+  padding: 2.05vw 4.1vw 10.26vw 4.1vw;
   background-color: var(--background);
   border-radius: 4.1vw 4.1vw 0 0;
   min-height: 60vh;
@@ -8,7 +8,7 @@
 .purchase-form__drag-handle {
   width: 10.26vw;
   height: 1.03vw;
-  background: rgba(0, 0, 0, 0.15);
+  background: #333;
   border-radius: 0.51vw;
   margin: 0 auto 5.13vw;
 }

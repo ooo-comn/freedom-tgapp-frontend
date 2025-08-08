@@ -52,6 +52,15 @@ const QRPayment: FC = () => {
         );
       }
     },
+    onClose: () => {
+      console.log("QR Scanner closed by user");
+      // Если сканер закрылся пользователем и форма покупки не показана,
+      // возвращаемся на главную страницу
+      if (!showPurchaseForm) {
+        console.log("Navigating back to main page...");
+        window.history.back();
+      }
+    },
     text: "Наведите камеру на QR-код для оплаты",
   });
 
@@ -117,6 +126,13 @@ const QRPayment: FC = () => {
     if (!isOpened && showScanner) {
       console.log("Scanner closed in hook, updating local state...");
       setShowScanner(false);
+
+      // Если сканер закрылся без сканирования и форма покупки не показана,
+      // возвращаемся на главную страницу
+      if (!showPurchaseForm) {
+        console.log("Scanner closed without scanning, navigating back...");
+        window.history.back();
+      }
     }
 
     // Если сканер открылся в хуке, но локальное состояние показывает его закрытым
@@ -124,7 +140,7 @@ const QRPayment: FC = () => {
       console.log("Scanner opened in hook, updating local state...");
       setShowScanner(true);
     }
-  }, [isOpened, showScanner]);
+  }, [isOpened, showScanner, showPurchaseForm]);
 
   const handlePurchaseFormClose = () => {
     setShowPurchaseForm(false);
