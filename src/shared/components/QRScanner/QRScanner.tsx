@@ -14,23 +14,17 @@ const QRScanner: React.FC<QRScannerProps> = ({
   useEffect(() => {
     console.log("=== QR Scanner Component Debug ===");
 
-    // Проверяем доступность старого QR сканера
-    const isOldAvailable =
+    // Проверяем доступность QR сканера
+    const isAvailable =
       typeof window.Telegram?.WebApp?.showScanQrPopup === "function";
-    console.log("Old QR Scanner isAvailable:", isOldAvailable);
+    console.log("QR Scanner isAvailable:", isAvailable);
 
-    if (isOldAvailable) {
-      console.log("Opening old QR scanner...");
-      window.Telegram.WebApp.showScanQrPopup({
-        text,
-        onResult: (result: string) => {
-          console.log("QR Scanner result:", result);
-          onScanSuccess(result);
-        },
-        onError: (error: any) => {
-          console.error("QR Scanner error:", error);
-          onClose();
-        },
+    if (isAvailable) {
+      console.log("Opening QR scanner...");
+      window.Telegram.WebApp.showScanQrPopup({ text }, (result: string) => {
+        console.log("QR Scanner result:", result);
+        onScanSuccess(result);
+        return true; // Закрываем попап после получения результата
       });
     } else {
       console.error("QR Scanner not available");

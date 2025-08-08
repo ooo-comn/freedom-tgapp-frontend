@@ -84,17 +84,14 @@ const QRScannerDiagnostic: React.FC = () => {
   const testQRScanner = () => {
     if (window.Telegram?.WebApp?.showScanQrPopup) {
       console.log("Testing QR Scanner...");
-      window.Telegram.WebApp.showScanQrPopup({
-        text: "Тестовое сканирование QR-кода",
-        onResult: (result: string) => {
+      window.Telegram.WebApp.showScanQrPopup(
+        { text: "Тестовое сканирование QR-кода" },
+        (result: string) => {
           console.log("QR Test result:", result);
           handleTelegramEvent("qr_text_received", { data: result });
-        },
-        onError: (error: any) => {
-          console.log("QR Test error:", error);
-          handleTelegramEvent("scan_qr_popup_closed", {});
-        },
-      });
+          return true; // Закрываем попап после получения результата
+        }
+      );
     } else {
       console.log("QR Scanner not available");
     }

@@ -46,11 +46,11 @@ declare global {
         };
         initData?: string;
         requestCameraAccess(): Promise<boolean>;
-        showScanQrPopup(options: {
-          text: string;
-          onResult: (result: string) => void;
-          onError: (error: any) => void;
-        }): void;
+        // QR Scanner методы (Bot API 6.4+) - обновленные типы
+        showScanQrPopup: (
+          params: { text?: string },
+          callback?: (result: string) => boolean
+        ) => void;
         closeScanQrPopup(): void;
       };
     };

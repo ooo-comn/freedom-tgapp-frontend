@@ -6,13 +6,7 @@ const QRScannerTest: React.FC = () => {
   const [result, setResult] = useState<string>("");
   const [method, setMethod] = useState<"component" | "hook">("component");
 
-  const {
-    scanQR,
-    scanQRWithValidation,
-    isAvailable,
-    isNewAvailable,
-    isOldAvailable,
-  } = useQRScanner({
+  const { scanQR, scanQRWithValidation, isAvailable } = useQRScanner({
     onSuccess: (qrResult) => {
       setResult(qrResult);
       console.log("QR отсканирован через хук:", qrResult);
@@ -60,14 +54,6 @@ const QRScannerTest: React.FC = () => {
           {isAvailable ? "✅ Доступен" : "❌ Недоступен"}
         </p>
         <p>
-          <strong>Новый QR сканер:</strong>{" "}
-          {isNewAvailable ? "✅ Доступен" : "❌ Недоступен"}
-        </p>
-        <p>
-          <strong>Старый QR сканер:</strong>{" "}
-          {isOldAvailable ? "✅ Доступен" : "❌ Недоступен"}
-        </p>
-        <p>
           <strong>Метод:</strong> {method}
         </p>
       </div>
@@ -98,14 +84,13 @@ const QRScannerTest: React.FC = () => {
         <div>
           <button
             onClick={() => setShowScanner(true)}
-            disabled={!isAvailable}
             style={{
               padding: "10px 20px",
-              backgroundColor: "#0088cc",
+              backgroundColor: "#007bff",
               color: "white",
               border: "none",
               borderRadius: "5px",
-              cursor: isAvailable ? "pointer" : "not-allowed",
+              cursor: "pointer",
               marginRight: "10px",
             }}
           >
@@ -116,96 +101,58 @@ const QRScannerTest: React.FC = () => {
         <div>
           <button
             onClick={handleHookScan}
-            disabled={!isAvailable}
             style={{
               padding: "10px 20px",
               backgroundColor: "#28a745",
               color: "white",
               border: "none",
               borderRadius: "5px",
-              cursor: isAvailable ? "pointer" : "not-allowed",
+              cursor: "pointer",
               marginRight: "10px",
             }}
           >
             Сканировать QR (Хук)
           </button>
-
           <button
             onClick={handleHookValidationScan}
-            disabled={!isAvailable}
             style={{
               padding: "10px 20px",
               backgroundColor: "#ffc107",
               color: "black",
               border: "none",
               borderRadius: "5px",
-              cursor: isAvailable ? "pointer" : "not-allowed",
-            }}
-          >
-            Сканировать с валидацией
-          </button>
-        </div>
-      )}
-
-      {result && (
-        <div
-          style={{
-            marginTop: "20px",
-            padding: "15px",
-            backgroundColor: "#f8f9fa",
-            borderRadius: "5px",
-            border: "1px solid #dee2e6",
-          }}
-        >
-          <h4>Результат сканирования:</h4>
-          <p style={{ wordBreak: "break-all", fontFamily: "monospace" }}>
-            {result}
-          </p>
-          <button
-            onClick={() => setResult("")}
-            style={{
-              padding: "5px 10px",
-              backgroundColor: "#dc3545",
-              color: "white",
-              border: "none",
-              borderRadius: "3px",
               cursor: "pointer",
             }}
           >
-            Очистить
+            Сканировать с Валидацией
           </button>
         </div>
       )}
 
       {showScanner && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: 1000,
-            backgroundColor: "rgba(0, 0, 0, 0.8)",
-          }}
-        >
-          <QRScanner
-            onScanSuccess={handleComponentSuccess}
-            onClose={handleComponentClose}
-          />
-        </div>
+        <QRScanner
+          onScanSuccess={handleComponentSuccess}
+          onClose={handleComponentClose}
+          text="Отсканируйте QR код для тестирования"
+        />
       )}
 
-      <div style={{ marginTop: "30px", fontSize: "14px", color: "#666" }}>
-        <h4>Инструкция по тестированию:</h4>
-        <ol>
-          <li>Убедитесь, что вы находитесь в Telegram Mini App</li>
-          <li>Выберите метод тестирования (компонент или хук)</li>
-          <li>Нажмите кнопку для открытия QR сканера</li>
-          <li>Наведите камеру на QR код</li>
-          <li>Проверьте результат в консоли и на экране</li>
-        </ol>
-      </div>
+      {result && (
+        <div style={{ marginTop: "20px" }}>
+          <h3>Результат сканирования:</h3>
+          <div
+            style={{
+              padding: "10px",
+              backgroundColor: "#f8f9fa",
+              border: "1px solid #dee2e6",
+              borderRadius: "5px",
+              wordBreak: "break-all",
+            }}
+          >
+            {result}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

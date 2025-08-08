@@ -9,6 +9,8 @@ interface UseQRScannerOptions {
 export const useQRScanner = (options: UseQRScannerOptions = {}) => {
   const { onSuccess, onError, text = "Наведите камеру на QR-код" } = options;
   const isScanningRef = useRef(false);
+  const resolveRef = useRef<((value: string) => void) | null>(null);
+  const rejectRef = useRef<((error: any) => void) | null>(null);
 
   // Обработка событий QR сканера
   useEffect(() => {
@@ -18,7 +20,15 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
       if (eventData.data && isScanningRef.current) {
         console.log("QR Code scanned via event:", eventData.data);
         isScanningRef.current = false;
+
+        // Закрываем QR сканер после получения результата
+        closeQRScanner();
+
+        // Вызываем callback и resolve Promise
         onSuccess?.(eventData.data);
+        resolveRef.current?.(eventData.data);
+        resolveRef.current = null;
+        rejectRef.current = null;
       }
     };
 
@@ -96,11 +106,6 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
         window.Telegram.WebApp.closeScanQrPopup();
         isScanningRef.current = false;
         console.log("QR Scanner closed via closeScanQrPopup");
-      } else if (typeof window.Telegram?.WebApp?.close === "function") {
-        console.log("Using close API as fallback...");
-        window.Telegram.WebApp.close();
-        isScanningRef.current = false;
-        console.log("QR Scanner closed via close API");
       } else {
         console.log("No native close API available, setting flag to false");
         isScanningRef.current = false;
@@ -115,39 +120,43 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
     try {
       console.log("=== QR Scanner Debug ===");
 
-      // Проверяем доступность старого QR сканера
-      const isOldAvailable =
+      // Проверяем доступность QR сканера
+      const isAvailable =
         typeof window.Telegram?.WebApp?.showScanQrPopup === "function";
-      console.log("Old QR Scanner isAvailable:", isOldAvailable);
+      console.log("QR Scanner isAvailable:", isAvailable);
 
-      if (isOldAvailable) {
-        // Используем старый QR сканер
-        console.log("Using old QR scanner...");
+      if (isAvailable) {
+        console.log("Opening QR scanner...");
         isScanningRef.current = true;
 
         return new Promise((resolve, reject) => {
-          window.Telegram.WebApp.showScanQrPopup({
-            text,
-            onResult: (result: string) => {
-              console.log("Old QR Scanner result:", result);
+          // Сохраняем ссылки на resolve и reject
+          resolveRef.current = resolve;
+          rejectRef.current = reject;
+
+          const timeout = setTimeout(() => {
+            if (isScanningRef.current) {
               isScanningRef.current = false;
-
-              // Нативно закрываем QR сканер после получения результата
               closeQRScanner();
-
-              onSuccess?.(result);
-              resolve(result);
-            },
-            onError: (error: any) => {
-              console.log("Old QR Scanner error:", error);
-              isScanningRef.current = false;
-
-              // Нативно закрываем QR сканер при ошибке
-              closeQRScanner();
-
+              const error = new Error("QR Scanner timeout");
               onError?.(error);
               reject(error);
-            },
+              resolveRef.current = null;
+              rejectRef.current = null;
+            }
+          }, 30000); // 30 секунд таймаут
+
+          // Используем официальный API согласно документации
+          window.Telegram.WebApp.showScanQrPopup({ text }, (result: string) => {
+            clearTimeout(timeout);
+            console.log("QR Scanner result:", result);
+            isScanningRef.current = false;
+            closeQRScanner();
+            onSuccess?.(result);
+            resolve(result);
+            resolveRef.current = null;
+            rejectRef.current = null;
+            return true; // Закрываем попап после получения результата
           });
         });
       } else {
@@ -177,55 +186,61 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
       try {
         console.log("=== QR Scanner Validation Debug ===");
 
-        // Проверяем доступность старого QR сканера
-        const isOldAvailable =
+        // Проверяем доступность QR сканера
+        const isAvailable =
           typeof window.Telegram?.WebApp?.showScanQrPopup === "function";
-        console.log("Old QR Scanner isAvailable:", isOldAvailable);
+        console.log("QR Scanner isAvailable:", isAvailable);
 
-        if (isOldAvailable) {
-          // Используем старый QR сканер с валидацией
-          console.log("Using old QR scanner with validation...");
+        if (isAvailable) {
+          console.log("Opening QR scanner with validation...");
           isScanningRef.current = true;
 
           return new Promise((resolve, reject) => {
-            window.Telegram.WebApp.showScanQrPopup({
-              text,
-              onResult: (result: string) => {
-                console.log("Old QR Scanner result:", result);
+            // Сохраняем ссылки на resolve и reject
+            resolveRef.current = resolve;
+            rejectRef.current = reject;
+
+            const timeout = setTimeout(() => {
+              if (isScanningRef.current) {
+                isScanningRef.current = false;
+                closeQRScanner();
+                const error = new Error("QR Scanner timeout");
+                onError?.(error);
+                reject(error);
+                resolveRef.current = null;
+                rejectRef.current = null;
+              }
+            }, 30000);
+
+            window.Telegram.WebApp.showScanQrPopup(
+              { text },
+              (result: string) => {
+                clearTimeout(timeout);
+                console.log("QR Scanner result:", result);
                 const isValid = validator(result);
-                console.log("Old QR validation result:", isValid);
+                console.log("QR validation result:", isValid);
 
                 if (isValid) {
                   isScanningRef.current = false;
-
-                  // Нативно закрываем QR сканер после успешной валидации
                   closeQRScanner();
-
                   onSuccess?.(result);
                   resolve(result);
+                  resolveRef.current = null;
+                  rejectRef.current = null;
+                  return true; // Закрываем попап после успешной валидации
                 } else {
                   isScanningRef.current = false;
-
-                  // Нативно закрываем QR сканер при неудачной валидации
                   closeQRScanner();
-
                   if (errorMessage && window.Telegram?.WebApp?.showAlert) {
                     window.Telegram.WebApp.showAlert(errorMessage);
                   }
                   reject(new Error("QR validation failed"));
+                  resolveRef.current = null;
+                  rejectRef.current = null;
+                  return false; // Не закрываем попап при неудачной валидации
                 }
-              },
-              onError: (error: any) => {
-                console.log("Old QR Scanner error:", error);
-                isScanningRef.current = false;
-
-                // Нативно закрываем QR сканер при ошибке
-                closeQRScanner();
-
-                onError?.(error);
-                reject(error);
-              },
-            });
+              }
+            );
           });
         } else {
           const error = new Error("QR Scanner is not available");
@@ -243,12 +258,10 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
   );
 
   // Проверяем доступность при инициализации хука
-  const isOldAvailable =
+  const isAvailable =
     typeof window.Telegram?.WebApp?.showScanQrPopup === "function";
-  const isAvailable = isOldAvailable;
 
   console.log("=== useQRScanner Hook Debug ===");
-  console.log("isOldAvailable:", isOldAvailable);
   console.log("isAvailable:", isAvailable);
   console.log("isScanning:", isScanningRef.current);
 
@@ -258,7 +271,5 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
     closeQRScanner,
     isAvailable,
     isOpened: isScanningRef.current,
-    isNewAvailable: false,
-    isOldAvailable,
   };
 };
