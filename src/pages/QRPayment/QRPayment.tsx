@@ -54,6 +54,7 @@ const QRPayment: FC = () => {
 
   const { scanQR, isAvailable } = useQRScanner({
     onSuccess: (result) => {
+      console.log("=== QR SCAN SUCCESS ===");
       console.log("QR Code scanned:", result);
       console.log("QR Data type:", typeof result);
       console.log("QR Data length:", result.length);
@@ -61,11 +62,17 @@ const QRPayment: FC = () => {
 
       // Сначала устанавливаем scanSuccessful, чтобы отменить таймаут
       setScanSuccessful(true);
+      console.log("scanSuccessful set to true");
 
       // Затем обновляем остальные состояния
       setQrData(result);
+      console.log("qrData set to:", result);
+
       setShowScanner(false);
+      console.log("showScanner set to false");
+
       setShowPurchaseForm(true);
+      console.log("showPurchaseForm set to true");
 
       console.log(
         "State updated - scanner closed, purchase form should be visible"
@@ -85,15 +92,23 @@ const QRPayment: FC = () => {
   });
 
   const handleScanSuccess = useCallback((result: string) => {
+    console.log("=== HANDLE SCAN SUCCESS ===");
     console.log("QR Code scanned:", result);
     console.log("QR Data type:", typeof result);
     console.log("QR Data length:", result.length);
     console.log("Setting QR data and showing purchase form...");
 
     setScanSuccessful(true);
+    console.log("handleScanSuccess: scanSuccessful set to true");
+
     setQrData(result);
+    console.log("handleScanSuccess: qrData set to", result);
+
     setShowScanner(false);
+    console.log("handleScanSuccess: showScanner set to false");
+
     setShowPurchaseForm(true);
+    console.log("handleScanSuccess: showPurchaseForm set to true");
 
     console.log(
       "State updated - scanner closed, purchase form should be visible"
@@ -104,8 +119,12 @@ const QRPayment: FC = () => {
     if (isAvailable) {
       console.log("Starting QR scan...");
       const result = await scanQR();
+      console.log("scanQR result:", result);
       if (result) {
+        console.log("Calling handleScanSuccess with result:", result);
         handleScanSuccess(result);
+      } else {
+        console.log("scanQR returned null/undefined");
       }
     } else {
       console.log("QR Scanner is not available");
@@ -119,6 +138,12 @@ const QRPayment: FC = () => {
 
   // Автоматически открываем QR сканер при загрузке страницы
   useEffect(() => {
+    console.log(
+      "useEffect triggered - isAvailable:",
+      isAvailable,
+      "showScanner:",
+      showScanner
+    );
     if (isAvailable && showScanner) {
       console.log("Auto-opening QR scanner...");
       handleManualScan();
@@ -192,6 +217,13 @@ const QRPayment: FC = () => {
     setShowScanner(true);
     setScanSuccessful(false);
   };
+
+  console.log(
+    "Rendering - showPurchaseForm:",
+    showPurchaseForm,
+    "qrData:",
+    qrData
+  );
 
   return (
     <div className={styles["qr-payment"]}>
