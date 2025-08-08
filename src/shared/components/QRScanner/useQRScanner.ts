@@ -13,7 +13,6 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
   // Обработка событий QR сканера
   useEffect(() => {
     const handleQRTextReceived = (eventData: any) => {
-      console.log("=== QR Text Received Event ===");
       console.log("Event data:", eventData);
 
       if (eventData.data && isScanningRef.current) {
@@ -28,7 +27,6 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
       isScanningRef.current = false;
     };
 
-    // Функция для обработки событий на разных платформах
     const handleTelegramEvent = (eventType: string, eventData: any) => {
       switch (eventType) {
         case "qr_text_received":
@@ -40,9 +38,7 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
       }
     };
 
-    // Настраиваем слушатели событий
     const setupEventListeners = () => {
-      // Для Web версии (iframe)
       const handleWebMessage = (event: MessageEvent) => {
         try {
           if (typeof event.data === "string") {
@@ -50,7 +46,7 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
             handleTelegramEvent(eventType, eventData);
           }
         } catch (error) {
-          // Игнорируем ошибки парсинга
+          // ignore
         }
       };
 
@@ -109,12 +105,20 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
             onResult: (result: string) => {
               console.log("Old QR Scanner result:", result);
               isScanningRef.current = false;
+
+              // Нативно закрываем QR сканер после получения результата
+              closeQRScanner();
+
               onSuccess?.(result);
               resolve(result);
             },
             onError: (error: any) => {
               console.log("Old QR Scanner error:", error);
               isScanningRef.current = false;
+
+              // Нативно закрываем QR сканер при ошибке
+              closeQRScanner();
+
               onError?.(error);
               reject(error);
             },
@@ -138,6 +142,32 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
       return null;
     }
   }, [onSuccess, onError, text]);
+
+  // Функция для нативного закрытия QR сканера
+  const closeQRScanner = useCallback(() => {
+    console.log("=== Closing QR Scanner Natively ===");
+
+    try {
+      // Проверяем доступность API для закрытия
+      if (typeof window.Telegram?.WebApp?.closeScanQrPopup === "function") {
+        console.log("Using closeScanQrPopup API...");
+        window.Telegram.WebApp.closeScanQrPopup();
+        isScanningRef.current = false;
+        console.log("QR Scanner closed via closeScanQrPopup");
+      } else if (typeof window.Telegram?.WebApp?.close === "function") {
+        console.log("Using close API as fallback...");
+        window.Telegram.WebApp.close();
+        isScanningRef.current = false;
+        console.log("QR Scanner closed via close API");
+      } else {
+        console.log("No native close API available, setting flag to false");
+        isScanningRef.current = false;
+      }
+    } catch (error) {
+      console.error("Error closing QR scanner:", error);
+      isScanningRef.current = false;
+    }
+  }, []);
 
   const scanQRWithValidation = useCallback(
     async (
@@ -167,10 +197,18 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
 
                 if (isValid) {
                   isScanningRef.current = false;
+
+                  // Нативно закрываем QR сканер после успешной валидации
+                  closeQRScanner();
+
                   onSuccess?.(result);
                   resolve(result);
                 } else {
                   isScanningRef.current = false;
+
+                  // Нативно закрываем QR сканер при неудачной валидации
+                  closeQRScanner();
+
                   if (errorMessage && window.Telegram?.WebApp?.showAlert) {
                     window.Telegram.WebApp.showAlert(errorMessage);
                   }
@@ -180,6 +218,10 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
               onError: (error: any) => {
                 console.log("Old QR Scanner error:", error);
                 isScanningRef.current = false;
+
+                // Нативно закрываем QR сканер при ошибке
+                closeQRScanner();
+
                 onError?.(error);
                 reject(error);
               },
@@ -213,9 +255,10 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
   return {
     scanQR,
     scanQRWithValidation,
+    closeQRScanner,
     isAvailable,
-    isOpened: isScanningRef.current, // Теперь показывает реальное состояние
-    isNewAvailable: false, // Новый SDK отключен
+    isOpened: isScanningRef.current,
+    isNewAvailable: false,
     isOldAvailable,
   };
 };

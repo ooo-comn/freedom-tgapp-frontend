@@ -13,7 +13,7 @@ const QRPayment: FC = () => {
   const [qrData, setQrData] = useState<string>("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  const { scanQR, isAvailable } = useQRScanner({
+  const { scanQR, isAvailable, isOpened, closeQRScanner } = useQRScanner({
     onSuccess: (result) => {
       console.log("QR Code scanned:", result);
       console.log("QR Data type:", typeof result);
@@ -23,6 +23,12 @@ const QRPayment: FC = () => {
       setQrData(result);
       setShowScanner(false);
       setShowPurchaseForm(true);
+
+      // Дополнительно закрываем сканер нативно (на случай если он еще открыт)
+      if (isOpened) {
+        console.log("Closing scanner natively after successful scan...");
+        closeQRScanner();
+      }
 
       console.log(
         "State updated - scanner closed, purchase form should be visible"
@@ -40,20 +46,29 @@ const QRPayment: FC = () => {
     text: "Наведите камеру на QR-код для оплаты",
   });
 
-  const handleScanSuccess = useCallback((result: string) => {
-    console.log("QR Code scanned:", result);
-    console.log("QR Data type:", typeof result);
-    console.log("QR Data length:", result.length);
-    console.log("Setting QR data and showing purchase form...");
+  const handleScanSuccess = useCallback(
+    (result: string) => {
+      console.log("QR Code scanned:", result);
+      console.log("QR Data type:", typeof result);
+      console.log("QR Data length:", result.length);
+      console.log("Setting QR data and showing purchase form...");
 
-    setQrData(result);
-    setShowScanner(false);
-    setShowPurchaseForm(true);
+      setQrData(result);
+      setShowScanner(false);
+      setShowPurchaseForm(true);
 
-    console.log(
-      "State updated - scanner closed, purchase form should be visible"
-    );
-  }, []);
+      // Дополнительно закрываем сканер нативно (на случай если он еще открыт)
+      if (isOpened) {
+        console.log("Closing scanner natively after successful scan...");
+        closeQRScanner();
+      }
+
+      console.log(
+        "State updated - scanner closed, purchase form should be visible"
+      );
+    },
+    [isOpened, closeQRScanner]
+  );
 
   const handleManualScan = useCallback(async () => {
     if (isAvailable) {
@@ -80,9 +95,38 @@ const QRPayment: FC = () => {
     }
   }, [isAvailable, showScanner, handleManualScan]);
 
+  // Синхронизируем состояние сканера с isOpened из хука
+  useEffect(() => {
+    console.log(
+      "Scanner state sync - isOpened:",
+      isOpened,
+      "showScanner:",
+      showScanner
+    );
+
+    // Если сканер закрылся в хуке, но локальное состояние все еще показывает его открытым
+    if (!isOpened && showScanner) {
+      console.log("Scanner closed in hook, updating local state...");
+      setShowScanner(false);
+    }
+
+    // Если сканер открылся в хуке, но локальное состояние показывает его закрытым
+    if (isOpened && !showScanner) {
+      console.log("Scanner opened in hook, updating local state...");
+      setShowScanner(true);
+    }
+  }, [isOpened, showScanner]);
+
   const handleScannerClose = () => {
+    console.log("Manual scanner close - isOpened:", isOpened);
     setShowScanner(false);
-    // Здесь можно добавить навигацию назад
+
+    // Нативно закрываем QR сканер если он открыт
+    if (isOpened) {
+      console.log("Scanner is still opened in hook, closing natively...");
+      closeQRScanner();
+    }
+
     window.history.back();
   };
 
@@ -130,6 +174,11 @@ const QRPayment: FC = () => {
                 </svg>
                 <h3>Открываем QR Сканер...</h3>
                 <p>Пожалуйста, подождите</p>
+                <p
+                  style={{ fontSize: "12px", color: "#666", marginTop: "10px" }}
+                >
+                  Состояние сканера: {isOpened ? "Открыт" : "Закрыт"}
+                </p>
                 <div style={{ marginTop: "20px" }}>
                   <button
                     onClick={handleManualScan}
@@ -137,6 +186,22 @@ const QRPayment: FC = () => {
                   >
                     Открыть QR Сканер
                   </button>
+                  {isOpened && (
+                    <button
+                      onClick={closeQRScanner}
+                      style={{
+                        marginLeft: "10px",
+                        padding: "10px 20px",
+                        backgroundColor: "#dc3545",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "5px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Принудительно закрыть
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
