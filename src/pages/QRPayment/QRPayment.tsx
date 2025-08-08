@@ -7,6 +7,32 @@ import PurchaseForm, {
 import ModalNotification from "src/shared/components/ModalNotification/ModalNotification";
 import styles from "./QRPayment.module.css";
 
+// Функция для отправки запроса на API
+const sendPaymentRequest = async (initData: string, paymentLink: string) => {
+  try {
+    const response = await fetch("https://comnapp.ru/api/v1/payment", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        init_data: initData,
+        payment_link: paymentLink,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return { success: true, data };
+  } catch (error) {
+    console.error("Payment request error:", error);
+    return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+  }
+};
+
 const QRPayment: FC = () => {
   const [showScanner, setShowScanner] = useState(true);
   const [showPurchaseForm, setShowPurchaseForm] = useState(false);
@@ -150,13 +176,38 @@ const QRPayment: FC = () => {
     setScanSuccessful(false);
   };
 
-  const handlePurchaseSubmit = (data: PurchaseFormData) => {
+  const handlePurchaseSubmit = async (data: PurchaseFormData) => {
     console.log("Purchase submitted:", data);
-    setShowPurchaseForm(false);
-    setShowSuccessModal(true);
-
-    // Здесь можно добавить логику отправки данных на сервер
-    // и обработки платежа
+    
+    try {
+      // Получаем init_data из Telegram WebApp
+      const initData = window.Telegram?.WebApp?.initData || "";
+      
+      // Отправляем запрос на API
+      const result = await sendPaymentRequest(initData, qrData);
+      
+      if (result.success) {
+        console.log("Payment request successful:", result.data);
+        setShowPurchaseForm(false);
+        setShowSuccessModal(true);
+      } else {
+        console.error("Payment request failed:", result.error);
+        // Показываем ошибку пользователю
+        if (window.Telegram?.WebApp?.showAlert) {
+          window.Telegram.WebApp.showAlert(
+            `Ошибка при оформлении заказа: ${result.error}`
+          );
+        }
+      }
+    } catch (error) {
+      console.error("Error in handlePurchaseSubmit:", error);
+      // Показываем ошибку пользователю
+      if (window.Telegram?.WebApp?.showAlert) {
+        window.Telegram.WebApp.showAlert(
+          "Произошла ошибка при оформлении заказа. Попробуйте еще раз."
+        );
+      }
+    }
   };
 
   const handleSuccessModalClose = () => {

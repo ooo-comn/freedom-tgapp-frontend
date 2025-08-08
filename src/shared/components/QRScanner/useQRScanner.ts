@@ -3,17 +3,11 @@ import { useCallback, useEffect, useRef } from "react";
 interface UseQRScannerOptions {
   onSuccess?: (result: string) => void;
   onError?: (error: any) => void;
-  onClose?: () => void;
   text?: string;
 }
 
 export const useQRScanner = (options: UseQRScannerOptions = {}) => {
-  const {
-    onSuccess,
-    onError,
-    onClose,
-    text = "Наведите камеру на QR-код",
-  } = options;
+  const { onSuccess, onError, text = "Наведите камеру на QR-код" } = options;
   const isScanningRef = useRef(false);
   const resolveRef = useRef<((value: string) => void) | null>(null);
   const rejectRef = useRef<((error: any) => void) | null>(null);
