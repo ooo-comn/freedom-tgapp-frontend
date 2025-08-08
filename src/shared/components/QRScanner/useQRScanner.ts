@@ -183,7 +183,7 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
       onError?.(error);
       return null;
     }
-  }, [onSuccess, onError, onClose, text, closeQRScanner]);
+  }, [onSuccess, onError, text, closeQRScanner]);
 
   const scanQRWithValidation = useCallback(
     async (
@@ -261,7 +261,7 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
         return null;
       }
     },
-    [onSuccess, onError, onClose, text, closeQRScanner]
+    [onSuccess, onError, text, closeQRScanner]
   );
 
   // Проверяем доступность при инициализации хука
