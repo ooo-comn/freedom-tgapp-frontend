@@ -85,6 +85,32 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
     setupEventListeners();
   }, [onSuccess]);
 
+  // Функция для нативного закрытия QR сканера
+  const closeQRScanner = useCallback(() => {
+    console.log("=== Closing QR Scanner Natively ===");
+
+    try {
+      // Проверяем доступность API для закрытия
+      if (typeof window.Telegram?.WebApp?.closeScanQrPopup === "function") {
+        console.log("Using closeScanQrPopup API...");
+        window.Telegram.WebApp.closeScanQrPopup();
+        isScanningRef.current = false;
+        console.log("QR Scanner closed via closeScanQrPopup");
+      } else if (typeof window.Telegram?.WebApp?.close === "function") {
+        console.log("Using close API as fallback...");
+        window.Telegram.WebApp.close();
+        isScanningRef.current = false;
+        console.log("QR Scanner closed via close API");
+      } else {
+        console.log("No native close API available, setting flag to false");
+        isScanningRef.current = false;
+      }
+    } catch (error) {
+      console.error("Error closing QR scanner:", error);
+      isScanningRef.current = false;
+    }
+  }, []);
+
   const scanQR = useCallback(async (): Promise<string | null> => {
     try {
       console.log("=== QR Scanner Debug ===");
@@ -141,33 +167,7 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
       onError?.(error);
       return null;
     }
-  }, [onSuccess, onError, text]);
-
-  // Функция для нативного закрытия QR сканера
-  const closeQRScanner = useCallback(() => {
-    console.log("=== Closing QR Scanner Natively ===");
-
-    try {
-      // Проверяем доступность API для закрытия
-      if (typeof window.Telegram?.WebApp?.closeScanQrPopup === "function") {
-        console.log("Using closeScanQrPopup API...");
-        window.Telegram.WebApp.closeScanQrPopup();
-        isScanningRef.current = false;
-        console.log("QR Scanner closed via closeScanQrPopup");
-      } else if (typeof window.Telegram?.WebApp?.close === "function") {
-        console.log("Using close API as fallback...");
-        window.Telegram.WebApp.close();
-        isScanningRef.current = false;
-        console.log("QR Scanner closed via close API");
-      } else {
-        console.log("No native close API available, setting flag to false");
-        isScanningRef.current = false;
-      }
-    } catch (error) {
-      console.error("Error closing QR scanner:", error);
-      isScanningRef.current = false;
-    }
-  }, []);
+  }, [onSuccess, onError, text, closeQRScanner]);
 
   const scanQRWithValidation = useCallback(
     async (
@@ -239,7 +239,7 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
         return null;
       }
     },
-    [onSuccess, onError, text]
+    [onSuccess, onError, text, closeQRScanner]
   );
 
   // Проверяем доступность при инициализации хука
