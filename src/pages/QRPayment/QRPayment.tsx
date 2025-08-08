@@ -52,45 +52,6 @@ const QRPayment: FC = () => {
     window.location.href = "/";
   });
 
-  const { scanQR, isAvailable } = useQRScanner({
-    onSuccess: (result) => {
-      console.log("=== QR SCAN SUCCESS ===");
-      console.log("QR Code scanned:", result);
-      console.log("QR Data type:", typeof result);
-      console.log("QR Data length:", result.length);
-      console.log("Setting QR data and showing purchase form...");
-
-      // Сначала устанавливаем scanSuccessful, чтобы отменить таймаут
-      setScanSuccessful(true);
-      console.log("scanSuccessful set to true");
-
-      // Затем обновляем остальные состояния
-      setQrData(result);
-      console.log("qrData set to:", result);
-
-      setShowScanner(false);
-      console.log("showScanner set to false");
-
-      setShowPurchaseForm(true);
-      console.log("showPurchaseForm set to true");
-
-      console.log(
-        "State updated - scanner closed, purchase form should be visible"
-      );
-    },
-    onError: (error) => {
-      console.error("QR Scanner error:", error);
-      // Показываем ошибку пользователю
-      if (window.Telegram?.WebApp?.showAlert) {
-        window.Telegram.WebApp.showAlert(
-          "Ошибка сканирования QR-кода. Попробуйте еще раз."
-        );
-      }
-    },
-
-    text: "Наведите камеру на QR-код для оплаты",
-  });
-
   const handleScanSuccess = useCallback((result: string) => {
     console.log("=== HANDLE SCAN SUCCESS ===");
     console.log("QR Code scanned:", result);
@@ -114,6 +75,20 @@ const QRPayment: FC = () => {
       "State updated - scanner closed, purchase form should be visible"
     );
   }, []);
+
+  const { scanQR, isAvailable } = useQRScanner({
+    onSuccess: handleScanSuccess,
+    onError: (error) => {
+      console.error("QR Scanner error:", error);
+      // Показываем ошибку пользователю
+      if (window.Telegram?.WebApp?.showAlert) {
+        window.Telegram.WebApp.showAlert(
+          "Ошибка сканирования QR-кода. Попробуйте еще раз."
+        );
+      }
+    },
+    text: "Наведите камеру на QR-код для оплаты",
+  });
 
   const handleManualScan = useCallback(async () => {
     if (isAvailable) {
@@ -150,6 +125,32 @@ const QRPayment: FC = () => {
     }
   }, [isAvailable, showScanner, handleManualScan]);
 
+  // Debug: Listen for QR scanner events
+  useEffect(() => {
+    const handleQRTextReceived = () => {
+      console.log("=== QR TEXT RECEIVED EVENT ===");
+      // The event data is available in the global scope or through other means
+      console.log("QR text received event triggered");
+    };
+
+    const handleScanQRPopupClosed = () => {
+      console.log("=== QR SCANNER POPUP CLOSED ===");
+    };
+
+    // Listen for Telegram WebApp events
+    if (window.Telegram?.WebApp?.onEvent) {
+      window.Telegram.WebApp.onEvent("qr_text_received", handleQRTextReceived);
+      window.Telegram.WebApp.onEvent(
+        "scan_qr_popup_closed",
+        handleScanQRPopupClosed
+      );
+    }
+
+    return () => {
+      // Cleanup event listeners if needed
+    };
+  }, []);
+
   // Простая обработка закрытия сканера без сканирования
   useEffect(() => {
     // Не запускаем таймаут, если сканирование уже успешно
@@ -164,7 +165,7 @@ const QRPayment: FC = () => {
         console.log("Scanner timeout - navigating to main page...");
         window.location.href = "/";
       }
-    }, 2000); // 1 секунда таймаут
+    }, 2000); // 2 секунды таймаут
 
     return () => {
       console.log("Clearing scanner timeout");
@@ -222,11 +223,55 @@ const QRPayment: FC = () => {
     "Rendering - showPurchaseForm:",
     showPurchaseForm,
     "qrData:",
-    qrData
+    qrData,
+    "showScanner:",
+    showScanner,
+    "scanSuccessful:",
+    scanSuccessful
   );
 
   return (
     <div className={styles["qr-payment"]}>
+      {/* Fallback UI when scanner is not available */}
+      {!isAvailable && (
+        <div className={styles["qr-scanner-placeholder"]}>
+          <div className={styles["qr-scanner-content"]}>
+            <h3>QR Сканер недоступен</h3>
+            <p>QR сканер недоступен в данной версии Telegram.</p>
+            <button
+              className={styles["back-button"]}
+              onClick={() => (window.location.href = "/")}
+            >
+              Вернуться назад
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Debug: Test button to manually trigger popup */}
+      <div
+        style={{ position: "fixed", top: "10px", right: "10px", zIndex: 10001 }}
+      >
+        <button
+          onClick={() => {
+            console.log("Manual test - triggering popup");
+            setQrData("test-qr-data");
+            setShowPurchaseForm(true);
+            setScanSuccessful(true);
+          }}
+          style={{
+            background: "#f3734e",
+            color: "white",
+            border: "none",
+            padding: "10px",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          Test Popup
+        </button>
+      </div>
+
       <AnimatePresence>
         {showPurchaseForm && (
           <motion.div
