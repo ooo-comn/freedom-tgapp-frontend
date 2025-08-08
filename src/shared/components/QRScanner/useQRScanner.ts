@@ -62,7 +62,6 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
     const handleScanQRPopupClosed = () => {
       console.log("=== QR Scanner Popup Closed Event ===");
       isScanningRef.current = false;
-      onClose?.();
     };
 
     const handleTelegramEvent = (eventType: string, eventData: any) => {
@@ -121,7 +120,7 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
     };
 
     setupEventListeners();
-  }, [onSuccess, onClose, closeQRScanner]);
+  }, [onSuccess, closeQRScanner]);
 
   const scanQR = useCallback(async (): Promise<string | null> => {
     try {

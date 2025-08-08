@@ -54,17 +54,7 @@ const QRPayment: FC = () => {
         );
       }
     },
-    onClose: () => {
-      console.log("QR Scanner closed by user");
-      // Если сканер закрылся пользователем без успешного сканирования,
-      // возвращаемся на главную страницу
-      if (!scanSuccessful) {
-        console.log(
-          "Scanner closed without successful scan, navigating to main page..."
-        );
-        window.location.href = "/";
-      }
-    },
+
     text: "Наведите камеру на QR-код для оплаты",
   });
 
@@ -138,7 +128,12 @@ const QRPayment: FC = () => {
         console.log(
           "Scanner closed without successful scan, navigating to main page..."
         );
-        window.location.href = "/";
+        // Добавляем задержку, чтобы onSuccess успел сработать
+        setTimeout(() => {
+          if (!scanSuccessful) {
+            window.location.href = "/";
+          }
+        }, 100);
       }
     }
 
