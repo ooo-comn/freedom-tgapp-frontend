@@ -129,7 +129,7 @@ const QRPayment: FC = () => {
         console.log("Scanner timeout - navigating to main page...");
         window.location.href = "/";
       }
-    }, 5000); // 5 секунд таймаут
+    }, 1000); // 1 секунда таймаут
 
     return () => clearTimeout(timer);
   }, [showScanner, scanSuccessful]);
