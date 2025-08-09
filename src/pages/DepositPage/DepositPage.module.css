@@ -1,0 +1,96 @@
+.deposit__title {
+  color: var(--main-text);
+  font-family: "Geologica";
+  font-size: 4.62vw;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  letter-spacing: 0.01vw;
+  margin-bottom: 4.1vw;
+}
+
+.deposit__amount {
+  color: var(--second-text);
+  text-align: center;
+  font-family: "Geologica";
+  font-size: 3.08vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+/* alias to keep TSX using old class name working */
+.deposit__amount-title {
+  color: var(--second-text);
+  text-align: center;
+  font-family: "Geologica";
+  font-size: 3.08vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.deposit__box-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2.05vw;
+}
+
+.deposit__qr {
+  width: 91.79vw;
+  height: 91.79vw;
+}
+
+.deposit__address {
+  color: var(--main-text);
+  text-align: center;
+  font-family: "Geologica";
+  font-size: 3.59vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.deposit__commission,
+.deposit__note {
+  color: #f3734e;
+  text-align: center;
+  font-family: "Geologica";
+  font-size: 2.56vw;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+}
+
+.deposit__balance {
+  display: flex;
+  flex-direction: column;
+  gap: 2.05vw;
+}
+
+.deposit__balance-title {
+  color: var(--second-text);
+  font-family: "Geologica";
+  font-size: 3.08vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.deposit__button-copy {
+  margin: auto auto 12.05vw auto;
+  display: flex;
+  width: 91.28vw;
+  height: 12.82vw;
+  padding: 2.56vw;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1.54vw;
+  background: var(---, #f3734e);
+  color: var(---, #fff);
+  font-family: "Geologica";
+  font-size: 3.59vw;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}

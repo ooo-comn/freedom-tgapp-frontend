@@ -8,7 +8,7 @@ import { UserName } from "src/shared/components/UserName/UserName";
 import { useTelegramUserData } from "src/hooks/useTelegramUserData";
 import { useUserProfile } from "../model/useUserProfile";
 import styles from "./UserProfile.module.css";
-import MyDataCard from "src/shared/components/MyDataCard/MyDataCard";
+// import MyDataCard from "src/shared/components/MyDataCard/MyDataCard";
 
 const UserProfile: FC = () => {
   window.scrollTo(0, 0);
@@ -58,7 +58,7 @@ const UserProfile: FC = () => {
 
       <PaymentLimits />
 
-      <div className={styles["user-profile__wrapper-cards"]}>
+      {/* <div className={styles["user-profile__wrapper-cards"]}>
         <MyDataCard
           title="Пройдите KYC-верификацию"
           description="Пройди верификацию, чтобы получить доступ к расширенному функционалу"
@@ -70,7 +70,7 @@ const UserProfile: FC = () => {
           path={creditCardSolid}
           text="Реферальная программа"
         />
-      </div>
+      </div> */}
 
       <div className={styles["user-profile__wrapper-cards"]}>
         <LinksFAQ isSubmit={true} path={creditCardSolid} text="Безопасность" />

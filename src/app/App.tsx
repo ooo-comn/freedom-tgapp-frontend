@@ -11,6 +11,7 @@ import { QRScannerTest } from "src/shared/components/QRScanner";
 import QRScannerDiagnostic from "src/shared/components/QRScanner/QRScannerDiagnostic";
 import UserProfile from "src/pages/UserProfile/ui/UserProfile";
 import WithdrawalPage from "src/pages/WithdrawalPage/WithdrawalPage";
+import DepositPage from "src/pages/DepositPage/DepositPage";
 import Create from "../pages/Create/Create";
 import RegistrationPage from "src/pages/RegistrationPage/RegistrationPage";
 import SubscriptionPage from "src/pages/SubscriptionPage/SubscriptionPage";
@@ -243,6 +244,7 @@ function App() {
               <Route path={"connect-payments-form"} element={<ConnectCard />} />
               <Route path={"return-form"} element={<ReturnForm />} />
               <Route path={"withdrawal"} element={<WithdrawalPage />} />
+              <Route path={"deposit"} element={<DepositPage />} />
               <Route path={"qr-payment"} element={<QRPayment />} />
               <Route path={"qr-test"} element={<QRScannerTest />} />
               <Route path={"qr-diagnostic"} element={<QRScannerDiagnostic />} />
