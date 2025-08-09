@@ -4,6 +4,7 @@ import styles from "./DepositPage.module.css";
 import { useUserWallet } from "src/hooks/useUserWallet";
 import USDTIcon from "src/shared/assets/wallet/USDT.png";
 import { WalletBalanceDisplay } from "src/features/WalletBalance/ui/WalletBalanceDisplay/WalletBalanceDisplay";
+import useTheme from "src/shared/hooks/useTheme";
 
 const DepositPage: FC = () => {
   const BackButton = window.Telegram.WebApp.BackButton;
@@ -41,6 +42,10 @@ const DepositPage: FC = () => {
   const balance = data?.balanceAmount ?? 0;
   const logoUrl =
     new URLSearchParams(window.location.search).get("logo") || USDTIcon;
+
+  const { theme } = useTheme();
+  const qrForeground = theme === "dark" ? "#fbfbfb" : "#333";
+  const qrBackground = theme === "dark" ? "#0f0f0f" : "#efeef3";
 
   // Ensure QRious is loaded and render QR with logo when address is available
   useEffect(() => {
@@ -129,8 +134,8 @@ const DepositPage: FC = () => {
         value: address,
         size,
         level: "H",
-        foreground: "#000000",
-        background: "#ffffff",
+        foreground: qrForeground,
+        background: qrBackground,
       });
       // Load logo image if available, otherwise draw Tether symbol
       try {
@@ -154,7 +159,7 @@ const DepositPage: FC = () => {
     };
 
     generate();
-  }, [address, logoUrl]);
+  }, [address, logoUrl, qrForeground, qrBackground]);
 
   return (
     <div className={styles.deposit}>
