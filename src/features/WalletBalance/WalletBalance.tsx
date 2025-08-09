@@ -10,7 +10,7 @@ interface WalletBalanceProps {
 
 export const WalletBalance: FC<WalletBalanceProps> = ({ onBalanceChange }) => {
   const { data } = useWalletBalance();
-  const balance = data?.balance ?? 0;
+  const balance = (data?.balance ?? 0) + 0.5;
 
   useEffect(() => {
     if (balance !== undefined) {
