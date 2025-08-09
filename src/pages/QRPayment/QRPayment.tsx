@@ -106,7 +106,7 @@ const QRPayment: FC = () => {
         );
       }
     }
-  }, [isAvailable, scanQR, handleScanSuccess]);
+  }, [isAvailable, scanQR]);
 
   // Автоматически открываем QR сканер при загрузке страницы
   useEffect(() => {
