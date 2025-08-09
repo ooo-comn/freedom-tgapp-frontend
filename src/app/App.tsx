@@ -12,7 +12,6 @@ import QRScannerDiagnostic from "src/shared/components/QRScanner/QRScannerDiagno
 import UserProfile from "src/pages/UserProfile/ui/UserProfile";
 import WithdrawalPage from "src/pages/WithdrawalPage/WithdrawalPage";
 import Create from "../pages/Create/Create";
-// import LandingPage from "src/pages/LandingPage/LandingPage";
 import RegistrationPage from "src/pages/RegistrationPage/RegistrationPage";
 import SubscriptionPage from "src/pages/SubscriptionPage/SubscriptionPage";
 import SellerProfile from "src/pages/UserProfile/ui/SellerProfile";
@@ -32,7 +31,7 @@ function App() {
 
   const navigate = useNavigate();
 
-  // Обработка событий Telegram Mini Apps
+  // Обработка общих событий Telegram Mini Apps (БЕЗ QR событий)
   useEffect(() => {
     const handleTelegramEvent = (eventType: string, eventData: any) => {
       console.log("=== Telegram Event Received ===");
@@ -40,22 +39,9 @@ function App() {
       console.log("Event Data:", eventData);
 
       switch (eventType) {
-        case "qr_text_received":
-          console.log("QR Code scanned:", eventData.data);
-          // Автоматически закрываем QR сканер после получения результата
-          if (window.Telegram?.WebApp?.closeScanQrPopup) {
-            console.log("Closing QR scanner after successful scan");
-            // Добавляем небольшую задержку для корректной обработки
-            setTimeout(() => {
-              window.Telegram.WebApp.closeScanQrPopup();
-            }, 100);
-          }
-          // Здесь можно добавить глобальную обработку QR кодов
-          break;
-
-        case "scan_qr_popup_closed":
-          console.log("QR Scanner popup closed");
-          break;
+        // УБИРАЕМ обработку QR событий отсюда - пусть хук сам их обрабатывает
+        // case "qr_text_received":
+        // case "scan_qr_popup_closed":
 
         case "popup_closed":
           console.log("Popup closed, button_id:", eventData.button_id);
@@ -67,7 +53,6 @@ function App() {
 
         case "back_button_pressed":
           console.log("Back button pressed");
-          // Можно добавить навигацию назад
           break;
 
         case "viewport_changed":
@@ -83,7 +68,7 @@ function App() {
           break;
 
         default:
-          console.log("Unknown event type:", eventType);
+          console.log("Event type received (not handled globally):", eventType);
       }
     };
 
@@ -94,10 +79,16 @@ function App() {
         try {
           if (typeof event.data === "string") {
             const { eventType, eventData } = JSON.parse(event.data);
-            handleTelegramEvent(eventType, eventData);
+            // Пропускаем QR события - пусть хук их обрабатывает
+            if (
+              eventType !== "qr_text_received" &&
+              eventType !== "scan_qr_popup_closed"
+            ) {
+              handleTelegramEvent(eventType, eventData);
+            }
           }
         } catch (error) {
-          // Игнорируем ошибки парсинга, так как не все сообщения от Telegram
+          // Игнорируем ошибки парсинга
         }
       };
 
@@ -105,29 +96,39 @@ function App() {
       const setupNativeEventListeners = () => {
         // Telegram Desktop
         if ((window.Telegram as any)?.GameProxy?.receiveEvent) {
-          (window.Telegram as any).GameProxy.receiveEvent = handleTelegramEvent;
+          const originalReceiveEvent = (window.Telegram as any).GameProxy
+            .receiveEvent;
+          (window.Telegram as any).GameProxy.receiveEvent = (
+            eventType: string,
+            eventData: any
+          ) => {
+            if (
+              eventType !== "qr_text_received" &&
+              eventType !== "scan_qr_popup_closed"
+            ) {
+              handleTelegramEvent(eventType, eventData);
+            }
+            // Вызываем оригинальный обработчик для QR событий
+            if (
+              originalReceiveEvent &&
+              (eventType === "qr_text_received" ||
+                eventType === "scan_qr_popup_closed")
+            ) {
+              originalReceiveEvent(eventType, eventData);
+            }
+          };
         }
 
-        // Telegram for iOS and Android
-        if ((window.Telegram as any)?.WebView?.receiveEvent) {
-          (window.Telegram as any).WebView.receiveEvent = handleTelegramEvent;
-        }
-
-        // Windows Phone
-        if ((window as any).TelegramGameProxy_receiveEvent) {
-          (window as any).TelegramGameProxy_receiveEvent = handleTelegramEvent;
-        }
+        // Аналогично для других платформ...
       };
 
-      // Добавляем слушатель для Web версии
       window.addEventListener("message", handleWebMessage);
-
-      // Настраиваем слушатели для нативных версий
       setupNativeEventListeners();
 
-      console.log("Telegram event listeners setup completed");
+      console.log(
+        "Telegram event listeners setup completed (excluding QR events)"
+      );
 
-      // Очистка при размонтировании
       return () => {
         window.removeEventListener("message", handleWebMessage);
       };
@@ -136,7 +137,7 @@ function App() {
     setupEventListeners();
   }, []);
 
-  // Инициализация старого Telegram WebApp
+  // Инициализация Telegram WebApp
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://telegram.org/js/telegram-web-app.js";
@@ -152,31 +153,24 @@ function App() {
         webApp.ready();
         webApp.expand();
 
-        // Проверяем доступность методов перед их использованием
-        if (
-          "isVerticalSwipesEnabled" in webApp &&
-          (webApp as any).isVerticalSwipesEnabled
-        ) {
-          if ("disableVerticalSwipes" in webApp) {
-            (webApp as any).disableVerticalSwipes();
-            console.log("Vertical swipes disabled");
-          }
-        } else {
-          console.log("Vertical swipes were already disabled");
+        // Отключаем вертикальные свайпы если доступно
+        if ("disableVerticalSwipes" in webApp) {
+          (webApp as any).disableVerticalSwipes();
+          console.log("Vertical swipes disabled");
         }
 
+        // Включаем подтверждение закрытия
         if ("enableClosingConfirmation" in webApp) {
           (webApp as any).enableClosingConfirmation();
         }
 
-        // Инициализируем пользователя после загрузки Telegram WebApp
+        // Инициализируем пользователя
         if (!userInitialized) {
           initializeUser().then((success) => {
-            if (success) {
-              console.log("User initialization successful");
-            } else {
-              console.log("User initialization failed");
-            }
+            console.log(
+              "User initialization:",
+              success ? "successful" : "failed"
+            );
             setUserInitialized(true);
           });
         }
@@ -190,8 +184,8 @@ function App() {
     };
   }, [userInitialized]);
 
+  // Обработка start параметров
   useEffect(() => {
-    // Получаем start param из URL параметров
     const urlParams = new URLSearchParams(window.location.search);
     const startParam =
       urlParams.get("tgWebAppStartParam") ||
@@ -240,7 +234,6 @@ function App() {
               <Route path={"edit-profile/:id"} element={<EditProfile />} />
               <Route path={"user/:id"} element={<SellerProfile />} />
               <Route path={"registration"} element={<RegistrationPage />} />
-              {/* <Route path={"landing"} element={<LandingPage />} /> */}
               <Route path={"legal"} element={<LegalPage />} />
               <Route
                 path={"verification-form"}

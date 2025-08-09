@@ -53,31 +53,23 @@ const QRPayment: FC = () => {
   });
 
   const handleScanSuccess = useCallback((result: string) => {
-    try {
-      window.Telegram?.WebApp?.closeScanQrPopup?.();
-    } catch (err) {
-      // ignore
-    }
     console.log("=== HANDLE SCAN SUCCESS ===");
     console.log("QR Code scanned:", result);
-    console.log("QR Data type:", typeof result);
-    console.log("QR Data length:", result.length);
-    console.log("Setting QR data and showing purchase form...");
+
+    // УБИРАЕМ принудительное закрытие - пусть хук сам управляет этим
+    // try {
+    //   window.Telegram?.WebApp?.closeScanQrPopup?.();
+    // } catch (err) {
+    //   // ignore
+    // }
 
     setScanSuccessful(true);
-    console.log("handleScanSuccess: scanSuccessful set to true");
-
     setQrData(result);
-    console.log("handleScanSuccess: qrData set to", result);
-
     setShowScanner(false);
-    console.log("handleScanSuccess: showScanner set to false");
-
     setShowPurchaseForm(true);
-    console.log("handleScanSuccess: showPurchaseForm set to true");
 
     console.log(
-      "State updated - scanner closed, purchase form should be visible"
+      "State updated - scanner should be closed by hook, purchase form visible"
     );
   }, []);
 
@@ -85,7 +77,6 @@ const QRPayment: FC = () => {
     onSuccess: handleScanSuccess,
     onError: (error) => {
       console.error("QR Scanner error:", error);
-      // Показываем ошибку пользователю
       if (window.Telegram?.WebApp?.showAlert) {
         window.Telegram.WebApp.showAlert(
           "Ошибка сканирования QR-кода. Попробуйте еще раз."
@@ -121,15 +112,14 @@ const QRPayment: FC = () => {
       "showScanner:",
       showScanner
     );
-    if (isAvailable && showScanner) {
+    if (isAvailable && showScanner && !scanSuccessful) {
       console.log("Auto-opening QR scanner...");
       handleManualScan();
     }
-  }, [isAvailable, showScanner, handleManualScan]);
+  }, [isAvailable, showScanner, scanSuccessful, handleManualScan]);
 
-  // Простая обработка закрытия сканера без сканирования
+  // Таймаут для редиректа если сканирование не произошло
   useEffect(() => {
-    // Не запускаем таймаут, если сканирование уже успешно
     if (scanSuccessful) {
       console.log("Scan successful, skipping timeout");
       return;
@@ -141,7 +131,7 @@ const QRPayment: FC = () => {
         console.log("Scanner timeout - navigating to main page...");
         window.location.href = "/";
       }
-    }, 2000); // 2 секунды таймаут
+    }, 30000); // Увеличиваем до 30 секунд
 
     return () => {
       console.log("Clearing scanner timeout");
@@ -153,21 +143,14 @@ const QRPayment: FC = () => {
     setShowPurchaseForm(false);
     setShowScanner(true);
     setScanSuccessful(false);
-    try {
-      closeQRScanner();
-    } catch (err) {
-      // ignore
-    }
+    // Не вызываем closeQRScanner здесь, так как сканер уже должен быть закрыт
   };
 
   const handlePurchaseSubmit = async (data: PurchaseFormData) => {
     console.log("Purchase submitted:", data);
 
     try {
-      // Получаем init_data из Telegram WebApp
       const initData = window.Telegram?.WebApp?.initData || "";
-
-      // Отправляем запрос на API
       const result = await sendPaymentRequest(initData, qrData);
 
       if (result.success) {
@@ -176,7 +159,6 @@ const QRPayment: FC = () => {
         setShowSuccessModal(true);
       } else {
         console.error("Payment request failed:", result.error);
-        // Показываем ошибку пользователю
         if (window.Telegram?.WebApp?.showAlert) {
           window.Telegram.WebApp.showAlert(
             `Ошибка при оформлении заказа: ${result.error}`
@@ -185,7 +167,6 @@ const QRPayment: FC = () => {
       }
     } catch (error) {
       console.error("Error in handlePurchaseSubmit:", error);
-      // Показываем ошибку пользователю
       if (window.Telegram?.WebApp?.showAlert) {
         window.Telegram.WebApp.showAlert(
           "Произошла ошибка при оформлении заказа. Попробуйте еще раз."
