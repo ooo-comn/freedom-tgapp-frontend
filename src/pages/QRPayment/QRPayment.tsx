@@ -213,46 +213,6 @@ const QRPayment: FC = () => {
 
   return (
     <div className={styles["qr-payment"]}>
-      {/* Fallback UI when scanner is not available */}
-      {!isAvailable && (
-        <div className={styles["qr-scanner-placeholder"]}>
-          <div className={styles["qr-scanner-content"]}>
-            <h3>QR Сканер недоступен</h3>
-            <p>QR сканер недоступен в данной версии Telegram.</p>
-            <button
-              className={styles["back-button"]}
-              onClick={() => (window.location.href = "/")}
-            >
-              Вернуться назад
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Debug: Test button to manually trigger popup */}
-      <div
-        style={{ position: "fixed", top: "10px", right: "10px", zIndex: 10001 }}
-      >
-        <button
-          onClick={() => {
-            console.log("Manual test - triggering popup");
-            setQrData("test-qr-data");
-            setShowPurchaseForm(true);
-            setScanSuccessful(true);
-          }}
-          style={{
-            background: "#f3734e",
-            color: "white",
-            border: "none",
-            padding: "10px",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Test Popup
-        </button>
-      </div>
-
       <AnimatePresence>
         {showPurchaseForm && (
           <motion.div
