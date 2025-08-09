@@ -24,18 +24,32 @@ const WithdrawalPage: FC = () => {
   const balance = walletData?.balance || 0;
 
   const commission = 2.75;
-  const minAmount = commission + 0.01;
+  // Work in integer cents to avoid floating-point precision issues
+  const commissionCents = 275;
+  const minAmountCents = commissionCents + 1; // 2.76 USDT
+  const minAmount = (minAmountCents / 100).toFixed(2);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const numAmount = parseFloat(amount);
-    if (numAmount < minAmount) {
-      alert(`Минимальная сумма для вывода: ${minAmount} USDT`);
+    const amountCents = Math.round(numAmount * 100);
+    if (Number.isNaN(numAmount)) {
+      alert("Введите корректную сумму");
       return;
     }
 
-    if (numAmount > balance) {
+    if (amountCents < minAmountCents) {
+      alert(
+        `Минимальная сумма для вывода: ${(minAmountCents / 100).toFixed(
+          2
+        )} USDT`
+      );
+      return;
+    }
+
+    const balanceCents = Math.round((balance || 0) * 100);
+    if (amountCents > balanceCents) {
       alert("Недостаточно средств на балансе");
       return;
     }

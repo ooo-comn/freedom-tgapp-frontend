@@ -1,5 +1,5 @@
 import { FC, useEffect } from "react";
-import { useUserBalance } from "src/hooks/useUserBalance";
+import { useWalletBalance } from "src/entities/wallet/model/fetchWalletBalance";
 import { WalletBalanceDisplay } from "./ui/WalletBalanceDisplay/WalletBalanceDisplay";
 import { WalletBalanceActions } from "./ui/WalletBalanceActions/WalletBalanceActions";
 import styles from "./WalletBalance.module.css";
@@ -9,7 +9,8 @@ interface WalletBalanceProps {
 }
 
 export const WalletBalance: FC<WalletBalanceProps> = ({ onBalanceChange }) => {
-  const { data: balance = 0 } = useUserBalance();
+  const { data } = useWalletBalance();
+  const balance = data?.balance ?? 0;
 
   useEffect(() => {
     if (balance !== undefined) {

@@ -2,6 +2,7 @@ import { FC, useEffect } from "react";
 import styles from "./DepositPage.module.css";
 // import { WalletBalance } from "src/features/WalletBalance/WalletBalance";
 import { useUserWallet } from "src/hooks/useUserWallet";
+import { useWalletBalance } from "src/entities/wallet/model/fetchWalletBalance";
 import USDTIcon from "src/shared/assets/wallet/USDT.png";
 import { WalletBalanceDisplay } from "src/features/WalletBalance/ui/WalletBalanceDisplay/WalletBalanceDisplay";
 import useTheme from "src/shared/hooks/useTheme";
@@ -39,7 +40,8 @@ const DepositPage: FC = () => {
 
   const { data, isLoading: isWalletLoading } = useUserWallet();
   const address = data?.address || "";
-  const balance = data?.balanceAmount ?? 0;
+  const { data: balanceData } = useWalletBalance();
+  const balance = balanceData?.balance ?? 0;
   const logoUrl =
     new URLSearchParams(window.location.search).get("logo") || USDTIcon;
 

@@ -2,8 +2,7 @@ import { FC, useState } from "react";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
 import styles from "./PurchaseForm.module.css";
-import { WalletBalanceDisplay } from "src/features/WalletBalance/ui/WalletBalanceDisplay/WalletBalanceDisplay";
-import { useUserBalance } from "src/hooks/useUserBalance";
+import { useUserWallet } from "src/hooks/useUserWallet";
 
 interface PurchaseFormProps {
   qrData: string;
@@ -22,7 +21,8 @@ const PurchaseForm: FC<PurchaseFormProps> = ({ onClose, onSubmit }) => {
   const [amount, setAmount] = useState<number | null>(null);
   const paymentMethod = "Оплата по СБП";
   const wallet = "USDT";
-  const { data: balance = 0 } = useUserBalance();
+  const { data: walletData } = useUserWallet();
+  const walletAddress = walletData?.address || "";
 
   const transactionId = "19876543456"; // В реальном приложении это будет генерироваться
   const currentDate = format(new Date(), "d MMMM yyyy", { locale: ru });
@@ -119,7 +119,7 @@ const PurchaseForm: FC<PurchaseFormProps> = ({ onClose, onSubmit }) => {
       {/* Wallet Section */}
       <div className={styles["purchase-form__section"]}>
         <label className={styles["purchase-form__label"]}>Кошелёк</label>
-        <WalletBalanceDisplay balance={balance} />
+        <div>{walletAddress || "—"}</div>
       </div>
 
       {/* Submit Button */}
