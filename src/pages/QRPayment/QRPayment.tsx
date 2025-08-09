@@ -95,10 +95,7 @@ const QRPayment: FC = () => {
       console.log("Starting QR scan...");
       const result = await scanQR();
       console.log("scanQR result:", result);
-      if (result) {
-        console.log("Calling handleScanSuccess with result:", result);
-        handleScanSuccess(result);
-      } else {
+      if (!result) {
         console.log("scanQR returned null/undefined");
       }
     } else {

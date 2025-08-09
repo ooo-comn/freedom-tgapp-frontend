@@ -28,16 +28,6 @@ export const WalletWidget: FC = () => {
   const webApp = getTelegramWebApp();
   console.log("initDataUnsafe", webApp?.initDataUnsafe);
 
-  // Настройка BackButton для закрытия приложения
-  const BackButton = window.Telegram.WebApp.BackButton;
-  BackButton.show();
-  BackButton.onClick(function () {
-    BackButton.hide();
-  });
-  window.Telegram.WebApp.onEvent("backButtonClicked", function () {
-    window.Telegram.WebApp.close();
-  });
-
   useEffect(() => {
     const checkAndAuthorizeUser = async () => {
       try {

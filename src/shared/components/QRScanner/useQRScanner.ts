@@ -17,19 +17,16 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
     console.log("=== Closing QR Scanner Natively ===");
 
     try {
-      // Проверяем доступность API для закрытия
+      // Закрываем только попап сканера, не всё WebApp
       if (typeof window.Telegram?.WebApp?.closeScanQrPopup === "function") {
         console.log("Using closeScanQrPopup API...");
         window.Telegram.WebApp.closeScanQrPopup();
         isScanningRef.current = false;
         console.log("QR Scanner closed via closeScanQrPopup");
-      } else if (typeof window.Telegram?.WebApp?.close === "function") {
-        console.log("Using close API as fallback...");
-        window.Telegram.WebApp.close();
-        isScanningRef.current = false;
-        console.log("QR Scanner closed via close API");
       } else {
-        console.log("No native close API available, setting flag to false");
+        console.log(
+          "No closeScanQrPopup API available, relying on return true"
+        );
         isScanningRef.current = false;
       }
     } catch (error) {
@@ -142,6 +139,7 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
             clearTimeout(timeout);
             console.log("QR Scanner result:", result);
             isScanningRef.current = false;
+            // Закрываем попап нативно (для совместимости разных платформ)
             closeQRScanner();
             onSuccess?.(result);
             resolve(result);
@@ -213,7 +211,7 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
 
                 if (isValid) {
                   isScanningRef.current = false;
-                  closeQRScanner();
+                  // Закрываем попап при успешной валидации
                   onSuccess?.(result);
                   resolve(result);
                   resolveRef.current = null;
@@ -221,7 +219,6 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
                   return true; // Закрываем попап после успешной валидации
                 } else {
                   isScanningRef.current = false;
-                  closeQRScanner();
                   if (errorMessage && window.Telegram?.WebApp?.showAlert) {
                     window.Telegram.WebApp.showAlert(errorMessage);
                   }
