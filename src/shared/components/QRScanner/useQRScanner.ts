@@ -30,27 +30,30 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
     closeCalls: 0,
   });
   const nowIso = () => new Date().toISOString();
-  const log = (...args: unknown[]) => {
+  const log = useCallback((...args: unknown[]) => {
     // eslint-disable-next-line no-console
     console.log(`[QR][${debugSessionIdRef.current}] ${nowIso()}`, ...args);
-  };
-  const logError = (...args: unknown[]) => {
+  }, []);
+  const logError = useCallback((...args: unknown[]) => {
     // eslint-disable-next-line no-console
     console.error(`[QR][${debugSessionIdRef.current}] ${nowIso()}`, ...args);
-  };
-  const dumpState = (label: string) => {
-    log(label, {
-      isScanning: isScanningRef.current,
-      isHandling: isHandlingRef.current,
-      hasTimeout: Boolean(timeoutRef.current),
-      hasCloseInterval: Boolean(closeIntervalRef.current),
-      hasResolve: Boolean(resolveRef.current),
-      hasReject: Boolean(rejectRef.current),
-      hasValidator: Boolean(validatorRef.current),
-      errorMessage: errorMessageRef.current,
-      counters: countersRef.current,
-    });
-  };
+  }, []);
+  const dumpState = useCallback(
+    (label: string) => {
+      log(label, {
+        isScanning: isScanningRef.current,
+        isHandling: isHandlingRef.current,
+        hasTimeout: Boolean(timeoutRef.current),
+        hasCloseInterval: Boolean(closeIntervalRef.current),
+        hasResolve: Boolean(resolveRef.current),
+        hasReject: Boolean(rejectRef.current),
+        hasValidator: Boolean(validatorRef.current),
+        errorMessage: errorMessageRef.current,
+        counters: countersRef.current,
+      });
+    },
+    [log]
+  );
 
   // Храним актуальный onSuccess в ref, чтобы не перевешивать обработчики
   useEffect(() => {
@@ -75,7 +78,7 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
       has_offEvent: typeof webApp?.offEvent === "function",
     });
     dumpState("Initial state");
-  }, []);
+  }, [log, dumpState]);
 
   // Функция для нативного закрытия QR сканера
   const closeQRScanner = useCallback(() => {
@@ -144,7 +147,7 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
       isScanningRef.current = false;
     }
     dumpState("After closeQRScanner call");
-  }, []);
+  }, [log, logError, dumpState]);
 
   // Обработка событий QR сканера
   useEffect(() => {
@@ -281,7 +284,7 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
       log("Event listeners removed (cleanup)");
       dumpState("After cleanup");
     };
-  }, [closeQRScanner]);
+  }, [closeQRScanner, log, dumpState]);
 
   const scanQR = useCallback(async (): Promise<string | null> => {
     try {
@@ -374,7 +377,7 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
       onError?.(error);
       return null;
     }
-  }, [onError, text, closeQRScanner]);
+  }, [onError, text, closeQRScanner, log, logError, dumpState]);
 
   const scanQRWithValidation = useCallback(
     async (
@@ -496,7 +499,7 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
         return null;
       }
     },
-    [onError, text, closeQRScanner]
+    [onError, text, closeQRScanner, log, logError, dumpState]
   );
 
   // Проверяем доступность при инициализации хука
