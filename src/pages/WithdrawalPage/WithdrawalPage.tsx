@@ -27,7 +27,9 @@ const WithdrawalPage: FC = () => {
   // Work in integer cents to avoid floating-point precision issues
   const commissionCents = 275;
   const minAmountCents = commissionCents + 1; // 2.76 USDT
-  const minAmount = (minAmountCents / 100).toFixed(2);
+  const minAmountNumber = minAmountCents / 100;
+  const minAmount = minAmountNumber.toFixed(2);
+  const canWithdraw = balance >= minAmountNumber;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,8 +105,9 @@ const WithdrawalPage: FC = () => {
             onChange={(e) => setAmount(e.target.value)}
             placeholder="0.00 USDT"
             step="0.01"
-            min={minAmount}
-            max={balance}
+            min={canWithdraw ? minAmount : "0"}
+            max={canWithdraw ? balance : undefined}
+            disabled={!canWithdraw}
             className={styles.input}
           />
           <p className={styles.commission}>

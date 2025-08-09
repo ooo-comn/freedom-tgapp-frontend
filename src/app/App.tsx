@@ -11,7 +11,6 @@ import UserProfile from "src/pages/UserProfile/ui/UserProfile";
 import WithdrawalPage from "src/pages/WithdrawalPage/WithdrawalPage";
 import DepositPage from "src/pages/DepositPage/DepositPage";
 import Create from "../pages/Create/Create";
-import RegistrationPage from "src/pages/RegistrationPage/RegistrationPage";
 import SubscriptionPage from "src/pages/SubscriptionPage/SubscriptionPage";
 import { WalletWidget } from "src/widgets/WalletWidget/WalletWidget";
 import NavBar from "../pages/Navbar/Navbar";
@@ -217,7 +216,6 @@ function App() {
               />
               <Route path={"profile"} element={<UserProfile />} />
               <Route path={"subscription"} element={<SubscriptionPage />} />
-              <Route path={"registration"} element={<RegistrationPage />} />
               <Route path={"legal"} element={<LegalPage />} />
               <Route
                 path={"verification-form"}
