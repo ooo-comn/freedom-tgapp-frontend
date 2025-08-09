@@ -35,7 +35,7 @@ const DepositPage: FC = () => {
     }
   };
 
-  const { data } = useUserWallet();
+  const { data, isLoading: isWalletLoading } = useUserWallet();
   const address = data?.address || "";
   const logoUrl =
     new URLSearchParams(window.location.search).get("logo") || USDTIcon;
@@ -168,15 +168,9 @@ const DepositPage: FC = () => {
       <div className={styles["deposit__box-info"]}>
         <p className={styles["deposit__amount-title"]}>Сумма в USDT</p>
 
-        {(() => {
-          const { data, isLoading } = useUserWallet();
-          const addr = data?.address || "";
-          return (
-            <h2 className={styles["deposit__address"]}>
-              {isLoading ? "Загрузка…" : addr || "—"}
-            </h2>
-          );
-        })()}
+        <h2 className={styles["deposit__address"]}>
+          {isWalletLoading ? "Загрузка…" : address || "—"}
+        </h2>
 
         <p className={styles["deposit__note"]}>
           Этот адрес предназначен только для получения USDT в сети TRC20.
@@ -193,19 +187,13 @@ const DepositPage: FC = () => {
         <WalletBalance />
       </div>
 
-      {(() => {
-        const { data } = useUserWallet();
-        const addr = data?.address || "";
-        return (
-          <button
-            className={styles["deposit__button-copy"]}
-            onClick={() => copyToClipboard(addr)}
-            disabled={!addr}
-          >
-            Скопировать адрес
-          </button>
-        );
-      })()}
+      <button
+        className={styles["deposit__button-copy"]}
+        onClick={() => copyToClipboard(address)}
+        disabled={!address}
+      >
+        Скопировать адрес
+      </button>
     </div>
   );
 };
