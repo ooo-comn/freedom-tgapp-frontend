@@ -105,9 +105,8 @@ const WithdrawalPage: FC = () => {
             onChange={(e) => setAmount(e.target.value)}
             placeholder="0.00 USDT"
             step="0.01"
-            min={canWithdraw ? minAmount : "0"}
+            min={minAmount}
             max={canWithdraw ? balance : undefined}
-            disabled={!canWithdraw}
             className={styles.input}
           />
           <p className={styles.commission}>
