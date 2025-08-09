@@ -1,10 +1,8 @@
 import { TonConnectUIProvider } from "@tonconnect/ui-react";
 import { useEffect, useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
-import { initializeUser } from "src/entities/user/model/createUser";
 import { VerificationForm } from "src/entities/verification/ui/VerificationForm/VerificationForm";
 import ConnectCard from "src/pages/ConnectCard/ConnectCard";
-import EditProfile from "src/pages/EditProfile/EditProfile";
 import LegalPage from "src/pages/LegalPage/LegalPage";
 import QRPayment from "src/pages/QRPayment/QRPayment";
 import { QRScannerTest } from "src/shared/components/QRScanner";
@@ -15,7 +13,6 @@ import DepositPage from "src/pages/DepositPage/DepositPage";
 import Create from "../pages/Create/Create";
 import RegistrationPage from "src/pages/RegistrationPage/RegistrationPage";
 import SubscriptionPage from "src/pages/SubscriptionPage/SubscriptionPage";
-import SellerProfile from "src/pages/UserProfile/ui/SellerProfile";
 import { WalletWidget } from "src/widgets/WalletWidget/WalletWidget";
 import NavBar from "../pages/Navbar/Navbar";
 import ConnectPayments from "../pages/Wallet/ConnectPayments";
@@ -25,7 +22,6 @@ import "./App.css";
 
 function App() {
   const [hasRedirected, setHasRedirected] = useState(false);
-  const [userInitialized, setUserInitialized] = useState(false);
 
   const { theme } = useTheme();
   console.log("theme", theme);
@@ -164,17 +160,6 @@ function App() {
         if ("enableClosingConfirmation" in webApp) {
           (webApp as any).enableClosingConfirmation();
         }
-
-        // Инициализируем пользователя
-        if (!userInitialized) {
-          initializeUser().then((success) => {
-            console.log(
-              "User initialization:",
-              success ? "successful" : "failed"
-            );
-            setUserInitialized(true);
-          });
-        }
       }
     };
 
@@ -183,7 +168,7 @@ function App() {
         document.body.removeChild(script);
       }
     };
-  }, [userInitialized]);
+  }, []);
 
   // Обработка start параметров
   useEffect(() => {
@@ -232,8 +217,6 @@ function App() {
               />
               <Route path={"profile"} element={<UserProfile />} />
               <Route path={"subscription"} element={<SubscriptionPage />} />
-              <Route path={"edit-profile/:id"} element={<EditProfile />} />
-              <Route path={"user/:id"} element={<SellerProfile />} />
               <Route path={"registration"} element={<RegistrationPage />} />
               <Route path={"legal"} element={<LegalPage />} />
               <Route

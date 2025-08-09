@@ -1,5 +1,5 @@
-export {
-  fetchContacts,
-  fetchUserFavoriteContacts,
-  checkContactIsFavorite,
-} from "./fetchContacts";
+// export {
+//   fetchContacts,
+//   fetchUserFavoriteContacts,
+//   checkContactIsFavorite,
+// } from "./fetchContacts";
