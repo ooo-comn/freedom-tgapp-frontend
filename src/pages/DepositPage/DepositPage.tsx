@@ -152,7 +152,7 @@ const DepositPage: FC = () => {
     };
 
     generate();
-  }, [address]);
+  }, [address, logoUrl]);
 
   return (
     <div className={styles.deposit}>
