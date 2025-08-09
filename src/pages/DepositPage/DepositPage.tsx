@@ -1,8 +1,9 @@
 import { FC, useEffect } from "react";
 import styles from "./DepositPage.module.css";
-import { WalletBalance } from "src/features/WalletBalance/WalletBalance";
+// import { WalletBalance } from "src/features/WalletBalance/WalletBalance";
 import { useUserWallet } from "src/hooks/useUserWallet";
 import USDTIcon from "src/shared/assets/wallet/USDT.png";
+import { WalletBalanceDisplay } from "src/features/WalletBalance/ui/WalletBalanceDisplay/WalletBalanceDisplay";
 
 const DepositPage: FC = () => {
   const BackButton = window.Telegram.WebApp.BackButton;
@@ -37,6 +38,7 @@ const DepositPage: FC = () => {
 
   const { data, isLoading: isWalletLoading } = useUserWallet();
   const address = data?.address || "";
+  const balance = data?.balanceAmount ?? 0;
   const logoUrl =
     new URLSearchParams(window.location.search).get("logo") || USDTIcon;
 
@@ -184,7 +186,7 @@ const DepositPage: FC = () => {
 
       <div className={styles["deposit__balance"]}>
         <h3 className={styles["deposit__balance-title"]}>Баланс</h3>
-        <WalletBalance />
+        <WalletBalanceDisplay balance={balance} />
       </div>
 
       <button
