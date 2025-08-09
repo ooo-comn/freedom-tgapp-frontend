@@ -53,6 +53,11 @@ const QRPayment: FC = () => {
   });
 
   const handleScanSuccess = useCallback((result: string) => {
+    try {
+      window.Telegram?.WebApp?.closeScanQrPopup?.();
+    } catch (err) {
+      // ignore
+    }
     console.log("=== HANDLE SCAN SUCCESS ===");
     console.log("QR Code scanned:", result);
     console.log("QR Data type:", typeof result);
@@ -76,7 +81,7 @@ const QRPayment: FC = () => {
     );
   }, []);
 
-  const { scanQR, isAvailable } = useQRScanner({
+  const { scanQR, isAvailable, closeQRScanner } = useQRScanner({
     onSuccess: handleScanSuccess,
     onError: (error) => {
       console.error("QR Scanner error:", error);
@@ -148,6 +153,11 @@ const QRPayment: FC = () => {
     setShowPurchaseForm(false);
     setShowScanner(true);
     setScanSuccessful(false);
+    try {
+      closeQRScanner();
+    } catch (err) {
+      // ignore
+    }
   };
 
   const handlePurchaseSubmit = async (data: PurchaseFormData) => {

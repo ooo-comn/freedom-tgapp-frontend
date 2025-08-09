@@ -15,6 +15,13 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
   const errorMessageRef = useRef<string | undefined>(undefined);
   const timeoutRef = useRef<number | null>(null);
   const isHandlingRef = useRef(false);
+  const closeIntervalRef = useRef<number | null>(null);
+  const onSuccessRef = useRef<typeof onSuccess>(onSuccess);
+
+  // Храним актуальный onSuccess в ref, чтобы не перевешивать обработчики
+  useEffect(() => {
+    onSuccessRef.current = onSuccess;
+  }, [onSuccess]);
 
   // Функция для нативного закрытия QR сканера
   const closeQRScanner = useCallback(() => {
@@ -33,6 +40,40 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
             // ignore
           }
         }, 50);
+        setTimeout(() => {
+          try {
+            window.Telegram?.WebApp?.closeScanQrPopup?.();
+          } catch (err) {
+            // ignore
+          }
+        }, 150);
+        setTimeout(() => {
+          try {
+            window.Telegram?.WebApp?.closeScanQrPopup?.();
+          } catch (err) {
+            // ignore
+          }
+        }, 300);
+        // Повторяющееся закрытие до прихода события закрытия (макс 10 попыток)
+        if (closeIntervalRef.current) {
+          clearInterval(closeIntervalRef.current);
+          closeIntervalRef.current = null;
+        }
+        let attempts = 0;
+        closeIntervalRef.current = window.setInterval(() => {
+          try {
+            window.Telegram?.WebApp?.closeScanQrPopup?.();
+          } catch (err) {
+            // ignore
+          }
+          attempts += 1;
+          if (attempts >= 10) {
+            if (closeIntervalRef.current) {
+              clearInterval(closeIntervalRef.current);
+              closeIntervalRef.current = null;
+            }
+          }
+        }, 100);
         isScanningRef.current = false;
         console.log("QR Scanner closed via closeScanQrPopup");
       } else {
@@ -54,7 +95,7 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
       console.log("Event data:", eventData);
       console.log("isScanningRef.current:", isScanningRef.current);
 
-      if (eventData.data && isScanningRef.current && !isHandlingRef.current) {
+      if (eventData.data && !isHandlingRef.current) {
         isHandlingRef.current = true;
         const qrText: string = eventData.data;
         console.log("QR Code scanned via event:", qrText);
@@ -83,7 +124,7 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
         closeQRScanner();
 
         // Затем отдаем результат наружу
-        onSuccess?.(qrText);
+        onSuccessRef.current?.(qrText);
         if (resolveRef.current) {
           resolveRef.current(qrText);
           resolveRef.current = null;
@@ -92,7 +133,8 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
         // Сбрасываем валидатор после успешного результата
         validatorRef.current = null;
         errorMessageRef.current = undefined;
-        isHandlingRef.current = false;
+        // isHandlingRef сбросим после события закрытия попапа,
+        // чтобы не ловить дубликаты qr_text_received пока попап ещё на экране
       } else {
         console.log("QR event received but scanner is not active or no data");
       }
@@ -106,8 +148,13 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
         clearTimeout(timeoutRef.current);
         timeoutRef.current = null;
       }
+      if (closeIntervalRef.current) {
+        clearInterval(closeIntervalRef.current);
+        closeIntervalRef.current = null;
+      }
 
-      // Очищаем ссылки на Promise
+      // Снимаем флаг обработки, очищаем ссылки на Promise
+      isHandlingRef.current = false;
       if (resolveRef.current) {
         rejectRef.current?.(new Error("QR Scanner closed by user"));
         resolveRef.current = null;
@@ -130,6 +177,11 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
       (window.Telegram.WebApp as any).onEvent(
         "scanQrPopupClosed",
         handleScanQRPopupClosed
+      );
+      // Snake case вариант названия события закрытия на некоторых клиентах
+      (window.Telegram.WebApp as any).onEvent(
+        "scan_qr_popup_closed",
+        handleScanQRPopupClosed as unknown as (data: unknown) => void
       );
     }
 
@@ -154,7 +206,7 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
         );
       }
     };
-  }, [onSuccess, closeQRScanner]);
+  }, [closeQRScanner]);
 
   const scanQR = useCallback(async (): Promise<string | null> => {
     try {
