@@ -73,7 +73,7 @@ const QRPayment: FC = () => {
     );
   }, []);
 
-  const { scanQR, isAvailable, closeQRScanner } = useQRScanner({
+  const { scanQR, isAvailable } = useQRScanner({
     onSuccess: handleScanSuccess,
     onError: (error) => {
       console.error("QR Scanner error:", error);
