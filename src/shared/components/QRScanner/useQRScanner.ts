@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 
 interface UseQRScannerOptions {
   onSuccess?: (result: string) => void;
-  onError?: (error: any) => void;
+  onError?: (error: unknown) => void;
   text?: string;
 }
 
@@ -10,7 +10,11 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
   const { onSuccess, onError, text = "Наведите камеру на QR-код" } = options;
   const isScanningRef = useRef(false);
   const resolveRef = useRef<((value: string) => void) | null>(null);
-  const rejectRef = useRef<((error: any) => void) | null>(null);
+  const rejectRef = useRef<((error: unknown) => void) | null>(null);
+  const validatorRef = useRef<((qr: string) => boolean) | null>(null);
+  const errorMessageRef = useRef<string | undefined>(undefined);
+  const timeoutRef = useRef<number | null>(null);
+  const isHandlingRef = useRef(false);
 
   // Функция для нативного закрытия QR сканера
   const closeQRScanner = useCallback(() => {
@@ -21,6 +25,14 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
       if (typeof window.Telegram?.WebApp?.closeScanQrPopup === "function") {
         console.log("Using closeScanQrPopup API...");
         window.Telegram.WebApp.closeScanQrPopup();
+        // Дублирующий вызов как страховка для некоторых клиентов Telegram
+        setTimeout(() => {
+          try {
+            window.Telegram?.WebApp?.closeScanQrPopup?.();
+          } catch (err) {
+            // ignore
+          }
+        }, 50);
         isScanningRef.current = false;
         console.log("QR Scanner closed via closeScanQrPopup");
       } else {
@@ -37,25 +49,50 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
 
   // Обработка событий QR сканера
   useEffect(() => {
-    const handleQRTextReceived = (eventData: any) => {
+    const handleQRTextReceived = (eventData: { data?: string }) => {
       console.log("=== QR Text Received Event in useQRScanner ===");
       console.log("Event data:", eventData);
       console.log("isScanningRef.current:", isScanningRef.current);
 
-      if (eventData.data && isScanningRef.current) {
-        console.log("QR Code scanned via event:", eventData.data);
-        isScanningRef.current = false;
+      if (eventData.data && isScanningRef.current && !isHandlingRef.current) {
+        isHandlingRef.current = true;
+        const qrText: string = eventData.data;
+        console.log("QR Code scanned via event:", qrText);
 
-        // Вызываем callback и resolve Promise
-        onSuccess?.(eventData.data);
+        // Чистим таймаут при успешном чтении
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+          timeoutRef.current = null;
+        }
+
+        // Если задан валидатор — валидируем. При невалидном значении не закрываем попап
+        if (validatorRef.current) {
+          const isValid = validatorRef.current(qrText);
+          console.log("QR validation result:", isValid);
+          if (!isValid) {
+            if (errorMessageRef.current && window.Telegram?.WebApp?.showAlert) {
+              window.Telegram.WebApp.showAlert(errorMessageRef.current);
+            }
+            isHandlingRef.current = false;
+            return; // оставляем сканер открытым
+          }
+        }
+
+        // Сначала блокируем дальнейшие события и закрываем попап
+        isScanningRef.current = false;
+        closeQRScanner();
+
+        // Затем отдаем результат наружу
+        onSuccess?.(qrText);
         if (resolveRef.current) {
-          resolveRef.current(eventData.data);
+          resolveRef.current(qrText);
           resolveRef.current = null;
           rejectRef.current = null;
         }
-
-        // Закрываем QR сканер после получения результата
-        closeQRScanner();
+        // Сбрасываем валидатор после успешного результата
+        validatorRef.current = null;
+        errorMessageRef.current = undefined;
+        isHandlingRef.current = false;
       } else {
         console.log("QR event received but scanner is not active or no data");
       }
@@ -64,6 +101,11 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
     const handleScanQRPopupClosed = () => {
       console.log("=== QR Scanner Popup Closed Event ===");
       isScanningRef.current = false;
+
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
 
       // Очищаем ссылки на Promise
       if (resolveRef.current) {
@@ -75,9 +117,15 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
 
     // Используем официальный Telegram.WebApp.onEvent API
     if (window.Telegram?.WebApp?.onEvent) {
+      // Основное событие
       (window.Telegram.WebApp as any).onEvent(
         "qrTextReceived",
         handleQRTextReceived
+      );
+      // Фолбэк для платформ, присылающих snake_case
+      (window.Telegram.WebApp as any).onEvent(
+        "qr_text_received",
+        handleQRTextReceived as unknown as (data: unknown) => void
       );
       (window.Telegram.WebApp as any).onEvent(
         "scanQrPopupClosed",
@@ -95,6 +143,10 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
         (window.Telegram.WebApp as any).offEvent(
           "qrTextReceived",
           handleQRTextReceived
+        );
+        (window.Telegram.WebApp as any).offEvent(
+          "qr_text_received",
+          handleQRTextReceived as unknown as (data: unknown) => void
         );
         (window.Telegram.WebApp as any).offEvent(
           "scanQrPopupClosed",
@@ -122,7 +174,7 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
           resolveRef.current = resolve;
           rejectRef.current = reject;
 
-          const timeout = setTimeout(() => {
+          timeoutRef.current = window.setTimeout(() => {
             if (isScanningRef.current) {
               isScanningRef.current = false;
               closeQRScanner();
@@ -132,21 +184,11 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
               resolveRef.current = null;
               rejectRef.current = null;
             }
+            timeoutRef.current = null;
           }, 30000); // 30 секунд таймаут
 
-          // Используем официальный API согласно документации
-          window.Telegram.WebApp.showScanQrPopup({ text }, (result: string) => {
-            clearTimeout(timeout);
-            console.log("QR Scanner result:", result);
-            isScanningRef.current = false;
-            // Закрываем попап нативно (для совместимости разных платформ)
-            closeQRScanner();
-            onSuccess?.(result);
-            resolve(result);
-            resolveRef.current = null;
-            rejectRef.current = null;
-            return true; // Закрываем попап после получения результата
-          });
+          // Открываем попап без callback — ждём только событие qrTextReceived
+          window.Telegram.WebApp.showScanQrPopup({ text });
         });
       } else {
         console.log("No QR scanner available!");
@@ -185,11 +227,15 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
           isScanningRef.current = true;
 
           return new Promise((resolve, reject) => {
-            // Сохраняем ссылки на resolve и reject
+            // Сохраняем ссылки на resolve/reject
             resolveRef.current = resolve;
             rejectRef.current = reject;
 
-            const timeout = setTimeout(() => {
+            // Настраиваем валидатор на время этого сканирования
+            validatorRef.current = validator;
+            errorMessageRef.current = errorMessage;
+
+            timeoutRef.current = window.setTimeout(() => {
               if (isScanningRef.current) {
                 isScanningRef.current = false;
                 closeQRScanner();
@@ -198,37 +244,14 @@ export const useQRScanner = (options: UseQRScannerOptions = {}) => {
                 reject(error);
                 resolveRef.current = null;
                 rejectRef.current = null;
+                validatorRef.current = null;
+                errorMessageRef.current = undefined;
               }
+              timeoutRef.current = null;
             }, 30000);
 
-            window.Telegram.WebApp.showScanQrPopup(
-              { text },
-              (result: string) => {
-                clearTimeout(timeout);
-                console.log("QR Scanner result:", result);
-                const isValid = validator(result);
-                console.log("QR validation result:", isValid);
-
-                if (isValid) {
-                  isScanningRef.current = false;
-                  // Закрываем попап при успешной валидации
-                  onSuccess?.(result);
-                  resolve(result);
-                  resolveRef.current = null;
-                  rejectRef.current = null;
-                  return true; // Закрываем попап после успешной валидации
-                } else {
-                  isScanningRef.current = false;
-                  if (errorMessage && window.Telegram?.WebApp?.showAlert) {
-                    window.Telegram.WebApp.showAlert(errorMessage);
-                  }
-                  reject(new Error("QR validation failed"));
-                  resolveRef.current = null;
-                  rejectRef.current = null;
-                  return false; // Не закрываем попап при неудачной валидации
-                }
-              }
-            );
+            // Открываем попап без callback — валидация произойдёт в обработчике события
+            window.Telegram.WebApp.showScanQrPopup({ text });
           });
         } else {
           const error = new Error("QR Scanner is not available");
