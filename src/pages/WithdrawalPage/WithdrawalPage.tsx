@@ -21,7 +21,7 @@ const WithdrawalPage: FC = () => {
   const [amount, setAmount] = useState("");
 
   const { data: walletData } = useWalletBalance();
-  const balance = (walletData?.balance || 0) + 0.5;
+  const balance = walletData?.balance || 0;
 
   const commission = 2.75;
   // Work in integer cents to avoid floating-point precision issues

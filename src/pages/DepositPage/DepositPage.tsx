@@ -41,7 +41,7 @@ const DepositPage: FC = () => {
   const { data, isLoading: isWalletLoading } = useUserWallet();
   const address = data?.address || "";
   const { data: balanceData } = useWalletBalance();
-  const balance = (balanceData?.balance ?? 0) + 0.5;
+  const balance = balanceData?.balance ?? 0;
   const logoUrl =
     new URLSearchParams(window.location.search).get("logo") || USDTIcon;
 

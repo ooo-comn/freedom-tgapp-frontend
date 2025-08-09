@@ -26,7 +26,7 @@ const PurchaseForm: FC<PurchaseFormProps> = ({ onClose, onSubmit }) => {
   const { data: walletData } = useUserWallet();
   const walletAddress = walletData?.address || "";
   const { data: balanceData } = useWalletBalance();
-  const balance = (balanceData?.balance ?? 0) + 0.5;
+  const balance = balanceData?.balance ?? 0;
 
   const transactionId = "19876543456"; // В реальном приложении это будет генерироваться
   const currentDate = format(new Date(), "d MMMM yyyy", { locale: ru });
