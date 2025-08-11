@@ -116,7 +116,7 @@ const WithdrawalPage: FC = () => {
 
         <div className={styles.balanceSection}>
           <label className={styles.label}>Баланс</label>
-          <WalletBalanceDisplay balance={balance} />
+          <WalletBalanceDisplay />
         </div>
 
         <button type="submit" className={styles.submitButton}>

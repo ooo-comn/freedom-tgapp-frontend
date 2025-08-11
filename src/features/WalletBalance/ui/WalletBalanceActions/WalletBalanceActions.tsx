@@ -3,11 +3,7 @@ import { useNavigate } from "react-router-dom";
 import CreditCard from "src/shared/assets/wallet/CreditCard.svg";
 import styles from "./WalletBalanceActions.module.css";
 
-interface WalletBalanceActionsProps {
-  balance: number;
-}
-
-export const WalletBalanceActions: FC<WalletBalanceActionsProps> = () => {
+export const WalletBalanceActions: FC = () => {
   const navigate = useNavigate();
 
   const handleDeposit = () => {

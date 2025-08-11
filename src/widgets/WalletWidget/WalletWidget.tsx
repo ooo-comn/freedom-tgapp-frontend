@@ -2,6 +2,7 @@ import { format, isToday, isYesterday, parseISO } from "date-fns";
 import { ru } from "date-fns/locale";
 import { FC, useEffect, useState } from "react";
 import { ITransaction } from "src/entities/course/model/types";
+import { useWalletBalance } from "src/entities/wallet/model/fetchWalletBalance";
 import { TransactionsHistory } from "src/features/TransactionsHistory/TransactionsHistory";
 import { WalletBalance } from "src/features/WalletBalance/WalletBalance";
 import BottomSheet from "src/shared/components/BottomSheet/BottomSheet";
@@ -25,8 +26,18 @@ export const WalletWidget: FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [formattedBalance, setFormattedBalance] = useState<string>("0");
 
+  const { data: walletData } = useWalletBalance();
+  const balance = walletData?.balance ?? 0;
+
   const webApp = getTelegramWebApp();
   console.log("initDataUnsafe", webApp?.initDataUnsafe);
+
+  useEffect(() => {
+    if (balance !== undefined) {
+      const formatted = balance.toLocaleString("ru-RU");
+      setFormattedBalance(formatted);
+    }
+  }, [balance]);
 
   useEffect(() => {
     const checkAndAuthorizeUser = async () => {
@@ -71,7 +82,7 @@ export const WalletWidget: FC = () => {
     <div className={styles["wallet"]}>
       <h1 className={styles["wallet__title"]}>Кошелёк</h1>
 
-      <WalletBalance onBalanceChange={setFormattedBalance} />
+      <WalletBalance />
 
       {/* <MyDataCard
         title="Пройдите верификацию"

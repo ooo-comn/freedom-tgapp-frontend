@@ -1,15 +1,13 @@
 import { FC } from "react";
+import { useWalletBalance } from "src/entities/wallet/model/fetchWalletBalance";
 import { useExchangeRate } from "src/hooks/useExchangeRate";
 import USDTImage from "../../../../shared/assets/wallet/USDT.png";
 import styles from "./WalletBalanceDisplay.module.css";
 
-interface WalletBalanceDisplayProps {
-  balance: number;
-}
+export const WalletBalanceDisplay: FC = () => {
+  const { data: walletData } = useWalletBalance();
+  const balance = walletData?.balance ?? 0;
 
-export const WalletBalanceDisplay: FC<WalletBalanceDisplayProps> = ({
-  balance,
-}) => {
   const {
     data: exchangeRate,
     isLoading: isRateLoading,
