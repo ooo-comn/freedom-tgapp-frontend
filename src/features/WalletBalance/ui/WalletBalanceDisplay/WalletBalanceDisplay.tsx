@@ -8,6 +8,8 @@ export const WalletBalanceDisplay: FC = () => {
   const { data: walletData } = useWalletBalance();
   const balance = walletData?.balance ?? 0;
 
+  console.log("balance", balance);
+
   const {
     data: exchangeRate,
     isLoading: isRateLoading,
@@ -17,6 +19,8 @@ export const WalletBalanceDisplay: FC = () => {
   const rubValue = exchangeRate?.price?.usdt_rub
     ? (balance * exchangeRate.price.usdt_rub).toFixed(2)
     : "0.00";
+
+  console.log("rubValue", rubValue);
 
   const rateValue = isRateLoading
     ? "Загрузка..."
