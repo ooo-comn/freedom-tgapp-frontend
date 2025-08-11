@@ -1,5 +1,4 @@
 .withdrawalPage {
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
@@ -84,8 +83,8 @@
 }
 
 .submitButton {
-  margin-top: auto;
-  margin-bottom: 9.74vw;
+  position: absolute;
+  bottom: 9.74vw;
   display: flex;
   width: 91.28vw;
   padding: 2.56vw;
