@@ -15,7 +15,7 @@ export const WalletBalanceDisplay: FC = () => {
 	} = useExchangeRate()
 
 	const rubValue = exchangeRate?.price?.usdt_rub
-		? ((balance + 0.5) * exchangeRate.price.usdt_rub).toFixed(2)
+		? (balance * exchangeRate.price.usdt_rub).toFixed(2)
 		: '0.00'
 
 	const rateValue = isRateLoading
@@ -23,7 +23,7 @@ export const WalletBalanceDisplay: FC = () => {
 		: rateError
 		? 'Ошибка'
 		: exchangeRate?.price?.usdt_rub
-		? `${exchangeRate.price.usdt_rub.toFixed(2)} ₽`
+		? `${exchangeRate.price.usdt_rub.toFixed(2) + 0.5} ₽`
 		: '0.00 ₽'
 
 	return (
