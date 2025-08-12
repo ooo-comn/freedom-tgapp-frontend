@@ -8,7 +8,7 @@ import ModalNotification from "src/shared/components/ModalNotification/ModalNoti
 import styles from "./QRPayment.module.css";
 
 // Функция для отправки запроса на API
-const sendPaymentRequest = async (auth: any, paymentLink: string) => {
+const sendPaymentRequest = async (initData: string, paymentLink: string) => {
   try {
     const response = await fetch("https://comnapp.ru/api/v1/payment", {
       method: "POST",
@@ -16,7 +16,7 @@ const sendPaymentRequest = async (auth: any, paymentLink: string) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        auth: auth,
+        init_data: initData,
         payment_link: paymentLink,
       }),
     });
@@ -151,19 +151,9 @@ const QRPayment: FC = () => {
 
     try {
       const webApp = window.Telegram?.WebApp;
+      const initData = webApp?.initData || "";
 
-      // Извлекаем данные пользователя из Telegram WebApp
-      const auth = {
-        auth_date: Number(webApp?.initDataUnsafe?.auth_date),
-        first_name: webApp?.initDataUnsafe?.user?.first_name,
-        hash: webApp?.initDataUnsafe?.hash,
-        id: webApp?.initDataUnsafe?.user?.id,
-        last_name: webApp?.initDataUnsafe?.user?.last_name,
-        photo_url: webApp?.initDataUnsafe?.user?.photo_url,
-        username: webApp?.initDataUnsafe?.user?.username,
-      };
-
-      const result = await sendPaymentRequest(auth, qrData);
+      const result = await sendPaymentRequest(initData, qrData);
 
       if (result.success) {
         console.log("Payment request successful:", result.data);
