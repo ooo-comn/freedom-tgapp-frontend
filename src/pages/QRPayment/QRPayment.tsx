@@ -154,7 +154,7 @@ const QRPayment: FC = () => {
 
       // Извлекаем данные пользователя из Telegram WebApp
       const auth = {
-        auth_date: webApp?.initDataUnsafe?.auth_date,
+        auth_date: Number(webApp?.initDataUnsafe?.auth_date),
         first_name: webApp?.initDataUnsafe?.user?.first_name,
         hash: webApp?.initDataUnsafe?.hash,
         id: webApp?.initDataUnsafe?.user?.id,
